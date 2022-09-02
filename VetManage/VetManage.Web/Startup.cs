@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -8,6 +10,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using VetManage.Web.Data;
+using VetManage.Web.Data.Entities;
+using VetManage.Web.Helpers;
 
 namespace VetManage.Web
 {
@@ -23,6 +28,32 @@ namespace VetManage.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddIdentity<User, IdentityRole>(cfg =>
+            {
+                cfg.Tokens.AuthenticatorTokenProvider = TokenOptions.DefaultAuthenticatorProvider;
+                cfg.SignIn.RequireConfirmedEmail = true;
+                cfg.User.RequireUniqueEmail = true;
+                cfg.Password.RequireDigit = false;
+                cfg.Password.RequiredUniqueChars = 0;
+                cfg.Password.RequireUppercase = false;
+                cfg.Password.RequireLowercase = false;
+                cfg.Password.RequireNonAlphanumeric = false;
+                cfg.Password.RequiredLength = 6;
+            })
+                .AddDefaultTokenProviders()
+                .AddEntityFrameworkStores<DataContext>();
+
+            services.AddDbContext<DataContext>(cfg =>
+            {
+                cfg.UseSqlServer(this.Configuration.GetConnectionString("DefaultConnection"));
+            });
+
+            // Register seeder
+            services.AddTransient<SeedDb>();
+
+            // Helper services
+            services.AddScoped<IUserHelper, UserHelper>();
+
             services.AddControllersWithViews();
         }
 
@@ -44,6 +75,7 @@ namespace VetManage.Web
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
