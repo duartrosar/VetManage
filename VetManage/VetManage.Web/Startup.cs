@@ -54,6 +54,9 @@ namespace VetManage.Web
             // Helper services
             services.AddScoped<IUserHelper, UserHelper>();
 
+            // Repositories
+            services.AddScoped<IOwnerRepository, OwnerRepository>();
+
             services.AddControllersWithViews();
         }
 
