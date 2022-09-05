@@ -1,0 +1,86 @@
+﻿@using System.Text.Json.Serialization
+@using Newtonsoft.Json
+
+@model VetManage.Web.Models.AccountViewModel
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Users</h1>
+
+<p>
+    <a asp-action="Register">New User</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.EditUser.FirstName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EditUser.LastName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EditUser.Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EditUser.PhoneNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EditUser.Address)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Users) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PhoneNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Address)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id" data-user="@JsonConvert.SerializeObject(item)" data-id="@item.Id" class="btn-edit">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+<partial name="_Edit" model="@new EditUserViewModel()"/>
+
+@section Scripts{
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $(".btn-edit").click(function() {
+                var user = $(this).data("user");
+
+                $("#userId").val(user.Id);
+                $("#firstName").val(user.FirstName);
+                $("#lastName").val(user.LastName);
+                $("#phoneNumber").val(user.PhoneNumber);
+                $("#address").val(user.Address);
+
+                console.log(user);
+                $("#editUser").modal("show");
+                return false;
+            });
+        });
+    </script>
+}

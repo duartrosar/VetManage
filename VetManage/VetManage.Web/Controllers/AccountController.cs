@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Threading.Tasks;
+using VetManage.Web.Data.Entities;
 using VetManage.Web.Helpers;
 using VetManage.Web.Models;
 
@@ -13,6 +16,21 @@ namespace VetManage.Web.Controllers
         public AccountController(IUserHelper userHelper)
         {
             _userHelper = userHelper;
+        }
+
+        [Authorize]
+        public IActionResult Index()
+        {
+            var users = _userHelper.GetAll()
+                .OrderBy(u => u.FirstName)
+                .ThenBy(u => u.LastName);
+
+            AccountViewModel model = new AccountViewModel
+            {
+                Users = users.ToList(),
+            };
+
+            return View(model);
         }
 
         public IActionResult Login()
@@ -54,6 +72,74 @@ namespace VetManage.Web.Controllers
             await _userHelper.LogoutAsync();
 
             return RedirectToAction("Index", "Home");
+        }
+
+        [Authorize]
+        public IActionResult Register()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Register(RegisterNewUserViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                // Check if user exists and get it if it does
+                var user = await _userHelper.GetUserByEmailAsync(model.Username);
+
+                if (user == null)
+                {
+                    // Add new user with the data from the model
+                    user = new User
+                    {
+                        FirstName = model.FirstName,
+                        LastName = model.LastName,
+                        Email = model.Username,
+                        UserName = model.Username,
+                        Address = model.Address,
+                        PhoneNumber = model.PhoneNumber,
+                    };
+
+                    var result = await _userHelper.AddUserAsync(user, model.Password);
+
+                    if(result != IdentityResult.Success)
+                    {
+                        ModelState.AddModelError(string.Empty, "The User could not be created.");
+
+                        return View(model);
+                    }
+
+                    // Login the newly created user
+                    LoginViewModel loginViewModel = new LoginViewModel
+                    {
+                        Username = user.UserName,
+                        Password = model.Password,
+                        RememberMe = false,
+                    };
+
+                    // Try to login
+                    var result2 = await _userHelper.LoginAsync(loginViewModel);
+
+                    if (result2.Succeeded)
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
+                }
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(EditUserViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+
+            }
+
+            return View();
         }
     }
 }
