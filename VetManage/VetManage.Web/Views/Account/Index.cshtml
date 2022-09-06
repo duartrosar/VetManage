@@ -52,9 +52,9 @@
                 @Html.DisplayFor(modelItem => item.Address)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id" data-user="@JsonConvert.SerializeObject(item)" data-id="@item.Id" class="btn-edit">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <button type="button" data-action="read" data-user="@JsonConvert.SerializeObject(item)" data-id="@item.Id" class="btn btn-primary btn-action">Details</button>
+                <button type="button" data-action="edit" data-user="@JsonConvert.SerializeObject(item)" data-id="@item.Id" class="btn btn-warning btn-action">Edit</button>
+                <button type="button" data-action="delete" data-user="@JsonConvert.SerializeObject(item)" data-id="@item.Id" class="btn btn-danger btn-action">Delete</button>
             </td>
         </tr>
 }
@@ -62,25 +62,68 @@
 </table>
 
 <partial name="_Edit" model="@new EditUserViewModel()"/>
+@*<partial name="_Details" model="@new EditUserViewModel()"/>*@
 
 @section Scripts{
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
     <script type="text/javascript">
         $(document).ready(function() {
-            $(".btn-edit").click(function() {
+            $(".btn-action").click(function() {
                 var user = $(this).data("user");
+                var action = $(this).data("action");
+                var readonly;
 
-                $("#userId").val(user.Id);
-                $("#firstName").val(user.FirstName);
-                $("#lastName").val(user.LastName);
-                $("#phoneNumber").val(user.PhoneNumber);
-                $("#address").val(user.Address);
+                if (action === "read") {
+                    readonly = true;
+                    $("#enableEditUser").removeClass("d-none");
+
+                    $("#submitEditUser").addClass("d-none");
+                    $("#deleteUser").addClass("d-none");
+                } else if (action == "edit") {
+                    readonly = false;
+                    $("#submitEditUser").removeClass("d-none");
+
+                    $("#enableEditUser").addClass("d-none");
+                    $("#deleteUser").addClass("d-none");
+                } else {
+                    readonly = true;
+                    $("#deleteUser").removeClass("d-none");
+
+                    $("#enableEditUser").addClass("d-none");
+                    $("#submitEditUser").addClass("d-none");
+                }
+
+                setReadonly(readonly);
+
+                $("#userIdEdit").val(user.Id);
+                $("#firstNameEdit").val(user.FirstName);
+                $("#lastNameEdit").val(user.LastName);
+                $("#phoneNumberEdit").val(user.PhoneNumber);
+                $("#addressEdit").val(user.Address);
 
                 console.log(user);
                 $("#editUser").modal("show");
                 return false;
             });
+
+            $("#enableEditUser").click(function() {
+                $("#enableEditUser").addClass("d-none");
+                $("#submitEditUser").removeClass("d-none");
+                setReadonly(false);
+            });
+
+            $("#btnCancel").click(function() {
+                $("#editUser").modal("hide");
+            });
         });
+
+        function setReadonly(readonly) {
+            $("#userIdEdit").attr('readonly', readonly);
+            $("#firstNameEdit").attr('readonly', readonly);
+            $("#lastNameEdit").attr('readonly', readonly);
+            $("#phoneNumberEdit").attr('readonly', readonly);
+            $("#addressEdit").attr('readonly', readonly);
+        }
     </script>
 }

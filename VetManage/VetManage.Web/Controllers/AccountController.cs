@@ -131,15 +131,48 @@ namespace VetManage.Web.Controllers
             return View(model);
         }
 
+
         [HttpPost]
         public async Task<IActionResult> Edit(EditUserViewModel model)
         {
             if (ModelState.IsValid)
             {
+                var user = await _userHelper.GetUserByIdAsync(model.Id);
 
+                if(user != null)
+                {
+                    user.FirstName = model.FirstName;
+                    user.LastName = model.LastName;
+                    user.Address = model.Address;
+                    user.PhoneNumber = model.PhoneNumber;
+
+                    var response = await _userHelper.UpdateUserAsync(user);
+
+                    if (response.Succeeded)
+                    {
+                        ViewBag.UserMessage = "User Updated!";
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, response.Errors.FirstOrDefault().Description);
+                    }
+
+                }
+                return RedirectToAction(nameof(Index));
             }
 
-            return View();
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(EditUserViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                
+            }
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

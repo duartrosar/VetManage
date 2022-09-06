@@ -1,11 +1,12 @@
-﻿@model VetManage.Web.Models.EditUserViewModel
+﻿@using Newtonsoft.Json
+@model VetManage.Web.Models.EditUserViewModel
 
 @{
     
 }
 
 <!-- Form Modal -->
-<div class="modal fade" id="editUser" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+<div class="modal fade" id="detailsUser" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -15,37 +16,31 @@
         </button>
       </div>
       <div class="modal-body">
-          <form id="editUser" method="post">
+          <form asp-action="Delete" id="deleteUser" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input id="userIdEdit"  type="hidden" asp-for="Id" />
+            <input id="userId" type="hidden" asp-for="Id"/>
             <div class="form-group">
                 <label asp-for="FirstName" class="control-label"></label>
-                <input id="firstNameEdit" asp-for="FirstName" class="form-control" />
+                <input id="firstNameDelete" asp-for="FirstName" class="form-control" readonly/>
                 <span asp-validation-for="FirstName" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="LastName" class="control-label"></label>
-                <input id="lastNameEdit" asp-for="LastName" class="form-control" />
+                <input id="lastNameDelete" asp-for="LastName" class="form-control" readonly/>
                 <span asp-validation-for="LastName" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="PhoneNumber" class="control-label"></label>
-                <input id="phoneNumberEdit" asp-for="PhoneNumber" class="form-control" />
+                <input id="phoneNumberDelete" asp-for="PhoneNumber" class="form-control" readonly/>
                 <span asp-validation-for="PhoneNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Address" class="control-label"></label>
-                <input id="addressEdit"  asp-for="Address" class="form-control" />
+                <input id="addressDelete"  asp-for="Address" class="form-control" readonly/>
                 <span asp-validation-for="Address" class="text-danger"></span>
             </div>
             <div class="form-group">
-
-                <div class="text-right">
-                    <button id="btnCancel" type="button" class="btn btn-danger">Cancel</button>
-                    <input asp-action="Edit" id="submitEditUser" type="submit" value="Save" class="btn btn-success" />
-                    <input asp-action="Delete" id="deleteUser" type="submit" value="Delete" class="btn btn-success" />
-                    <button id="enableEditUser" type="button" class="btn btn-primary">Edit</button>
-                </div>
+                <input type="submit" value="Delete" id="btnDelete" data-item="@JsonConvert.SerializeObject(Model)" class="btn btn-Danger"/>
             </div>
         </form>
       </div>
