@@ -8,5 +8,7 @@ namespace VetManage.Web.Models
         public ICollection<User> Users { get; set; }
 
         public EditUserViewModel EditUser { get; set; }
+
+        public RegisterNewUserViewModel RegisterNewUser { get; set; }
     }
 }

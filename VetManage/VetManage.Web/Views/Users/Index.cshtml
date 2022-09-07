@@ -63,8 +63,8 @@
     </tbody>
 </table>
 
-<partial name="_Edit" model="@new EditUserViewModel()"/>
-<partial name="_Register" model="@new RegisterNewUserViewModel()"/>
+<partial name="_Edit" model="@Model.EditUser"/>
+<partial name="_Register" model="@Model.RegisterNewUser"/>
 
 @section Scripts{
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
@@ -75,6 +75,8 @@
                 var user = $(this).data("user");
                 var action = $(this).data("action");
                 var readonly;
+
+                console.log(user);
 
                 if (action === "read") {
                     readonly = true;
@@ -104,7 +106,8 @@
                 $("#phoneNumberEdit").val(user.PhoneNumber);
                 $("#addressEdit").val(user.Address);
 
-                console.log(user);
+                $("#selectRoleEdit").val(user.RoleId);
+
                 $("#editUser").modal("show");
                 return false;
             });
@@ -122,6 +125,17 @@
             $("#btnNewUser").click(function() {
                 $("#newUser").modal("show");
             });
+
+            $("#selectRoleEdit").change(function() {
+                var roleName = $("#selectRoleEdit option:selected").text();
+                console.log(roleName);
+                $("#roleNameEdit").val(roleName);
+            });
+
+            $("#selectRoleRegister").change(function() {
+                var roleName = $("#selectRoleRegister option:selected").text();
+                $("#roleNameRegister").val(roleName);
+            });
         });
 
         function setReadonly(readonly) {
@@ -130,6 +144,7 @@
             $("#lastNameEdit").attr('readonly', readonly);
             $("#phoneNumberEdit").attr('readonly', readonly);
             $("#addressEdit").attr('readonly', readonly);
+            $("#selectRoleEdit").attr('disabled', readonly);
         }
     </script>
 }

@@ -14,7 +14,14 @@ namespace VetManage.Web.Data.Entities
         [MaxLength(100, ErrorMessage = "The field {0} can only contain {1} characters length.")]
         public string Address { get; set; }
 
-        [Display(Name = "Full Name")]
+        public int RoleId { get; set; }
+
+        public string RoleName { get; set; }
+
+        // TO DO: Make sure user has access to certain common properties of the various Entities
+        //public IEntity UserEntity { get; set; }
+
+        [Display(Name = "Name")]
         public string FullName => $"{FirstName} {LastName}";
     }
 }

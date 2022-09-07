@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,8 +24,18 @@ namespace VetManage.Web.Helpers
 
         Task<IdentityResult> ChangePasswordAsync(User user, string oldPassword, string newPassword);
 
-        Task<IdentityResult> DeleteUserAsync(string userId);
+        Task<IdentityResult> DeleteUserAsync(User user);
 
         Task<User> GetUserByIdAsync(string userId);
+
+        Task CheckRoleAsync(string roleName);
+
+        Task AddUserToRoleAsync(User user, string roleName);
+
+        Task RemoveUserFromRoleAsync(User user, string roleName);
+
+        Task<bool> IsUserInRoleAsync(User user, string roleName);
+
+        IEnumerable<SelectListItem> GetComboRoles();
     }
 }

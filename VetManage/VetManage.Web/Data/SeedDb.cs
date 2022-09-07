@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading.Tasks;
+using VetManage.Web.Constants;
 using VetManage.Web.Data.Entities;
 using VetManage.Web.Helpers;
 
@@ -21,6 +22,10 @@ namespace VetManage.Web.Data
         public async Task SeedAsync()
         {
             await _context.Database.MigrateAsync();
+
+            await _userHelper.CheckRoleAsync(Roles.Admin.ToString());
+            await _userHelper.CheckRoleAsync(Roles.Employee.ToString());
+            await _userHelper.CheckRoleAsync(Roles.Client.ToString());
 
             await AddAdminUser();
         }

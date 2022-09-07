@@ -19,6 +19,12 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input id="userIdEdit"  type="hidden" asp-for="Id" />
             <div class="form-group">
+                <label asp-for="RoleId" class="control-label"></label>
+                <input asp-for="RoleName" type="hidden" id="roleNameEdit"/>
+                <select asp-for="RoleId" asp-items="Model.Roles" id="selectRoleEdit" class="form-control"></select>
+                <span asp-validation-for="RoleId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="FirstName" class="control-label"></label>
                 <input id="firstNameEdit" asp-for="FirstName" class="form-control" />
                 <span asp-validation-for="FirstName" class="text-danger"></span>

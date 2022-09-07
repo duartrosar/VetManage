@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace VetManage.Web.Models
 {
@@ -34,5 +36,14 @@ namespace VetManage.Web.Models
         [Required]
         [Compare("Password")]
         public string Confirm { get; set; }
+
+
+        [Display(Name = "Role")]
+        [Range(1, int.MaxValue, ErrorMessage = "You must select a country")]
+        public int RoleId { get; set; }
+
+        public string RoleName { get; set; }
+
+        public IEnumerable<SelectListItem> Roles { get; set; }
     }
 }
