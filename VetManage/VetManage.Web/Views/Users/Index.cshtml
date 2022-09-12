@@ -24,12 +24,6 @@
             <th>
                 @Html.DisplayNameFor(model => model.EditUser.Email)
             </th>
-            @*<th>
-                @Html.DisplayNameFor(model => model.EditUser.PhoneNumber)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EditUser.Address)
-            </th>*@
             <th></th>
         </tr>
     </thead>
@@ -128,7 +122,6 @@
 
             $("#selectRoleEdit").change(function() {
                 var roleName = $("#selectRoleEdit option:selected").text();
-                console.log(roleName);
                 $("#roleNameEdit").val(roleName);
             });
 

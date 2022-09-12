@@ -39,7 +39,7 @@ namespace VetManage.Web.Models
 
 
         [Display(Name = "Role")]
-        [Range(1, int.MaxValue, ErrorMessage = "You must select a country")]
+        [Range(1, int.MaxValue, ErrorMessage = "You must select a role")]
         public int RoleId { get; set; }
 
         public string RoleName { get; set; }

@@ -1,0 +1,71 @@
+﻿@model VetManage.Web.Models.OwnerViewModel
+
+<!-- Form Modal -->
+<div class="modal fade" id="crudOwner" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalCenterTitle">New Owner</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <form asp-action="Register" method="post">
+            <div asp-validation-summary="ModelOnly"></div>
+            <input type="hidden" asp-for="Id" id="ownerId"/>
+            <div class="form-group">
+                <label asp-for="UserId" class="control-label"></label>
+                <select asp-for="UserId" id="userSelect" asp-items="Model.Users" class="form-control">
+                    <option value="">-- Select a User --</option>
+                </select>
+                <span asp-validation-for="UserId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FirstName">First Name</label>
+                <input id="firstName" asp-for="FirstName" class="form-control"/>
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LastName">Last Name</label>
+                <input id="lastName" asp-for="LastName" class="form-control"/>
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Gender">Gender</label>
+                <input id="gender" asp-for="Gender" class="form-control"/>
+                <span asp-validation-for="Gender" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DateOfBirth">DateOfBirth</label>
+                <input id="dateOfBirth" asp-for="DateOfBirth" class="form-control"/>
+                <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Address">Address</label>
+                <input id="address" asp-for="Address" class="form-control" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MobileNumber">Mobile Number</label>
+                <input id="mobileNumber" asp-for="MobileNumber" class="form-control" />
+                <span asp-validation-for="MobileNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <div class="text-right">
+                    <button id="btnCancel" type="button" class="btn btn-danger">Cancel</button>
+                    <input asp-action="Edit" id="submitEditOwner" type="submit" value="Save" class="btn btn-success" />
+                    <input asp-action="Delete" id="deleteOwner" type="submit" value="Delete" class="btn btn-success" />
+                    <input asp-action="Create" id="createOwner" type="submit" value="Create" class="btn btn-success" />
+                    <button id="enableEditOwner" type="button" class="btn btn-primary">Edit</button>
+                </div>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

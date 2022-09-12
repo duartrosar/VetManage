@@ -14,6 +14,9 @@ namespace VetManage.Web.Data.Entities
         [MaxLength(100, ErrorMessage = "The field {0} can only contain {1} characters length.")]
         public string Address { get; set; }
 
+        /// <summary>
+        /// RoleId is the id used by the dropdown to access the correct role
+        /// </summary>
         public int RoleId { get; set; }
 
         public string RoleName { get; set; }

@@ -1,4 +1,5 @@
-﻿@model IEnumerable<VetManage.Web.Data.Entities.Owner>
+﻿@using Newtonsoft.Json
+@model VetManage.Web.Models.OwnersViewModel
 
 @{
     ViewData["Title"] = "Index";
@@ -7,43 +8,37 @@
 <h1>Owners</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <button type="button" id="btnNewOwner" class="btn btn-primary">New Owner</button>
 </p>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.FirstName)
+                @Html.DisplayNameFor(model => model.Owner.FirstName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.LastName)
+                @Html.DisplayNameFor(model => model.Owner.LastName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Gender)
+                @Html.DisplayNameFor(model => model.Owner.DateOfBirth)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.DateOfBirth)
+                @Html.DisplayNameFor(model => model.Owner.MobileNumber)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.MobileNumber)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Address)
+                @Html.DisplayNameFor(model => model.Owner.Address)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+@foreach (var item in Model.Owners) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.FirstName)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.LastName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Gender)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.DateOfBirth)
@@ -55,11 +50,117 @@
                 @Html.DisplayFor(modelItem => item.Address)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <button type="button" data-action="read" data-owner="@JsonConvert.SerializeObject(item)" data-id="@item.Id" class="btn btn-primary btn-action">Details</button>
+                    <button type="button" data-action="edit" data-owner="@JsonConvert.SerializeObject(item)" data-id="@item.Id" class="btn btn-warning btn-action">Edit</button>
+                    <button type="button" data-action="delete" data-owner="@JsonConvert.SerializeObject(item)" data-id="@item.Id" class="btn btn-danger btn-action">Delete</button>
             </td>
         </tr>
 }
     </tbody>
 </table>
+
+<partial name="_CrudModal" model="Model.Owner" />
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $(".btn-action").click(function() {
+                var owner = $(this).data("owner");
+                var action = $(this).data("action");
+                var title = $("#exampleModalCenterTitle");
+                var readonly;
+
+                console.log(owner.Id);
+                // Hide or Show the buttons depending on the action
+                if (action === "read") {
+                    readonly = true;
+                    $("#enableEditOwner").removeClass("d-none");
+
+                    $("#submitEditOwner").addClass("d-none");
+                    $("#deleteOwner").addClass("d-none");
+                    $("#createOwner").addClass("d-none");
+
+                    title.text("Details");
+                } else if (action == "edit") {
+                    readonly = false;
+                    $("#submitEditOwner").removeClass("d-none");
+                    $("#enableEditOwner").addClass("d-none");
+                    $("#deleteOwner").addClass("d-none");
+                    $("#createOwner").addClass("d-none");
+                    title.text("Edit");
+                } else {
+                    readonly = true;
+                    $("#deleteOwner").removeClass("d-none");
+                    $("#enableEditOwner").addClass("d-none");
+                    $("#submitEditOwner").addClass("d-none");
+                    $("#createOwner").addClass("d-none");
+                    title.text("Delete");
+                }
+
+                // Set the fields to readonly or not depending on the action
+                setReadonly(readonly);
+
+                // Set the value of owner being read, edited or deleted
+                populateForm(owner);
+
+                $("#crudOwner").modal("show");
+                return false;
+            });
+
+            function populateForm(owner) {
+                $("#firstName").val(owner.FirstName);
+                $("#lastName").val(owner.LastName);
+                $("#gender").val(owner.LastName);
+                $("#dateOfBirth").val(owner.DateOfBirth);
+                $("#mobileNumber").val(owner.MobileNumber);
+                $("#address").val(owner.Address);
+                $("#userSelect").val(owner.User.Id);
+                $("#ownerId").val(owner.Id);
+            }
+
+            $("#enableEditOwner").click(function() {
+                $("#enableEditOwner").addClass("d-none");
+                $("#submitEditOwner").removeClass("d-none");
+                setReadonly(false);
+            });
+
+            $("#btnCancel").click(function() {
+                $("#crudOwner").modal("hide");
+            });
+
+            $("#btnNewOwner").click(function() {
+                var title = $("exampleModalCenterTitle");
+                setReadonly(false);
+                $("#crudOwner").modal("show");
+                $("#createOwner").removeClass("d-none");
+                $("#enableEditOwner").addClass("d-none");
+                $("#submitEditOwner").addClass("d-none");
+                $("#deleteOwner").addClass("d-none");
+
+                // Clear Inputs
+                $("#firstName").val("");
+                $("#lastName").val("");
+                $("#gender").val("");
+                $("#dateOfBirth").val("");
+                $("#mobileNumber").val("");
+                $("#address").val("");
+                $("#userSelect").prop("selectedIndex", 0)
+                $("#ownerId").val(0);
+
+                title.text("New");
+            });
+        });
+
+        function setReadonly(readonly) {
+            $("#userSelect").attr('disabled', readonly);
+            $("#firstName").attr('readonly', readonly);
+            $("#lastName").attr('readonly', readonly);
+            $("#gender").attr('readonly', readonly);
+            $("#dateOfBirth").attr('readonly', readonly);
+            $("#mobileNumber").attr('readonly', readonly);
+            $("#address").attr('readonly', readonly);
+        }
+    </script>
+}
