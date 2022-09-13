@@ -19,7 +19,20 @@ namespace VetManage.Web.Data.Entities
         /// </summary>
         public int RoleId { get; set; }
 
+        /// <summary>
+        /// RoleName is used to insert the user into a role and to search
+        /// </summary>
         public string RoleName { get; set; }
+
+        /// <summary>
+        /// The id of the Entity associated with the
+        /// </summary>
+        public int EntityId { get; set; }
+
+        /// <summary>
+        /// Whether or not the user has an Entity associated with it
+        /// </summary>
+        public bool HasEntity { get; set; }
 
         // TO DO: Make sure user has access to certain common properties of the various Entities
         //public IEntity UserEntity { get; set; }

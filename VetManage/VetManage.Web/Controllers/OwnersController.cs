@@ -79,8 +79,6 @@ namespace VetManage.Web.Controllers
         }
 
         // POST: Owners/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(OwnerViewModel model)
@@ -93,34 +91,27 @@ namespace VetManage.Web.Controllers
                 {
                     var owner = _converterHelper.ToOwner(model, true);
 
-                    owner.User = user;
+                    user.HasEntity = true;
+                    user.EntityId = owner.Id;
 
-                    await _ownerRepository.CreateAsync(owner);
-                    return RedirectToAction(nameof(Index));
+                    // Update the user so that it has a entity related to it
+                    var response = await _userHelper.UpdateUserAsync(user);
+
+                    if (response.Succeeded)
+                    {
+                        owner.User = user;
+
+                        await _ownerRepository.CreateAsync(owner);
+                        return RedirectToAction(nameof(Index));
+                    }
+                    // TODO: Owner could not be created
                 }
             }
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Owners/Edit/5
-        //public async Task<IActionResult> Edit(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    var owner = await _ownerRepository.GetByIdAsync(id.Value);
-        //    if (owner == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    return View(owner);
-        //}
 
         // POST: Owners/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, OwnerViewModel model)
@@ -136,11 +127,21 @@ namespace VetManage.Web.Controllers
                 {
                     // Get the user the user chose from the dropdown with the id
                     var user = await _userHelper.GetUserByIdAsync(model.UserId);
-                    model.User = user;
+                    user.HasEntity = true;
+                    user.EntityId = model.Id;
 
-                    var owner = _converterHelper.ToOwner(model, false);
+                    // Update the user so that it has an entity related to it
+                    var response = await _userHelper.UpdateUserAsync(user);
 
-                    await _ownerRepository.UpdateAsync(model);
+                    if (response.Succeeded)
+                    {
+                        model.User = user;
+
+                        var owner = _converterHelper.ToOwner(model, false);
+
+                        await _ownerRepository.UpdateAsync(model);
+                    }
+                    // TODO: Owner could not be updated
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -158,31 +159,38 @@ namespace VetManage.Web.Controllers
             return View(model);
         }
 
-        // GET: Owners/Delete/5
-        //public async Task<IActionResult> Delete(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    var owner = await _ownerRepository.GetByIdAsync(id.Value);
-        //    if (owner == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return View(owner);
-        //}
-
         // POST: Owners/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var owner = await _ownerRepository.GetByIdAsync(id);
-            await _ownerRepository.DeleteAsync(owner);
+            //var owner = await _ownerRepository.GetByIdAsync(id);
+            var owner = await _ownerRepository.GetWithUserByIdAsync(id);
+
+            var user = await _userHelper.GetUserByIdAsync(owner.User.Id);
+            user.HasEntity = false;
+            user.EntityId = -1;
+
+            // Update the user so that it has an entity related to it
+            var response = await _userHelper.UpdateUserAsync(user);
+
+            if (response.Succeeded)
+            {
+                await _ownerRepository.DeleteAsync(owner);
+                return RedirectToAction(nameof(Index));
+            }
+            // TODO: Owner could not be deleted
+
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [Route("Owners/GetUserAsync")]
+        public async Task<JsonResult> GetUserAsync(string userId)
+        {
+            var user = await _userHelper.GetUserByIdAsync(userId);
+
+            return Json(user);
         }
     }
 }

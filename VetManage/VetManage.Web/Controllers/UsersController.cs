@@ -70,6 +70,7 @@ namespace VetManage.Web.Controllers
                         PhoneNumber = model.PhoneNumber,
                         RoleId = model.RoleId,
                         RoleName = model.RoleName,
+                        HasEntity = false,
                     };
 
                     var result = await _userHelper.AddUserAsync(user, model.Password);

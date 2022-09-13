@@ -120,6 +120,33 @@
                 $("#ownerId").val(owner.Id);
             }
 
+            $("#userSelect").change(function() {
+
+                $.ajax({
+                    url: '@Url.Action("GetUserAsync","Owners")',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: { userId: $("#userSelect").val() },
+                    success: function(user) {
+
+                        if(user == null){
+                            console.log("No user selected");
+                            clearInputs();
+                            return;
+                        }
+
+                        $("#firstName").val(user.firstName);
+                        $("#lastName").val(user.lastName);
+                        $("#mobileNumber").val(user.phoneNumber);
+                        $("#address").val(user.address);
+                    },
+                    error: function(ex) {
+                        debugger;
+                        alert('Failed to retrieve user.\n' + ex)
+                    }
+                });
+            });
+
             $("#enableEditOwner").click(function() {
                 $("#enableEditOwner").addClass("d-none");
                 $("#submitEditOwner").removeClass("d-none");
@@ -140,18 +167,23 @@
                 $("#deleteOwner").addClass("d-none");
 
                 // Clear Inputs
-                $("#firstName").val("");
-                $("#lastName").val("");
-                $("#gender").val("");
-                $("#dateOfBirth").val("");
-                $("#mobileNumber").val("");
-                $("#address").val("");
-                $("#userSelect").prop("selectedIndex", 0)
-                $("#ownerId").val(0);
-
+                clearInputs();
+                
                 title.text("New");
             });
         });
+
+        function clearInputs()
+        {
+            $("#firstName").val("");
+            $("#lastName").val("");
+            $("#gender").val("");
+            $("#dateOfBirth").val("");
+            $("#mobileNumber").val("");
+            $("#address").val("");
+            $("#userSelect").prop("selectedIndex", 0)
+            $("#ownerId").val(0);
+        }
 
         function setReadonly(readonly) {
             $("#userSelect").attr('disabled', readonly);

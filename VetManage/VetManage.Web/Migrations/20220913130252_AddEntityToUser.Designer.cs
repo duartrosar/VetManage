@@ -10,8 +10,8 @@ using VetManage.Web.Data;
 namespace VetManage.Web.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220909160057_AddUserIdToOwner")]
-    partial class AddUserIdToOwner
+    [Migration("20220913130252_AddEntityToUser")]
+    partial class AddEntityToUser
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -186,9 +186,6 @@ namespace VetManage.Web.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<int>("UserComboId")
-                        .HasColumnType("int");
-
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
@@ -270,9 +267,15 @@ namespace VetManage.Web.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<int>("EntityId")
+                        .HasColumnType("int");
+
                     b.Property<string>("FirstName")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("HasEntity")
+                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .HasMaxLength(50)

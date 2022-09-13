@@ -184,9 +184,6 @@ namespace VetManage.Web.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<int>("UserComboId")
-                        .HasColumnType("int");
-
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
@@ -268,9 +265,15 @@ namespace VetManage.Web.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<int>("EntityId")
+                        .HasColumnType("int");
+
                     b.Property<string>("FirstName")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("HasEntity")
+                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .HasMaxLength(50)

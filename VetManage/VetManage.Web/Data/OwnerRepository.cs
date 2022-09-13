@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using VetManage.Web.Data.Entities;
 
 namespace VetManage.Web.Data
@@ -22,9 +23,13 @@ namespace VetManage.Web.Data
 
         public IEnumerable<SelectListItem> GetComboUsers()
         {
-            // Get all the users with the role Client as list of SelectListItem
+
+            //  .Where(u => !u.HasEntity)
+
+            // Get all the users with the role Client that do not have an entity associated with them as list of SelectListItem
             var list = _context.Users
                 .Where(u => u.RoleName == "Client")
+                .Where(u => !u.HasEntity)
                 .Select(u => new SelectListItem
                 {
                     Text = u.FullName,
@@ -40,6 +45,13 @@ namespace VetManage.Web.Data
             //});
 
             return list;
+        }
+
+        public async Task<Owner> GetWithUserByIdAsync(int id)
+        {
+            return await _context.Owners
+                .Include(o => o.User)
+                .FirstOrDefaultAsync(o => o.Id == id);
         }
     }
 }

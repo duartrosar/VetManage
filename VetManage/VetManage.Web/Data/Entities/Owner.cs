@@ -37,13 +37,6 @@ namespace VetManage.Web.Data.Entities
 
         public User User { get; set; }
 
-        /// <summary>
-        /// UserId is the id used by the dropdown to access the correct User
-        /// </summary>
-        /// [Display(Name = "Role")]
-        //[Range(1, int.MaxValue, ErrorMessage = "You must select a user")]
-        public int UserComboId { get; set; }
-
         public ICollection<Pet> Pets { get; set; }
 
         public string FullName => $"{FirstName} {LastName}";
