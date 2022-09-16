@@ -48,7 +48,6 @@ function newOrganizeButtons(entityName, title) {
 
 
 function populateForm(formInputs, entity) {
-    console.log(entity);
     for (let i = 0; i < formInputs.length; i++) {
         formInputs[i].value = entity[`${formInputs[i].name}`];
     }
@@ -58,7 +57,11 @@ function clearInputs(formInputs) {
     for (let i = 0; i < formInputs.length; i++) {
         if (formInputs[i].nodeName === "SELECT") {
             formInputs[i].selectedIndex = "0";
-        } else {
+        } else if (formInputs[i].name === "Id") {
+            formInputs[i].value = 0;
+            console.log(formInputs[i].name);
+        }
+            else {
             formInputs[i].value = "";
         }
     }

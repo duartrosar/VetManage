@@ -67,6 +67,7 @@ namespace VetManage.Web.Helpers
                 Weight = model.Weight,
                 Length = model.Length,
                 Owner = model.Owner,
+                OwnerId = model.OwnerId,
             };
         }
 

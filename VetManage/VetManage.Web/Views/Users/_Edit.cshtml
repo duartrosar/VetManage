@@ -20,7 +20,7 @@
           <div class="d-flex align-items-center justify-content-center mt-md-5 pt-md-5">
               <form class="flex-fill" id="usersEditForm" method="post" style="max-width: 500px;">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <input id="userIdEdit"  type="hidden" asp-for="Id" />
+                <input id="userIdEdit" type="hidden" asp-for="Id" class="edit-form-control"/>
                 <div class="mb-3">
                     <label asp-for="RoleId" class="control-label"></label>
                     <input asp-for="RoleName" type="hidden" id="roleNameEdit"/>

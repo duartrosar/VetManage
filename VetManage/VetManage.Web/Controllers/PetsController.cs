@@ -40,6 +40,8 @@ namespace VetManage.Web.Controllers
             var ownerViewModels = _converterHelper.AllToOwnerViewModel(owners);
             var petViewModels = _converterHelper.AllToPetViewModel(pets);
 
+            ViewData["OwnerId"] = new SelectList(ownerViewModels, "Id", "FullName");
+
             PetsViewModel petsViewModel = new PetsViewModel
             {
                 Owners = ownerViewModels,
@@ -51,88 +53,52 @@ namespace VetManage.Web.Controllers
             return View(petsViewModel);
         }
 
-        // GET: Pets/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var pet = await _context.Pets
-                .Include(p => p.Owner)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (pet == null)
-            {
-                return NotFound();
-            }
-
-            return View(pet);
-        }
-
-        // GET: Pets/Create
-        public IActionResult Create()
-        {
-            ViewData["OwnerId"] = new SelectList(_context.Owners, "Id", "FullName");
-            return View();
-        }
 
         // POST: Pets/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Pet pet)
+        public async Task<IActionResult> Create(PetViewModel model)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(pet);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["OwnerId"] = new SelectList(_context.Owners, "Id", "FullName", pet.OwnerId);
-            return View(pet);
-        }
+                var owner = await _ownerRepository.GetByIdAsync(model.OwnerId);
 
-        // GET: Pets/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
+                if(owner != null)
+                {
+                    var pet = _converterHelper.ToPet(model, true);
+
+                    await _petRepository.CreateAsync(pet);
+                    return RedirectToAction(nameof(Index));
+                }
+                // TODO: Pet could not be created
             }
 
-            var pet = await _context.Pets.FindAsync(id);
-            if (pet == null)
-            {
-                return NotFound();
-            }
-            ViewData["OwnerId"] = new SelectList(_context.Owners, "Id", "FullName", pet.OwnerId);
-            return View(pet);
+            return RedirectToAction(nameof(Index));
         }
 
         // POST: Pets/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Type,Breed,Weight,Height,Length,DateOfBirth,Gender,OwnerId")] Pet pet)
+        public async Task<IActionResult> Edit(int id, PetViewModel model)
         {
-            if (id != pet.Id)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(pet);
-                    await _context.SaveChangesAsync();
+                    var owner = await _ownerRepository.GetByIdAsync(model.OwnerId);
+
+                    if(owner != null)
+                    {
+                        var pet = _converterHelper.ToPet(model, false);
+                        await _petRepository.UpdateAsync(pet);
+                    }
+                    // TODO: Pet could not be updated
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PetExists(pet.Id))
+                    if (!await _petRepository.ExistsAsync(model.Id))
                     {
                         return NotFound();
                     }
@@ -143,27 +109,7 @@ namespace VetManage.Web.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["OwnerId"] = new SelectList(_context.Owners, "Id", "FullName", pet.OwnerId);
-            return View(pet);
-        }
-
-        // GET: Pets/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var pet = await _context.Pets
-                .Include(p => p.Owner)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (pet == null)
-            {
-                return NotFound();
-            }
-
-            return View(pet);
+            return View(model);
         }
 
         // POST: Pets/Delete/5
@@ -171,15 +117,10 @@ namespace VetManage.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var pet = await _context.Pets.FindAsync(id);
-            _context.Pets.Remove(pet);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
+            var pet = await _petRepository.GetByIdAsync(id);
 
-        private bool PetExists(int id)
-        {
-            return _context.Pets.Any(e => e.Id == id);
+            await _petRepository.DeleteAsync(pet);
+            return RedirectToAction(nameof(Index));
         }
     }
 }

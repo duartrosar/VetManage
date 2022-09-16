@@ -52,30 +52,6 @@ namespace VetManage.Web.Controllers
             return View(ownersViewModel);
         }
 
-        // GET: Owners/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var owner = await _ownerRepository.GetByIdAsync(id.Value);
-
-            if (owner == null)
-            {
-                return NotFound();
-            }
-
-            return View(owner);
-        }
-
-        // GET: Owners/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
         // POST: Owners/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -114,11 +90,6 @@ namespace VetManage.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, OwnerViewModel model)
         {
-            if (id != model.Id)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
                 try
@@ -162,7 +133,6 @@ namespace VetManage.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            //var owner = await _ownerRepository.GetByIdAsync(id);
             var owner = await _ownerRepository.GetWithUserByIdAsync(id);
 
             var user = await _userHelper.GetUserByIdAsync(owner.User.Id);
