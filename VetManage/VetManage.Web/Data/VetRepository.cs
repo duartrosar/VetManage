@@ -7,25 +7,24 @@ using VetManage.Web.Data.Entities;
 
 namespace VetManage.Web.Data
 {
-    public class OwnerRepository : GenericRepository<Owner>, IOwnerRepository
+    public class VetRepository : GenericRepository<Vet>, IVetRepository
     {
         private readonly DataContext _context;
 
-        public OwnerRepository(DataContext context) : base(context)
+        public VetRepository(DataContext context) : base(context)
         {
             _context = context;
         }
 
         public IQueryable GetAllWithUsers()
         {
-            return _context.Owners.Include(o => o.User);
+            return _context.Vets.Include(v => v.User);
         }
 
         public IEnumerable<SelectListItem> GetComboUsersNoEntity()
         {
-            // Get all the users with the role Client that do not have an entity associated with them as list of SelectListItem
             var list = _context.Users
-                .Where(u => u.RoleName == "Client")
+                .Where(u => u.RoleName == "Employee")
                 .Where(u => !u.HasEntity)
                 .Select(u => new SelectListItem
                 {
@@ -36,23 +35,10 @@ namespace VetManage.Web.Data
             return list;
         }
 
-        public async Task<Owner> GetWithUserByIdAsync(int id)
-        {
-            return await _context.Owners
-                .Include(o => o.User)
-                .FirstOrDefaultAsync(o => o.Id == id);
-        }
-
-        public IQueryable GetAllWithPetsAndUsers()
-        {
-            return _context.Owners.Include(o => o.User).Include(o => o.Pets);
-        }
-
         public IEnumerable<SelectListItem> GetComboUsers()
         {
-            // Get all the users with the role Client as a list of SelectListItem
             var list = _context.Users
-                .Where(u => u.RoleName == "Client")
+                .Where(u => u.RoleName == "Employee")
                 .Select(u => new SelectListItem
                 {
                     Text = u.FullName,
@@ -60,6 +46,13 @@ namespace VetManage.Web.Data
                 }).ToList();
 
             return list;
+        }
+
+        public async Task<Vet> GetWithUserByIdAsync(int id)
+        {
+            return await _context.Vets
+                .Include(v => v.User)
+                .FirstOrDefaultAsync(v => v.Id == id);
         }
     }
 }

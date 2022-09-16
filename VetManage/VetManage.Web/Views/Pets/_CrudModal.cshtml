@@ -19,7 +19,9 @@
                 <input type="hidden" asp-for="Id" class="form-control"/>
                 <div class="mb-3">
                     <label asp-for="OwnerId" class="control-label"></label>
-                    <select asp-for="OwnerId" class ="form-control" asp-items="ViewBag.OwnerId"></select>
+                    <select asp-for="OwnerId" class ="form-control" asp-items="ViewBag.OwnerId">
+                        <option value="">-- Select an Owner --</option>
+                    </select>
                 </div>
                 <div class="mb-3">
                     <label asp-for="Name">Name</label>

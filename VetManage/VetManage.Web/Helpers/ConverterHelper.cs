@@ -7,6 +7,7 @@ namespace VetManage.Web.Helpers
 {
     public class ConverterHelper : IConverterHelper
     {
+        //////// OWNERS ////////
         public Owner ToOwner(OwnerViewModel model, bool isNew)
         {
             return new Owner
@@ -53,6 +54,9 @@ namespace VetManage.Web.Helpers
             return ownerViewModels;
         }
 
+
+
+        //////// PETS ////////
         public Pet ToPet(PetViewModel model, bool isNew)
         {
             return new Pet
@@ -99,6 +103,52 @@ namespace VetManage.Web.Helpers
             };
 
             return petViewModels;
+        }
+
+
+
+        //////// VETS ////////
+        public Vet ToVet(VetViewModel model, bool isNew)
+        {
+            return new Vet
+            {
+                Id = isNew ? 0 : model.Id,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                DateOfBirth = model.DateOfBirth,
+                Gender = model.Gender,
+                Address = model.Address,
+                MobileNumber = model.MobileNumber,
+                User = model.User,
+            };
+        }
+
+        public VetViewModel ToVetViewModel(Vet vet)
+        {
+            return new VetViewModel
+            {
+                Id = vet.Id,
+                FirstName = vet.FirstName,
+                LastName = vet.LastName,
+                DateOfBirth = vet.DateOfBirth,
+                Gender = vet.Gender,
+                Address = vet.Address,
+                MobileNumber = vet.MobileNumber,
+                User = vet.User,
+                UserId = vet.User.Id,
+            };
+        }
+
+        public ICollection<VetViewModel> AllToVetViewModel(IQueryable vets)
+        {
+            List<VetViewModel> vetViewModels = new List<VetViewModel>();
+
+            foreach (Vet vet in vets)
+            {
+                vetViewModels.Add(ToVetViewModel(vet));
+            }
+
+            return vetViewModels;
         }
     }
 }

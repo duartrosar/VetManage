@@ -1,68 +1,62 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 using VetManage.Web.Data;
-using VetManage.Web.Data.Entities;
 using VetManage.Web.Helpers;
 using VetManage.Web.Models;
 
 namespace VetManage.Web.Controllers
 {
-    public class OwnersController : Controller
+    public class VetsController : Controller
     {
-        private readonly IOwnerRepository _ownerRepository;
+        private readonly IVetRepository _vetRepository;
         private readonly IConverterHelper _converterHelper;
         private readonly IUserHelper _userHelper;
 
-        public OwnersController(
-            IOwnerRepository ownerRepository,
+        public VetsController(
+            IVetRepository vetRepository,
             IConverterHelper converterHelper,
             IUserHelper userHelper)
         {
-            _ownerRepository = ownerRepository;
+            _vetRepository = vetRepository;
             _converterHelper = converterHelper;
             _userHelper = userHelper;
         }
-
-        // GET: Owners
         public IActionResult Index()
         {
-            var owners = _ownerRepository.GetAllWithUsers();
-            var users = _ownerRepository.GetComboUsers();
+            var vets = _vetRepository.GetAllWithUsers();
+            //var users = _vetRepository.GetComboUsersNoEntity();
+            var users = _vetRepository.GetComboUsers();
 
-            var ownerViewModels = _converterHelper.AllToOwnerViewModel(owners);
+            var vetViewModels = _converterHelper.AllToVetViewModel(vets);
 
-            OwnerViewModel ownerViewModel = new OwnerViewModel
+            VetViewModel vetViewModel = new VetViewModel
             {
                 Users = users,
             };
 
-            OwnersViewModel ownersViewModel = new OwnersViewModel()
+            VetsViewModel vetsViewModel = new VetsViewModel()
             {
-                Users = users,
-                Owners = ownerViewModels,
-                Owner = ownerViewModel
+                //Users = users,
+                Vets = vetViewModels,
+                Vet = vetViewModel,
             };
 
-            return View(ownersViewModel);
+            return View(vetsViewModel);
         }
 
-        // POST: Owners/Create
+        // POST: Vets/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(OwnerViewModel model)
+        public async Task<IActionResult> Create(VetViewModel model)
         {
             if (ModelState.IsValid)
             {
                 var user = await _userHelper.GetUserByIdAsync(model.UserId);
 
-                if(user != null)
+                if (user != null)
                 {
-                    var owner = _converterHelper.ToOwner(model, true);
+                    var owner = _converterHelper.ToVet(model, true);
 
                     user.HasEntity = true;
                     user.EntityId = owner.Id;
@@ -74,20 +68,19 @@ namespace VetManage.Web.Controllers
                     {
                         owner.User = user;
 
-                        await _ownerRepository.CreateAsync(owner);
+                        await _vetRepository.CreateAsync(owner);
                         return RedirectToAction(nameof(Index));
                     }
-                    // TODO: Owner could not be created
+                    // TODO: Vet could not be created
                 }
             }
             return RedirectToAction(nameof(Index));
         }
 
-
-        // POST: Owners/Edit/5
+        // POST: Vets/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, OwnerViewModel model)
+        public async Task<IActionResult> Edit(int id, VetViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -105,15 +98,15 @@ namespace VetManage.Web.Controllers
                     {
                         model.User = user;
 
-                        var owner = _converterHelper.ToOwner(model, false);
+                        var vet = _converterHelper.ToVet(model, false);
 
-                        await _ownerRepository.UpdateAsync(owner);
+                        await _vetRepository.UpdateAsync(vet);
                     }
-                    // TODO: Owner could not be updated
+                    // TODO: Vet could not be updated
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await _ownerRepository.ExistsAsync(model.Id))
+                    if (!await _vetRepository.ExistsAsync(model.Id))
                     {
                         return NotFound();
                     }
@@ -132,9 +125,9 @@ namespace VetManage.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var owner = await _ownerRepository.GetWithUserByIdAsync(id);
+            var vet = await _vetRepository.GetWithUserByIdAsync(id);
 
-            var user = await _userHelper.GetUserByIdAsync(owner.User.Id);
+            var user = await _userHelper.GetUserByIdAsync(vet.User.Id);
             user.HasEntity = false;
             user.EntityId = -1;
 
@@ -143,16 +136,16 @@ namespace VetManage.Web.Controllers
 
             if (response.Succeeded)
             {
-                await _ownerRepository.DeleteAsync(owner);
+                await _vetRepository.DeleteAsync(vet);
                 return RedirectToAction(nameof(Index));
             }
-            // TODO: Owner could not be deleted
+            // TODO: Vet could not be deleted
 
             return RedirectToAction(nameof(Index));
         }
 
         [HttpPost]
-        [Route("Owners/GetUserAsync")]
+        [Route("Vets/GetUserAsync")]
         public async Task<JsonResult> GetUserAsync(string userId)
         {
             var user = await _userHelper.GetUserByIdAsync(userId);

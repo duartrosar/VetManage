@@ -8,6 +8,8 @@ namespace VetManage.Web.Data
     {
         public DbSet<Owner> Owners { get; set; }
 
+        public DbSet<Vet> Vets { get; set; }
+
         public DbSet<Pet> Pets { get; set; }
 
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }

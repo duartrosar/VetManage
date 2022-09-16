@@ -49,7 +49,6 @@ namespace VetManage.Web.Controllers
                 Pet = new PetViewModel()
             };
 
-
             return View(petsViewModel);
         }
 

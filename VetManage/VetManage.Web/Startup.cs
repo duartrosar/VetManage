@@ -55,6 +55,7 @@ namespace VetManage.Web
             // Repositories
             services.AddScoped<IOwnerRepository, OwnerRepository>();
             services.AddScoped<IPetRepository, PetRepository>();
+            services.AddScoped<IVetRepository, VetRepository>();
 
             services.AddControllersWithViews();
         }

@@ -6,16 +6,14 @@ using VetManage.Web.Data.Entities;
 
 namespace VetManage.Web.Data
 {
-    public interface IOwnerRepository : IGenericRepository<Owner>
+    public interface IVetRepository : IGenericRepository<Vet>
     {
         IQueryable GetAllWithUsers();
 
-        Task<Owner> GetWithUserByIdAsync(int id);
-
-        IEnumerable<SelectListItem> GetComboUsers();
-
-        IQueryable GetAllWithPetsAndUsers();
+        Task<Vet> GetWithUserByIdAsync(int id);
 
         IEnumerable<SelectListItem> GetComboUsersNoEntity();
+
+        IEnumerable<SelectListItem> GetComboUsers();
     }
 }
