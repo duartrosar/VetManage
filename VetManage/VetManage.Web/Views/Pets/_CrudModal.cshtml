@@ -1,0 +1,91 @@
+﻿@model VetManage.Web.Models.PetViewModel
+
+<!-- Form Modal -->
+<div class="modal fade" id="crudPet" tabindex="-1" role="dialog" aria-labelledby="petFormTitle" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="container">
+            <div class="div d-flex align-items-center justify-content-center">
+                <h5 class="modal-title" id="petFormTitle">New Owner</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+        </div>
+      </div>
+      <div class="modal-body">
+          <div class="d-flex align-items-center justify-content-center mt-md-5 pt-md-5">
+              <form class="flex-fill" method="post" id="petsForm" style="max-width: 500px;">
+                <div asp-validation-summary="ModelOnly"></div>
+                <input type="hidden" asp-for="Id" id="ownerId"/>
+
+                @*<div class="mb-3">
+                    <label asp-for="UserId" class="control-label"></label>
+                    <select asp-for="UserId" id="userSelect" asp-items="Model.Users" class="form-control">
+                        <option value="">-- Select a User --</option>
+                    </select>
+                    <span asp-validation-for="UserId" class="text-danger"></span>
+                </div>*@
+
+                <div class="mb-3">
+                    <label asp-for="Name">Name</label>
+                    <input id="name" asp-for="Name" class="form-control"/>
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+               <div class="mb-3">
+                    <label asp-for="Type" class="control-label"></label>
+                    <input asp-for="Type" class="form-control" />
+                    <span asp-validation-for="Type" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Breed" class="control-label"></label>
+                    <input asp-for="Breed" class="form-control" />
+                    <span asp-validation-for="Breed" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Weight" class="control-label"></label>
+                    <input asp-for="Weight" class="form-control" />
+                    <span asp-validation-for="Weight" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Height" class="control-label"></label>
+                    <input asp-for="Height" class="form-control" />
+                    <span asp-validation-for="Height" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Length" class="control-label"></label>
+                    <input asp-for="Length" class="form-control" />
+                    <span asp-validation-for="Length" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="DateOfBirth" class="control-label"></label>
+                    <input asp-for="DateOfBirth" class="form-control" />
+                    <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Gender" class="control-label"></label>
+                    <input asp-for="Gender" class="form-control" />
+                    <span asp-validation-for="Gender" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="OwnerId" class="control-label"></label>
+                    <select asp-for="OwnerId" class ="form-control" asp-items="ViewBag.OwnerId"></select>
+                </div>
+                <div class="mb-3">
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button id="btnCancel" type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                        <input asp-action="Edit" id="submitEditPet" type="submit" value="Save" class="btn btn-success" />
+                        <input asp-action="Delete" id="deletePet" type="submit" value="Delete" class="btn btn-success" />
+                        <input asp-action="Create" id="createPet" type="submit" value="Create" class="btn btn-success" />
+                        <button id="enableEditPet" type="button" class="btn btn-primary">Edit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

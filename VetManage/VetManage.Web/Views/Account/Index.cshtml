@@ -74,26 +74,28 @@
             $(".btn-action").click(function() {
                 var user = $(this).data("user");
                 var action = $(this).data("action");
+                var title = $("#editFormTitle");
                 var readonly;
 
                 if (action === "read") {
                     readonly = true;
                     $("#enableEditUser").removeClass("d-none");
-
                     $("#submitEditUser").addClass("d-none");
                     $("#deleteUser").addClass("d-none");
+                    title.text("Details");
                 } else if (action == "edit") {
                     readonly = false;
                     $("#submitEditUser").removeClass("d-none");
-
                     $("#enableEditUser").addClass("d-none");
                     $("#deleteUser").addClass("d-none");
+                    title.text("Edit");
                 } else {
                     readonly = true;
                     $("#deleteUser").removeClass("d-none");
 
                     $("#enableEditUser").addClass("d-none");
                     $("#submitEditUser").addClass("d-none");
+                    title.text("Delete");
                 }
 
                 setReadonly(readonly);

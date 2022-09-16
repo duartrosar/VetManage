@@ -13,5 +13,7 @@ namespace VetManage.Web.Data
         Task<Owner> GetWithUserByIdAsync(int id);
 
         IEnumerable<SelectListItem> GetComboUsers();
+
+        IQueryable GetAllWithPetsAndUsers();
     }
 }

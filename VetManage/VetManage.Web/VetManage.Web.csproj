@@ -9,6 +9,30 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Trash\dist\css\bootstrap-grid.css" />
+    <Content Include="Trash\dist\css\bootstrap-grid.css.map" />
+    <Content Include="Trash\dist\css\bootstrap-grid.min.css" />
+    <Content Include="Trash\dist\css\bootstrap-grid.min.css.map" />
+    <Content Include="Trash\dist\css\bootstrap-reboot.css" />
+    <Content Include="Trash\dist\css\bootstrap-reboot.css.map" />
+    <Content Include="Trash\dist\css\bootstrap-reboot.min.css" />
+    <Content Include="Trash\dist\css\bootstrap-reboot.min.css.map" />
+    <Content Include="Trash\dist\css\bootstrap.css" />
+    <Content Include="Trash\dist\css\bootstrap.css.map" />
+    <Content Include="Trash\dist\css\bootstrap.min.css" />
+    <Content Include="Trash\dist\css\bootstrap.min.css.map" />
+    <Content Include="Trash\dist\js\bootstrap.bundle.js" />
+    <Content Include="Trash\dist\js\bootstrap.bundle.js.map" />
+    <Content Include="Trash\dist\js\bootstrap.bundle.min.js" />
+    <Content Include="Trash\dist\js\bootstrap.bundle.min.js.map" />
+    <Content Include="Trash\dist\js\bootstrap.js" />
+    <Content Include="Trash\dist\js\bootstrap.js.map" />
+    <Content Include="Trash\dist\js\bootstrap.min.js" />
+    <Content Include="Trash\dist\js\bootstrap.min.js.map" />
+    <Content Include="Trash\LICENSE" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="compilerconfig.json" />
     <None Include="wwwroot\scss\abstracts\_abstracts.scss" />
     <None Include="wwwroot\scss\abstracts\_mixins.scss" />
@@ -31,6 +55,10 @@
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\lib\bootstrap\" />
   </ItemGroup>
 
 </Project>

@@ -12,5 +12,11 @@ namespace VetManage.Web.Helpers
         OwnerViewModel ToOwnerViewModel(Owner owner);
 
         ICollection<OwnerViewModel> AllToOwnerViewModel(IQueryable owners);
+
+        Pet ToPet(PetViewModel model, bool isNew);
+
+        PetViewModel ToPetViewModel(Pet pet);
+
+        ICollection<PetViewModel> AllToPetViewModel(IQueryable pets);
     }
 }

@@ -32,8 +32,6 @@ namespace VetManage.Web.Controllers
         public IActionResult Index()
         {
             var owners = _ownerRepository.GetAllWithUsers();
-                //.OrderBy(o => o.FirstName)
-                //.ThenBy(o => o.LastName);
 
             var users = _ownerRepository.GetComboUsers();
 

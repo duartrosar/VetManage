@@ -53,5 +53,10 @@ namespace VetManage.Web.Data
                 .Include(o => o.User)
                 .FirstOrDefaultAsync(o => o.Id == id);
         }
+
+        public IQueryable GetAllWithPetsAndUsers()
+        {
+            return _context.Owners.Include(o => o.User).Include(o => o.Pets);
+        }
     }
 }

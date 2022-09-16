@@ -6,65 +6,69 @@
 
 <!-- Form Modal -->
 <div class="modal fade" id="newUser" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
+  <div class="modal-dialog modal-fullscreen modal-dialog-scrollable" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalCenterTitle">New User</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <div class="container">
+            <div class="div d-flex align-items-center justify-content-center">
+                <h5 class="modal-title" id="userRegisterFormTitle">New Owner</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+        </div>
       </div>
       <div class="modal-body">
-          <form asp-action="Register" method="post">
-            <div asp-validation-summary="ModelOnly"></div>
-            <div class="form-group">
-                <label asp-for="RoleId" class="control-label"></label>
-                <input asp-for="RoleName" type="hidden" id="roleNameRegister"/>
-                <select asp-for="RoleId" asp-items="Model.Roles" id="selectRoleRegister" class="form-control"></select>
-                <span asp-validation-for="RoleId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FirstName">First Name</label>
-                <input asp-for="FirstName" class="form-control"/>
-                <span asp-validation-for="FirstName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="LastName">Last Name</label>
-                <input asp-for="LastName" class="form-control"/>
-                <span asp-validation-for="LastName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Username">Username</label>
-                <input asp-for="Username" class="form-control"/>
-                <span asp-validation-for="Username" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Address">Address</label>
-                <input asp-for="Address" class="form-control" />
-                <span asp-validation-for="Address" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PhoneNumber">Phone Number</label>
-                <input asp-for="PhoneNumber" class="form-control" />
-                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Password">Password</label>
-                <input asp-for="Password" class="form-control"/>
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Confirm">Confirm Password</label>
-                <input asp-for="Confirm" class="form-control"/>
-                <span asp-validation-for="Confirm" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <div class="text-right">
-                    <button id="btnCancelDelete" type="button" class="btn btn-danger">Cancel</button>
-                    <input type="submit" value="Register" class="btn btn-primary"/>
+          <div class="d-flex align-items-center justify-content-center mt-md-5 pt-md-5">
+              <form asp-action="Register" id="usersRegisterForm" method="post" class="flex-fill" style="max-width: 500px;">
+                <div asp-validation-summary="ModelOnly"></div>
+                <div class="mb-3">
+                    <label asp-for="RoleId" class="control-label"></label>
+                    <input asp-for="RoleName" type="hidden" id="roleNameRegister"/>
+                    <select asp-for="RoleId" asp-items="Model.Roles" id="selectRoleRegister" class="form-control"></select>
+                    <span asp-validation-for="RoleId" class="text-danger"></span>
                 </div>
-            </div>
-        </form>
+                <div class="mb-3">
+                    <label asp-for="FirstName">First Name</label>
+                    <input asp-for="FirstName" class="form-control"/>
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="LastName">Last Name</label>
+                    <input asp-for="LastName" class="form-control"/>
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Username">Username</label>
+                    <input asp-for="Username" class="form-control"/>
+                    <span asp-validation-for="Username" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Address">Address</label>
+                    <input asp-for="Address" class="form-control" />
+                    <span asp-validation-for="Address" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="PhoneNumber">Phone Number</label>
+                    <input asp-for="PhoneNumber" class="form-control" />
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Password">Password</label>
+                    <input asp-for="Password" class="form-control"/>
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Confirm">Confirm Password</label>
+                    <input asp-for="Confirm" class="form-control"/>
+                    <span asp-validation-for="Confirm" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button id="btnCancelDelete" type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                        <input type="submit" id="createUser" value="Register" class="btn btn-primary"/>
+                    </div>
+                </div>
+            </form>
+        </div>
       </div>
     </div>
   </div>

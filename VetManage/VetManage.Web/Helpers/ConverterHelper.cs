@@ -52,5 +52,52 @@ namespace VetManage.Web.Helpers
 
             return ownerViewModels;
         }
+
+        public Pet ToPet(PetViewModel model, bool isNew)
+        {
+            return new Pet
+            {
+                Id = isNew ? 0 : model.Id,
+                Name = model.Name,
+                Breed = model.Breed,
+                Type = model.Type,
+                DateOfBirth = model.DateOfBirth,
+                Gender = model.Gender,
+                Height = model.Height,
+                Weight = model.Weight,
+                Length = model.Length,
+                Owner = model.Owner,
+            };
+        }
+
+        public PetViewModel ToPetViewModel(Pet pet)
+        {
+            return new PetViewModel
+            {
+                Id = pet.Id,
+                Name = pet.Name,
+                Breed = pet.Breed,
+                Type = pet.Type,
+                DateOfBirth = pet.DateOfBirth,
+                Gender = pet.Gender,
+                Height = pet.Height,
+                Weight = pet.Weight,
+                Length = pet.Length,
+                Owner = pet.Owner,
+                OwnerId = pet.OwnerId,
+            };
+        }
+
+        public ICollection<PetViewModel> AllToPetViewModel(IQueryable pets)
+        {
+            List<PetViewModel> petViewModels = new List<PetViewModel>();
+
+            foreach(Pet pet in pets)
+            {
+                petViewModels.Add(ToPetViewModel(pet));
+            };
+
+            return petViewModels;
+        }
     }
 }

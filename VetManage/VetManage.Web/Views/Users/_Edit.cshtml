@@ -6,54 +6,57 @@
 
 <!-- Form Modal -->
 <div class="modal fade" id="editUser" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
+  <div class="modal-dialog modal-fullscreen modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalCenterTitle">Edit User</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <div class="container">
+            <div class="div d-flex align-items-center justify-content-center">
+                <h5 class="modal-title" id="userEditFormTitle">Edit User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+        </div>
       </div>
       <div class="modal-body">
-          <form id="editUser" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input id="userIdEdit"  type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="RoleId" class="control-label"></label>
-                <input asp-for="RoleName" type="hidden" id="roleNameEdit"/>
-                <select asp-for="RoleId" asp-items="Model.Roles" id="selectRoleEdit" class="form-control"></select>
-                <span asp-validation-for="RoleId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FirstName" class="control-label"></label>
-                <input id="firstNameEdit" asp-for="FirstName" class="form-control" />
-                <span asp-validation-for="FirstName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="LastName" class="control-label"></label>
-                <input id="lastNameEdit" asp-for="LastName" class="form-control" />
-                <span asp-validation-for="LastName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PhoneNumber" class="control-label"></label>
-                <input id="phoneNumberEdit" asp-for="PhoneNumber" class="form-control" />
-                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Address" class="control-label"></label>
-                <input id="addressEdit"  asp-for="Address" class="form-control" />
-                <span asp-validation-for="Address" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-
-                <div class="text-right">
-                    <button id="btnCancel" type="button" class="btn btn-danger">Cancel</button>
-                    <input asp-action="Edit" id="submitEditUser" type="submit" value="Save" class="btn btn-success" />
-                    <input asp-action="Delete" id="deleteUser" type="submit" value="Delete" class="btn btn-success" />
-                    <button id="enableEditUser" type="button" class="btn btn-primary">Edit</button>
+          <div class="d-flex align-items-center justify-content-center mt-md-5 pt-md-5">
+              <form class="flex-fill" id="usersEditForm" method="post" style="max-width: 500px;">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input id="userIdEdit"  type="hidden" asp-for="Id" />
+                <div class="mb-3">
+                    <label asp-for="RoleId" class="control-label"></label>
+                    <input asp-for="RoleName" type="hidden" id="roleNameEdit"/>
+                    <select asp-for="RoleId" asp-items="Model.Roles" id="selectRoleEdit" class="form-control edit-form-control"></select>
+                    <span asp-validation-for="RoleId" class="text-danger"></span>
                 </div>
-            </div>
-        </form>
+                <div class="mb-3">
+                    <label asp-for="FirstName" class="control-label"></label>
+                    <input id="firstNameEdit" asp-for="FirstName" class="form-control edit-form-control" />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="LastName" class="control-label"></label>
+                    <input id="lastNameEdit" asp-for="LastName" class="form-control edit-form-control" />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="PhoneNumber" class="control-label"></label>
+                    <input id="phoneNumberEdit" asp-for="PhoneNumber" class="form-control edit-form-control" />
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Address" class="control-label"></label>
+                    <input id="addressEdit"  asp-for="Address" class="form-control edit-form-control" />
+                    <span asp-validation-for="Address" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button id="btnCancel" type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                        <input asp-action="Edit" id="submitEditUser" type="submit" value="Save" class="btn btn-success" />
+                        <input asp-action="Delete" id="deleteUser" type="submit" value="Delete" class="btn btn-success" />
+                        <button id="enableEditUser" type="button" class="btn btn-primary">Edit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
       </div>
     </div>
   </div>

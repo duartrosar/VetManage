@@ -10,54 +10,63 @@
 <p>
     <button type="button" id="btnNewOwner" class="btn btn-primary">New Owner</button>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Owner.FirstName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Owner.LastName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Owner.DateOfBirth)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Owner.MobileNumber)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Owner.Address)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model.Owners) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.FirstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateOfBirth)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MobileNumber)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Address)
-            </td>
-            <td>
-                <button type="button" data-action="read" data-owner="@JsonConvert.SerializeObject(item)" data-id="@item.Id" class="btn btn-primary btn-action">Details</button>
-                    <button type="button" data-action="edit" data-owner="@JsonConvert.SerializeObject(item)" data-id="@item.Id" class="btn btn-warning btn-action">Edit</button>
-                    <button type="button" data-action="delete" data-owner="@JsonConvert.SerializeObject(item)" data-id="@item.Id" class="btn btn-danger btn-action">Delete</button>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Owner.FirstName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Owner.LastName)
+                </th>
+                <th class="d-none d-lg-table-cell">
+                    @Html.DisplayNameFor(model => model.Owner.DateOfBirth)
+                </th>
+                <th class="d-none d-sm-table-cell">
+                    @Html.DisplayNameFor(model => model.Owner.MobileNumber)
+                </th>
+                <th class="d-none d-md-table-cell">
+                    @Html.DisplayNameFor(model => model.Owner.Address)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+    @foreach (var item in Model.Owners) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastName)
+                </td>
+                <td class="d-none d-lg-table-cell">
+                    @Html.DisplayFor(modelItem => item.DateOfBirth)
+                </td>
+                <td class="d-none d-sm-table-cell">
+                    @Html.DisplayFor(modelItem => item.MobileNumber)
+                </td>
+                <td class="d-none d-md-table-cell">
+                    @Html.DisplayFor(modelItem => item.Address)
+                </td>
+                <td class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <button type="button" data-action="read" data-owner="@JsonConvert.SerializeObject(item)" data-id="@item.Id" class="btn btn-primary btn-action">
+                        <i class="fa fa-magnifying-glass"></i>
+                    </button>
+                    <button type="button" data-action="edit" data-owner="@JsonConvert.SerializeObject(item)" data-id="@item.Id" class="btn btn-warning btn-action">
+                        <i class="fa fa-pencil"></i>
+                    </button>
+                    <button type="button" data-action="delete" data-owner="@JsonConvert.SerializeObject(item)" data-id="@item.Id" class="btn btn-danger btn-action">
+                        <i class="fa fa-remove fa-lg"></i>
+                    </button>
+                </td>
+            </tr>
+    }
+        </tbody>
+    </table>
+</div>
+
 
 <partial name="_CrudModal" model="Model.Owner" />
 
@@ -66,62 +75,31 @@
 
     <script type="text/javascript">
         $(document).ready(function() {
+            let inputs = document.querySelectorAll(".form-control");
+
             $(".btn-action").click(function() {
-                var owner = $(this).data("owner");
-                var action = $(this).data("action");
-                var title = $("#exampleModalCenterTitle");
-                var readonly;
+                // remove errors from ui
+                $("#ownersForm").find('.field-validation-error span').empty();
 
-                console.log(owner.Id);
+                let owner = $(this).data("owner");
+                let action = $(this).data("action");
+                let title = $("#ownerFormTitle");
+                
                 // Hide or Show the buttons depending on the action
-                if (action === "read") {
-                    readonly = true;
-                    $("#enableEditOwner").removeClass("d-none");
-
-                    $("#submitEditOwner").addClass("d-none");
-                    $("#deleteOwner").addClass("d-none");
-                    $("#createOwner").addClass("d-none");
-
-                    title.text("Details");
-                } else if (action == "edit") {
-                    readonly = false;
-                    $("#submitEditOwner").removeClass("d-none");
-                    $("#enableEditOwner").addClass("d-none");
-                    $("#deleteOwner").addClass("d-none");
-                    $("#createOwner").addClass("d-none");
-                    title.text("Edit");
-                } else {
-                    readonly = true;
-                    $("#deleteOwner").removeClass("d-none");
-                    $("#enableEditOwner").addClass("d-none");
-                    $("#submitEditOwner").addClass("d-none");
-                    $("#createOwner").addClass("d-none");
-                    title.text("Delete");
-                }
+                let readonly = organizeButtons(action, "Owner", title);
 
                 // Set the fields to readonly or not depending on the action
-                setReadonly(readonly);
+                setReadonly(inputs, readonly);
 
                 // Set the value of owner being read, edited or deleted
-                populateForm(owner);
+                populateForm(inputs, owner);
 
                 $("#crudOwner").modal("show");
+
                 return false;
             });
 
-            function populateForm(owner) {
-                $("#firstName").val(owner.FirstName);
-                $("#lastName").val(owner.LastName);
-                $("#gender").val(owner.LastName);
-                $("#dateOfBirth").val(owner.DateOfBirth);
-                $("#mobileNumber").val(owner.MobileNumber);
-                $("#address").val(owner.Address);
-                $("#userSelect").val(owner.User.Id);
-                $("#ownerId").val(owner.Id);
-            }
-
             $("#userSelect").change(function() {
-
                 $.ajax({
                     url: '@Url.Action("GetUserAsync","Owners")',
                     type: 'POST',
@@ -148,51 +126,22 @@
             });
 
             $("#enableEditOwner").click(function() {
-                $("#enableEditOwner").addClass("d-none");
-                $("#submitEditOwner").removeClass("d-none");
-                setReadonly(false);
-            });
-
-            $("#btnCancel").click(function() {
-                $("#crudOwner").modal("hide");
+                let title = $("#ownerFormTitle");
+                enableEdit("Owner", title)
+                setReadonly(inputs, false);
             });
 
             $("#btnNewOwner").click(function() {
-                var title = $("exampleModalCenterTitle");
-                setReadonly(false);
-                $("#crudOwner").modal("show");
-                $("#createOwner").removeClass("d-none");
-                $("#enableEditOwner").addClass("d-none");
-                $("#submitEditOwner").addClass("d-none");
-                $("#deleteOwner").addClass("d-none");
+                // remove errors from ui
+                $("#ownersForm").find('.field-validation-error span').empty();
 
-                // Clear Inputs
-                clearInputs();
-                
-                title.text("New");
+                console.log($("#ownersForm"));
+                let title = $("#ownerFormTitle");
+                setReadonly(inputs, false);
+                newOrganizeButtons("Owner", title);
+                clearInputs(inputs);
+                $("#crudOwner").modal("show");
             });
         });
-
-        function clearInputs()
-        {
-            $("#firstName").val("");
-            $("#lastName").val("");
-            $("#gender").val("");
-            $("#dateOfBirth").val("");
-            $("#mobileNumber").val("");
-            $("#address").val("");
-            $("#userSelect").prop("selectedIndex", 0)
-            $("#ownerId").val(0);
-        }
-
-        function setReadonly(readonly) {
-            $("#userSelect").attr('disabled', readonly);
-            $("#firstName").attr('readonly', readonly);
-            $("#lastName").attr('readonly', readonly);
-            $("#gender").attr('readonly', readonly);
-            $("#dateOfBirth").attr('readonly', readonly);
-            $("#mobileNumber").attr('readonly', readonly);
-            $("#address").attr('readonly', readonly);
-        }
     </script>
 }
