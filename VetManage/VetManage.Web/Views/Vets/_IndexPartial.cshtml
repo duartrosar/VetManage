@@ -1,0 +1,147 @@
+﻿@using Newtonsoft.Json
+@model VetManage.Web.Models.VetsViewModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Vets</h1>
+
+<p>
+    <button type="button" id="btnNewVet" class="btn btn-primary">New Vet</button>
+</p>
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Vet.FirstName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Vet.LastName)
+                </th>
+                <th class="d-none d-lg-table-cell">
+                    @Html.DisplayNameFor(model => model.Vet.DateOfBirth)
+                </th>
+                <th class="d-none d-sm-table-cell">
+                    @Html.DisplayNameFor(model => model.Vet.MobileNumber)
+                </th>
+                <th class="d-none d-md-table-cell">
+                    @Html.DisplayNameFor(model => model.Vet.Address)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+    @foreach (var item in Model.Vets) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastName)
+                </td>
+                <td class="d-none d-lg-table-cell">
+                    @Html.DisplayFor(modelItem => item.DateOfBirth)
+                </td>
+                <td class="d-none d-sm-table-cell">
+                    @Html.DisplayFor(modelItem => item.MobileNumber)
+                </td>
+                <td class="d-none d-md-table-cell">
+                    @Html.DisplayFor(modelItem => item.Address)
+                </td>
+                <td class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <button type="button" data-action="read" data-vet="@JsonConvert.SerializeObject(item)" data-id="@item.Id" class="btn btn-primary btn-action">
+                        <i class="fa fa-magnifying-glass"></i>
+                    </button>
+                    <button type="button" data-action="edit" data-vet="@JsonConvert.SerializeObject(item)" data-id="@item.Id" class="btn btn-warning btn-action">
+                        <i class="fa fa-pencil"></i>
+                    </button>
+                    <button type="button" data-action="delete" data-vet="@JsonConvert.SerializeObject(item)" data-id="@item.Id" class="btn btn-danger btn-action">
+                        <i class="fa fa-remove fa-lg"></i>
+                    </button>
+                </td>
+            </tr>
+    }
+        </tbody>
+    </table>
+</div>
+
+
+<partial name="_CrudModal" model="Model.Vet" />
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            let inputs = document.querySelectorAll(".form-control");
+
+            $(".btn-action").click(function() {
+                // remove errors from ui
+                $("#vetsForm").find('.field-validation-error span').empty();
+
+                let vet = $(this).data("vet");
+                let action = $(this).data("action");
+                let title = $("#vetFormTitle");
+                
+                // Hide or Show the buttons depending on the action
+                let readonly = organizeButtons(action, "Vet", title);
+
+                // Set the fields to readonly or not depending on the action
+                setReadonly(inputs, readonly);
+
+                // Set the value of vet being read, edited or deleted
+                populateForm(inputs, vet);
+
+                $("#crudVet").modal("show");
+
+                return false;
+            });
+
+            $("#userSelect").change(function() {
+                $.ajax({
+                    url: '@Url.Action("GetUserAsync","Vets")',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: { userId: $("#userSelect").val() },
+                    success: function(user) {
+
+                        if(user == null){
+                            console.log("No user selected");
+                            clearInputs();
+                            return;
+                        }
+
+                        $("#firstName").val(user.firstName);
+                        $("#lastName").val(user.lastName);
+                        $("#mobileNumber").val(user.phoneNumber);
+                        $("#address").val(user.address);
+                    },
+                    error: function(ex) {
+                        debugger;
+                        alert('Failed to retrieve user.\n' + ex)
+                    }
+                });
+            });
+
+            $("#enableEditVet").click(function() {
+                let title = $("#vetFormTitle");
+                enableEdit("Vet", title)
+                setReadonly(inputs, false);
+            });
+
+            $("#btnNewVet").click(function() {
+                // remove errors from ui
+                $("#vetsForm").find('.field-validation-error span').empty();
+
+                console.log($("#vetsForm"));
+                let title = $("#vetFormTitle");
+                setReadonly(inputs, false);
+                newOrganizeButtons("Vet", title);
+                clearInputs(inputs);
+                $("#crudVet").modal("show");
+            });
+        });
+    </script>
+}

@@ -45,6 +45,30 @@ namespace VetManage.Web.Controllers
             return View(vetsViewModel);
         }
 
+        [Route("Vets/IndexPartial")]
+        public IActionResult IndexPartial ()
+        {
+            var vets = _vetRepository.GetAllWithUsers();
+            //var users = _vetRepository.GetComboUsersNoEntity();
+            var users = _vetRepository.GetComboUsers();
+
+            var vetViewModels = _converterHelper.AllToVetViewModel(vets);
+
+            VetViewModel vetViewModel = new VetViewModel
+            {
+                Users = users,
+            };
+
+            VetsViewModel vetsViewModel = new VetsViewModel()
+            {
+                //Users = users,
+                Vets = vetViewModels,
+                Vet = vetViewModel,
+            };
+
+            return PartialView("_IndexPartial", vetsViewModel);
+        }
+
         // POST: Vets/Create
         [HttpPost]
         [ValidateAntiForgeryToken]

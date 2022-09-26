@@ -1,0 +1,40 @@
+﻿@use "../abstracts/abstracts" as *;
+
+.btn {
+    border: 1px solid #c8c8c8;
+    font-weight: 100;
+
+    &:hover {
+        .feather-book-open {
+            color: $pink;
+        }
+
+        .feather-edit {
+            color: $pink;
+        }
+
+        .feather-trash-2 {
+            color: $pink;
+        }
+    }
+
+    .feather-users {
+        width: 32px;
+        height: 32px;
+    }
+
+    .feather-book-open {
+        color: white;
+    }
+
+    .feather-edit {
+        color: white;
+    }
+
+    .feather-trash-2 {
+        color: white;
+    }
+
+    &-primary {
+    }
+}

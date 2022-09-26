@@ -1,0 +1,136 @@
+﻿@using Newtonsoft.Json
+@model VetManage.Web.Models.PetsViewModel
+
+@{
+    ViewData["Title"] = "Index";
+
+    JsonSerializerSettings serializerSettings =  new JsonSerializerSettings 
+    { 
+        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+    };
+}
+
+<h1>Pets</h1>
+
+<p>
+    <button type="button" id="btnNewPet" class="btn btn-primary">New Owner</button>
+</p>
+
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Pet.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Pet.Type)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Pet.Breed)
+                </th>
+                <th class="d-none d-sm-table-cell">
+                    @Html.DisplayNameFor(model => model.Pet.DateOfBirth)
+                </th>
+                <th class="d-none d-md-table-cell">
+                    @Html.DisplayNameFor(model => model.Pet.Gender)
+                </th>
+                <th class="d-none d-lg-table-cell">
+                    @Html.DisplayNameFor(model => model.Pet.Owner)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+    @foreach (var item in Model.Pets) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Type)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Breed)
+                </td>
+                <td class="d-none d-sm-table-cell">
+                    @Html.DisplayFor(modelItem => item.DateOfBirth)
+                </td>
+                <td class="d-none d-md-table-cell">
+                    @Html.DisplayFor(modelItem => item.Gender)
+                </td>
+                <td class="d-none d-lg-table-cell">
+                    @Html.DisplayFor(modelItem => item.Owner.FullName)
+                </td>
+                <td class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning"><i class="far fa-edit"></i></a>
+                    <button type="button" data-action="read" data-pet="@JsonConvert.SerializeObject(item, Formatting.Indented, serializerSettings)" data-id="@item.Id" class="btn btn-primary btn-action">
+                        <i class="fa fa-magnifying-glass"></i>
+                    </button>
+                    <button type="button" data-action="edit" data-pet="@JsonConvert.SerializeObject(item, Formatting.Indented, serializerSettings)" data-id="@item.Id" class="btn btn-warning btn-action">
+                        <i class="fa fa-pencil"></i>
+                    </button>
+                    <button type="button" data-action="delete" data-pet="@JsonConvert.SerializeObject(item, Formatting.Indented, serializerSettings)" data-id="@item.Id" class="btn btn-danger btn-action">
+                        <i class="fa fa-remove fa-lg"></i>
+                    </button>
+                </td>
+            </tr>
+    }
+        </tbody>
+    </table>
+</div>
+<partial name="_CrudModal" model="Model.Pet" />
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            let inputs = document.querySelectorAll(".form-control");
+
+            $("#petsNav").addClass("active");
+            $("#petsNav").addClass("active");
+
+            $(".btn-action").click(function() {
+                // remove errors from ui
+                $("#petsForm").find('.field-validation-error span').empty();
+                let pet = $(this).data("pet");
+                let action = $(this).data("action");
+                let title = $("#petFormTitle");
+                
+                //console.log(pet);
+
+                // Hide or Show the buttons depending on the action
+                let readonly = organizeButtons(action, "Pet", title);
+
+                // Set the fields to readonly or not depending on the action
+                setReadonly(inputs, readonly);
+
+                // Set the value of owner being read, edited or deleted
+                populateForm(inputs, pet);
+
+                $("#crudPet").modal("show");
+                return false;
+            });
+
+            $("#btnNewPet").click(function() {
+                // remove errors from ui
+                $("#petsForm").find('.field-validation-error span').empty();
+
+                let title = $("#petFormTitle");
+                setReadonly(inputs, false);
+                newOrganizeButtons("Pet", title);
+                clearInputs(inputs);
+                $("#crudPet").modal("show");
+            });
+
+            $("#enableEditPet").click(function() {
+                let title = $("#petFormTitle");
+                enableEdit("Pet", title)
+                setReadonly(inputs, false);
+            });
+        });
+    </script>
+}

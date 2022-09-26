@@ -1,0 +1,19 @@
+@use "../abstracts/abstracts" as *;
+@import '../../lib/bootstrap/scss/_functions.scss';
+
+.content {
+    margin-left: 200px;
+    margin-top: 57px;
+    //padding: 2rem;
+    background-image: linear-gradient(to right, tint-color($dark, 5%), $dark);
+    //transition: all 0.25s ease-in-out;
+    min-height: 90vh;
+
+    &.open {
+        margin-left: 200px;
+    }
+
+    &.closed {
+        margin-left: 70px;
+    }
+}

@@ -49,6 +49,36 @@ namespace VetManage.Web.Controllers
             return View(model);
         }
 
+        [Route("Users/IndexPartial")]
+
+        public IActionResult IndexPartial()
+        {
+            var users = _userHelper.GetAll()
+                .OrderBy(u => u.FirstName)
+                .ThenBy(u => u.LastName);
+
+            var roles = _userHelper.GetComboRoles();
+
+            RegisterNewUserViewModel registerViewModel = new RegisterNewUserViewModel()
+            {
+                Roles = roles,
+            };
+
+            EditUserViewModel editViewModel = new EditUserViewModel()
+            {
+                Roles = roles,
+            };
+
+            AccountViewModel model = new AccountViewModel
+            {
+                Users = users.ToList(),
+                RegisterNewUser = registerViewModel,
+                EditUser = editViewModel,
+            };
+
+            return PartialView("_IndexPartial", model);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Register(RegisterNewUserViewModel model)
         {

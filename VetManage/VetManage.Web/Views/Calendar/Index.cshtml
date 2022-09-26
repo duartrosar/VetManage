@@ -1,0 +1,88 @@
+﻿@using Syncfusion.EJ2.Schedule
+@using Syncfusion.EJ2
+
+@model VetManage.Web.Models.CalendarViewModel
+
+@{
+    ViewData["Title"] = "Index";
+
+    int[] workDays = new int[] { 0, 1, 2, 3, 4, 5, 6 };
+
+    DateTime minVal= new DateTime(2000,01,01, 07,00,00);
+    DateTime maxVal = new DateTime(2000,01,01, 18,00,00);
+
+    ScheduleTimeScale timeScale = new ScheduleTimeScale
+    {
+        Interval = 60,
+        SlotCount = 2,
+    };
+
+    ScheduleWorkHours workHours = new ScheduleWorkHours
+    {
+        Start = "07:00",
+        End = "18:00",
+        Highlight = true
+    };
+
+    List<ScheduleView> viewOptions = new List<ScheduleView>
+    {
+        new ScheduleView
+        {
+            Option = Syncfusion.EJ2.Schedule.View.Day,
+            StartHour = "07:00",
+            EndHour = "18:00",
+            TimeScale = timeScale,
+        },
+        new ScheduleView 
+        { 
+            Option = Syncfusion.EJ2.Schedule.View.Week,
+            FirstDayOfWeek = 0,
+            StartHour = "07:00",
+            EndHour = "18:00",
+            TimeScale = timeScale,
+        },
+        new ScheduleView 
+        { 
+            Option = Syncfusion.EJ2.Schedule.View.Month,
+            //Readonly = true,
+        },
+    };
+
+    List<object> menuItems = new List<object>();
+
+    menuItems.Add(new
+    {
+        text = "New Event",
+        iconCss = "e-icons new",
+        id = "Add"
+    });
+    menuItems.Add(new
+    {
+        text = "Edit Event",
+        iconCss = "e-icons edit",
+        id = "Save"
+    });
+    menuItems.Add(new
+    {
+        text = "Delete Event",
+        iconCss = "e-icons delete",
+        id = "Delete"
+    });
+}
+
+<ejs-schedule id="schedule" views="viewOptions" workDays="workDays" eventClick="onEventClick" popupOpen="onPopupOpen" showQuickInfo="false" workHours="workHours" width="100%" height="1000px">
+    <e-schedule-eventsettings dataSource="Model.Appointments" enableTooltip="true"></e-schedule-eventsettings>
+</ejs-schedule>
+
+@*<ejs-schedule id="schedule" views="viewOptions" showQuickInfo="false" workHours="workHours" width="100%" height="1000px">
+    <e-schedule-eventsettings dataSource="Model.Appointments" enableTooltip="true"></e-schedule-eventsettings>
+</ejs-schedule>*@
+
+<partial name="_Create"/>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+<script type="text/javascript" src="~/js/Calendar.js"></script>

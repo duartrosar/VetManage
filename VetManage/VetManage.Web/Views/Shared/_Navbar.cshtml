@@ -1,36 +1,42 @@
-﻿<nav class="navbar fixed-top navbar-expand-sm border-bottom box-shadow mb-3">
-    <div class="container-fluid">
-        <a class="nav-link text-dark"><i class="fa fa-bars fa-lg"></i></a>
-        <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">VetManage.Web</a>
+﻿<nav class="navbar fixed-top navbar-expand-sm box-shadow mb-3 bg-dark">
+    <div class="container-fluid p-0">
+        <div class="menu-burger-container">
+            <div class="px-4 d-flex flex-row justify-content-start align-items-center">
+                <a class="text-white" id="burgerMenu">
+                    @*<i class="fa fa-bars fa-xl"></i>*@
+                    <i data-feather="menu" stroke-width="1"></i>
+                </a>
+            </div>
+        </div>
+        <a class="navbar-brand text-white" asp-area="" asp-controller="Home" asp-action="Index">VetManage.Web</a>
         <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
             <ul class="navbar-nav flex-grow-1">
-                <li class="nav-item">
-                    <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                </li>
-                @if (User.Identity.IsAuthenticated)
+                @if (!User.Identity.IsAuthenticated)
                 {
-                <li class="nav-item">
-                    <a class="nav-link text-light" asp-area="" asp-controller="Owners" asp-action="Index">Owners</a>
-                </li>
+                    <li class="nav-item">
+                        <a class="px-4 text-light" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="px-4 text-light" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                    </li>
                 }
             </ul>
+            
             <ul class="nav navbar-nav navbar-right">
                 @if (User.Identity.IsAuthenticated)
                 {
                     <li class="nav-item">
-                        <a class="nav-link text-light" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
+                        <a class="px-4 text-light" asp-area="" asp-controller="Account" asp-action="Logout"><i class="fa fa-sign-out"></i></a>
                     </li>
                 }
                 else
                 {
                     <li class="nav-item">
-                        <a class="nav-link text-light" asp-area="" asp-controller="Account" asp-action="Login"><i class="fa fa-sign-in"></i></a>
+                        <a class="px-4 text-light" asp-area="" asp-controller="Account" asp-action="Login"><i class="fa fa-sign-in"></i></a>
                     </li>
                 }
             </ul>
         </div>
     </div>
 </nav>
+

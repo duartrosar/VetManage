@@ -4,15 +4,15 @@
 <div class="modal fade" id="crudPet" tabindex="-1" role="dialog" aria-labelledby="petFormTitle" aria-hidden="true">
   <div class="modal-dialog modal-fullscreen modal-dialog-scrollable">
     <div class="modal-content">
-      <div class="modal-header">
+      <div class="modal-header bg-dark">
         <div class="container">
             <div class="div d-flex align-items-center justify-content-center">
                 <h5 class="modal-title" id="petFormTitle">New Owner</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
         </div>
       </div>
-      <div class="modal-body">
+      <div class="modal-body bg-dark">
           <div class="d-flex align-items-center justify-content-center mt-md-5 pt-md-5">
               <form class="flex-fill" method="post" id="petsForm" style="max-width: 500px;">
                 <div asp-validation-summary="ModelOnly"></div>
@@ -66,9 +66,9 @@
                 <div class="mb-3">
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                         <button id="btnCancel" type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
-                        <input asp-action="Edit" id="submitEditPet" type="submit" value="Save" class="btn btn-success" />
-                        <input asp-action="Delete" id="deletePet" type="submit" value="Delete" class="btn btn-success" />
-                        <input asp-action="Create" id="createPet" type="submit" value="Create" class="btn btn-success" />
+                        <button asp-action="Edit" id="submitEditPet" type="submit" class="btn btn-success">Save</button>
+                        <button asp-action="Delete" id="deletePet" type="submit" class="btn btn-success">Delete</button>
+                        <button asp-action="Create" id="createPet" type="submit" class="btn btn-success">Create</button>
                         <button id="enableEditPet" type="button" class="btn btn-primary">Edit</button>
                     </div>
                 </div>

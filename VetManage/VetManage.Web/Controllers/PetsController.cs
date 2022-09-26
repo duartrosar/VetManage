@@ -52,6 +52,26 @@ namespace VetManage.Web.Controllers
             return View(petsViewModel);
         }
 
+        [Route("Pets/IndexPartial")]
+        public IActionResult IndexPartial()
+        {
+            var owners = _ownerRepository.GetAllWithPetsAndUsers();
+            var pets = _petRepository.GetAllWithOwners();
+
+            var ownerViewModels = _converterHelper.AllToOwnerViewModel(owners);
+            var petViewModels = _converterHelper.AllToPetViewModel(pets);
+
+            ViewData["OwnerId"] = new SelectList(ownerViewModels, "Id", "FullName");
+
+            PetsViewModel petsViewModel = new PetsViewModel
+            {
+                Owners = ownerViewModels,
+                Pets = petViewModels,
+                Pet = new PetViewModel()
+            };
+
+            return PartialView("_IndexPartial", petsViewModel);
+        }
 
         // POST: Pets/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -76,6 +96,27 @@ namespace VetManage.Web.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var pet = await _petRepository.GetByIdAsync(id.Value);
+
+            if (pet == null)
+            {
+                return NotFound();
+            }
+
+            var model = _converterHelper.ToPetViewModel(pet);
+
+            return View(model);
+        }
+
 
         // POST: Pets/Edit/5
         [HttpPost]

@@ -1,0 +1,166 @@
+﻿@use "../abstracts/abstracts" as *;
+//@import '../../lib/bootstrap/scss/_functions.scss';
+
+
+.e-schedule {
+    background-color: $dark;
+    border: 1px solid #fff;
+
+    .e-schedule-toolbar {
+        border-bottom: 1px solid #fff;
+
+        .e-toolbar-items {
+            background-color: $dark;
+
+            .e-toolbar-item {
+                &:hover {
+                    button {
+                        background-color: tint-color($dark, 20%);
+                    }
+                }
+
+                &.e-active-view {
+                    button {
+                        background-color: tint-color($dark, 20%);
+                    }
+                }
+            }
+
+            .e-tbar-btn-text {
+                color: #fff;
+            }
+        }
+    }
+
+    .e-day-view {
+        .e-work-cells {
+            background-color: $dark;
+            border-color: #fff;
+
+            &:hover {
+                background-color: tint-color($dark, 5%);
+            }
+        }
+    }
+
+    .e-week-view {
+        .e-work-cells {
+            background-color: $dark;
+            border-color: #fff;
+
+            &:hover {
+                background-color: tint-color($dark, 5%);
+            }
+        }
+    }
+
+    .e-month-view {
+        .e-appointment {
+            background-color: tint-color($dark, 5%);
+        }
+
+        .e-work-cells {
+            background-color: $dark;
+            border-color: #fff;
+            color: #fff;
+
+            &:hover {
+                background-color: tint-color($dark, 5%);
+                color: $secondary;
+            }
+        }
+
+        .e-date-header-wrap,
+        .e-time-cells-wrap,
+        .e-left-indent-wrap {
+            table {
+                tbody {
+                    td {
+                        background-color: $dark;
+                        color: #fff;
+                        border-color: #fff;
+                    }
+                }
+            }
+        }
+    }
+
+    .e-vertical-view {
+        // date headers
+        .e-date-header-wrap {
+            table {
+                tbody {
+                    td {
+                        color: #fff;
+                        border-left-color: #fff;
+                        background-color: $dark;
+                    }
+                }
+            }
+        }
+
+        // left time cells
+        .e-time-cells-wrap {
+            table {
+                tbody {
+                    td {
+                        color: #fff;
+                        border-right-color: #fff;
+                        background-color: $dark;
+                    }
+                }
+            }
+
+            .e-time-slots {
+                //border-top-color: #fff;
+                &.e-time-cells {
+                    border-bottom-color: #fff;
+                }
+            }
+        }
+
+        // top left indent square
+        .e-left-indent-wrap {
+            table {
+                tbody {
+                    td {
+                        color: #fff;
+                        border-right-color: #fff;
+                        border-bottom-color: #fff;
+                        background-color: $dark;
+                    }
+                }
+            }
+        }
+
+        .e-day-wrapper {
+            .e-appointment {
+                background-color: tint-color($dark, 5%);
+            }
+        }
+
+        .e-header-cells {
+            &.e-current-day {
+                color: $secondary;
+            }
+        }
+    }
+}
+
+
+
+.e-toolbar {
+    .e-tbar-btn {
+        background-color: $dark;
+        &.e-btn {
+            .e-icons{
+                color: #fff;
+            }
+        }
+    }
+}
+
+.e-btn-icon {
+    color: #fff;
+}
+

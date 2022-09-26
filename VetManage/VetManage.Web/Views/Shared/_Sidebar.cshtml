@@ -1,40 +1,67 @@
-﻿<aside class="sidebar">
-    <ul class="nav nav-pills flex-column mb-auto">
-      <li class="nav-item mb-3">
-        <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">
-        <i class="bi bi-house fa-xl me-2"></i>
-            Home
-        </a>
-      </li>
-      <li class="nav-item mb-3">
-        <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Privacy">
-            <i class="bi bi-shield fa-xl me-2"></i>
-            Privacy
-        </a>
-      </li class="nav-item mb-3">
-      <li class="nav-item mb-3">
-        <a class="nav-link text-light" asp-area="" asp-controller="Owners" asp-action="Index">
-            <i class="bi bi-person fa-xl me-2"></i>
-            Owners
-        </a>
-      </li>
-      <li class="nav-item mb-3">
-        <a class="nav-link text-light" asp-area="" asp-controller="Pets" asp-action="Index">
-            <i class="bi bi-paw fa-xl me-2"></i>
-            Pets
-        </a>
-      </li>
-      <li class="nav-item mb-3">
-        <a class="nav-link text-light" asp-area="" asp-controller="Vets" asp-action="Index">
-            <i class="bi bi-user-doctor fa-xl me-2"></i>
-            Vets
-        </a>
-      </li>
-      <li class="nav-item mb-3">
-        <a class="nav-link text-light" asp-area="" asp-controller="Users" asp-action="Index">
-            <i class="bi bi-people fa-xl me-2"></i>
-            Users
-        </a>
-      </li>
-    </ul>
+﻿<aside>
+    <div class="sidebar flex-column open" id="sidebar">
+          <div class="nav-item my-3">
+            <a class="text-light w-100" asp-area="" asp-controller="Home" asp-action="Index" id="homeNav">
+              <div class="px-4 d-flex flex-row justify-content-start align-items-center sidebar-item">
+                @*<i class="bi bi-house fa-xl"></i>*@
+                <i data-feather="grid" stroke-width="1"></i>
+                <p class="mx-2 my-0">Home</p>
+              </div>
+            </a>
+          </div>
+          <div class="nav-item my-3">
+            <a class="text-light w-100" asp-area="" asp-controller="Home" asp-action="Privacy">
+                <div class="px-4 d-flex flex-row justify-content-start align-items-center sidebar-item">
+                    @*<i class="bi bi-shield fa-xl"></i>*@
+                    <i data-feather="shield" stroke-width="1"></i>
+                    <p class="mx-2 my-0">Privacy</p>
+                </div>
+            </a>
+          </div>
+          <div class="nav-item my-3">
+            <a class="text-light w-100" asp-area="" asp-controller="Owners" asp-action="Index">
+                <div class="px-4 d-flex flex-row justify-content-start align-items-center sidebar-item" id="ownersNav">
+                    @*<i class="bi bi-person fa-xl"></i>*@
+                    <i data-feather="user" stroke-width="1"></i>
+                    <p class="mx-2 my-0">Owners</p>
+                </div>
+            </a>
+          </div>
+          <div class="nav-item my-3">
+            <a class="text-light w-100" asp-area="" asp-controller="Pets" asp-action="Index">
+                <div class="px-4 d-flex flex-row justify-content-start align-items-center sidebar-item" id="petsNav">
+                    @*<i class="bi bi-cart-plus fa-xl"></i>*@
+                    <i data-feather="shopping-cart" stroke-width="1"></i>
+                    <p class="mx-2 my-0">Pets</p>
+                </div>
+            </a>
+          </div>
+          <div class="nav-item my-3">
+            <a class="text-light w-100" asp-area="" asp-controller="Vets" asp-action="Index">
+                <div class="px-4 d-flex flex-row justify-content-start align-items-center sidebar-item" id="vetsNav">
+                    @*<i class="bi bi-bag-plus fa-xl"></i>*@
+                    <i data-feather="plus-circle" stroke-width="1"></i>
+                    <p class="mx-2 my-0">Vets</p>
+                </div>
+            </a>
+          </div>
+          <div class="nav-item my-3">
+            <a class="text-light w-100" asp-area="" asp-controller="Users" asp-action="Index">
+                <div class="px-4 d-flex flex-row justify-content-start align-items-center sidebar-item" id="usersNav">
+                    @*<i class="bi bi-people fa-xl"></i>*@
+                    <i data-feather="users" stroke-width="1"></i>
+                    <p class="mx-2 my-0">Users</p>
+                </div>
+            </a>
+          </div>
+          <div class="nav-item my-3">
+            <a class="text-light w-100" asp-area="" asp-controller="Calendar" asp-action="Index">
+                <div class="px-4 d-flex flex-row justify-content-start align-items-center sidebar-item" id="usersNav">
+                    @*<i class="bi bi-people fa-xl"></i>*@
+                    <i data-feather="calendar" stroke-width="1"></i>
+                    <p class="mx-2 my-0">Calendar</p>
+                </div>
+            </a>
+          </div>
+    </div>
 </aside>

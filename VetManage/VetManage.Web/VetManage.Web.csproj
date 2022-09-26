@@ -6,6 +6,9 @@
 
   <ItemGroup>
     <Content Remove="compilerconfig.json" />
+    <Content Remove="wwwroot\scss\bootstrap\_bootstrap.scss" />
+    <Content Remove="wwwroot\scss\bootstrap\_overrides.scss" />
+    <Content Remove="wwwroot\scss\layouts\_content.scss" />
   </ItemGroup>
 
   <ItemGroup>
@@ -40,7 +43,10 @@
     <None Include="wwwroot\scss\base\_base.scss" />
     <None Include="wwwroot\scss\base\_reset.scss" />
     <None Include="wwwroot\scss\base\_typography.scss" />
+    <None Include="wwwroot\scss\bootstrap\_overrides.scss" />
+    <None Include="wwwroot\scss\bootstrap\_bootstrap.scss" />
     <None Include="wwwroot\scss\components\_components.scss" />
+    <None Include="wwwroot\scss\layouts\_content.scss" />
     <None Include="wwwroot\scss\layouts\_layout.scss" />
     <None Include="wwwroot\scss\utilities\_utilities.scss" />
   </ItemGroup>
@@ -55,6 +61,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Syncfusion.EJ2.AspNet.Core" Version="20.2.0.50" />
   </ItemGroup>
 
   <ItemGroup>

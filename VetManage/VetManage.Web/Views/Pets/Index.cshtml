@@ -62,22 +62,25 @@
                 <td class="d-none d-lg-table-cell">
                     @Html.DisplayFor(modelItem => item.Owner.FullName)
                 </td>
-                <td class="d-grid gap-2 d-md-flex justify-content-md-end">
-                    <button type="button" data-action="read" data-pet="@JsonConvert.SerializeObject(item, Formatting.Indented, serializerSettings)" data-id="@item.Id" class="btn btn-primary btn-action">
-                        <i class="fa fa-magnifying-glass"></i>
-                    </button>
-                    <button type="button" data-action="edit" data-pet="@JsonConvert.SerializeObject(item, Formatting.Indented, serializerSettings)" data-id="@item.Id" class="btn btn-warning btn-action">
-                        <i class="fa fa-pencil"></i>
-                    </button>
-                    <button type="button" data-action="delete" data-pet="@JsonConvert.SerializeObject(item, Formatting.Indented, serializerSettings)" data-id="@item.Id" class="btn btn-danger btn-action">
-                        <i class="fa fa-remove fa-lg"></i>
-                    </button>
+                <td>
+                    <div class="w-100 d-grid d-md-flex justify-content-md-end">
+                        <button type="button" data-action="read" data-pet="@JsonConvert.SerializeObject(item, Formatting.Indented, serializerSettings)" data-id="@item.Id" class="btn btn-action">
+                            <i data-feather="book-open" stroke-width="0.5"></i>
+                        </button>
+                        <button type="button" data-action="edit" data-pet="@JsonConvert.SerializeObject(item, Formatting.Indented, serializerSettings)" data-id="@item.Id" class="btn btn-action">
+                            <i data-feather="edit" stroke-width="0.5"></i>
+                        </button>
+                        <button type="button" data-action="delete" data-pet="@JsonConvert.SerializeObject(item, Formatting.Indented, serializerSettings)" data-id="@item.Id" class="btn btn-action">
+                           <i data-feather="trash-2" stroke-width="0.5"></i>
+                        </button>
+                    </div>
                 </td>
             </tr>
     }
         </tbody>
     </table>
 </div>
+
 <partial name="_CrudModal" model="Model.Pet" />
 
 @section Scripts {
@@ -87,7 +90,15 @@
 
     <script type="text/javascript">
         $(document).ready(function() {
+            let sidebar = $(".sidebar");
+            let content = $(".content");
+            let menuState = localStorage.getItem("menuState");
+            
+            setSideBar(menuState, sidebar, content);
+
             let inputs = document.querySelectorAll(".form-control");
+
+            $("#petsNav").addClass("active");
 
             $(".btn-action").click(function() {
                 // remove errors from ui

@@ -29,6 +29,7 @@ namespace VetManage.Web.Controllers
         }
 
         // GET: Owners
+        //[Route("Owners/Index")]
         public IActionResult Index()
         {
             var owners = _ownerRepository.GetAllWithUsers();
@@ -49,6 +50,29 @@ namespace VetManage.Web.Controllers
             };
 
             return View(ownersViewModel);
+        }
+
+        [Route("Owners/IndexPartial")]
+        public IActionResult IndexPartial()
+        {
+            var owners = _ownerRepository.GetAllWithUsers();
+            var users = _ownerRepository.GetComboUsers();
+
+            var ownerViewModels = _converterHelper.AllToOwnerViewModel(owners);
+
+            OwnerViewModel ownerViewModel = new OwnerViewModel
+            {
+                Users = users,
+            };
+
+            OwnersViewModel ownersViewModel = new OwnersViewModel()
+            {
+                Users = users,
+                Owners = ownerViewModels,
+                Owner = ownerViewModel
+            };
+
+            return PartialView("_IndexPartial",ownersViewModel);
         }
 
         // POST: Owners/Create

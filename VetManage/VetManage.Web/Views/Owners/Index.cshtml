@@ -6,10 +6,12 @@
 }
 
 <h1>Owners</h1>
+<h1>Owners</h1>
 
 <p>
     <button type="button" id="btnNewOwner" class="btn btn-primary">New Owner</button>
 </p>
+
 <div class="table-responsive">
     <table class="table">
         <thead>
@@ -50,16 +52,18 @@
                 <td class="d-none d-md-table-cell">
                     @Html.DisplayFor(modelItem => item.Address)
                 </td>
-                <td class="d-grid gap-2 d-md-flex justify-content-md-end">
-                    <button type="button" data-action="read" data-owner="@JsonConvert.SerializeObject(item)" data-id="@item.Id" class="btn btn-primary btn-action">
-                        <i class="fa fa-magnifying-glass"></i>
-                    </button>
-                    <button type="button" data-action="edit" data-owner="@JsonConvert.SerializeObject(item)" data-id="@item.Id" class="btn btn-warning btn-action">
-                        <i class="fa fa-pencil"></i>
-                    </button>
-                    <button type="button" data-action="delete" data-owner="@JsonConvert.SerializeObject(item)" data-id="@item.Id" class="btn btn-danger btn-action">
-                        <i class="fa fa-remove fa-lg"></i>
-                    </button>
+                <td>
+                    <div class="w-100 d-grid d-md-flex justify-content-md-end">
+                        <button type="button" data-action="read" data-owner="@JsonConvert.SerializeObject(item)" data-id="@item.Id" class="btn btn-action">
+                            <i data-feather="book-open" stroke-width="0.5"></i>
+                        </button>
+                        <button type="button" data-action="edit" data-owner="@JsonConvert.SerializeObject(item)" data-id="@item.Id" class="btn btn-action">
+                            <i data-feather="edit" stroke-width="0.5"></i>
+                        </button>
+                        <button type="button" data-action="delete" data-owner="@JsonConvert.SerializeObject(item)" data-id="@item.Id" class="btn btn-action">
+                            <i data-feather="trash-2" stroke-width="0.5"></i>
+                        </button>
+                    </div>
                 </td>
             </tr>
     }
@@ -75,6 +79,14 @@
 
     <script type="text/javascript">
         $(document).ready(function() {
+            let sidebar = $(".sidebar");
+            let content = $(".content");
+            let menuState = localStorage.getItem("menuState");
+            
+            setSideBar(menuState, sidebar, content);
+
+            $("#ownersNav").addClass("active");
+
             let inputs = document.querySelectorAll(".form-control");
 
             $(".btn-action").click(function() {
