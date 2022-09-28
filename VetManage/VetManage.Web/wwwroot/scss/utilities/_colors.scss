@@ -1,0 +1,10 @@
+@use "../abstracts/abstracts" as *;
+
+
+.dark-5 {
+    background-color: tint-color($dark, 5%);
+}
+
+.dark-10 {
+    background-color: tint-color($dark, 10%);
+}

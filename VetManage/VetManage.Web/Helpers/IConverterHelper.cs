@@ -21,5 +21,9 @@ namespace VetManage.Web.Helpers
         VetViewModel ToVetViewModel(Vet vet);
         ICollection<VetViewModel> AllToVetViewModel(IQueryable vets);
 
+
+        Appointment ToAppointment(AppointmentViewModel model, bool isNew);
+        AppointmentViewModel ToAppointmentViewModel(Appointment appointment);
+        ICollection<AppointmentViewModel> AllToAppointmentViewModel(IQueryable appointments);
     }
 }

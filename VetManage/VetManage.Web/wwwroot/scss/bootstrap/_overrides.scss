@@ -10,33 +10,47 @@
 $link-color: $secondary;
 $link-decoration: none;
 $body-bg: $dark;
-$body-color: $white;
+$body-color: white;
 
-//$custom-theme-colors: (
-//    "altlight" : #fbebfa,
-//    "altdark": #522192
-//);
+// pagination variables
+$pagination-color: white;
+$pagination-bg: $dark;
+$pagination-border-color: $dark;
 
-//$theme-colors: map-merge($custom-theme-colors, $theme-colors);
+$pagination-focus-color: $secondary;
+$pagination-focus-bg: $dark;
+$pagination-focus-box-shadow: none;
+//$pagination-focus-outline: 0;
+
+$pagination-hover-color: $secondary;
+$pagination-hover-bg: $dark;
+$pagination-hover-border-color: $dark;
+
+$pagination-active-color: $secondary;
+$pagination-active-bg: tint-color($dark, 5%);
+$pagination-active-border-color: tint-color($dark, 5%);
+
+$pagination-disabled-color: $secondary;
+$pagination-disabled-bg: $dark;
+$pagination-disabled-border-color: $dark;
+
+// table
+$table-color: white;
+$table-bg: tint-color($dark, 10%);
+$table-accent-bg: tint-color($dark, 5%);
+
+$table-striped-color: white;
+$table-striped-bg-factor: 1;
+//$table-striped-bg: red;
+
+//$table-hover-color: $table-color;
+//$table-hover-bg-factor: 1;
+//$table-hover-bg: rgba(red, $table-hover-bg-factor);
 
 option {
     font-weight: 400;
-    font-size: 1.5rem;
+    color: #000;
     //text-align: center;
 }
-
-select {
-    height: calc(1.5em + .75rem + 2px);
-    padding: .375rem 1.75rem .375rem .75rem;
-    font-size: 1rem;
-    font-weight: 800;
-    line-height: 1.5;
-    vertical-align: middle;
-    background-color: red;
-    //-webkit-appearance: none;
-    //-moz-appearance: none;
-    //appearance: none;
-}
-
 // import bootsrap
 @import '../../lib/bootstrap/scss/bootstrap.scss';

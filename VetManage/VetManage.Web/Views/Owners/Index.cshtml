@@ -4,72 +4,75 @@
 @{
     ViewData["Title"] = "Index";
 }
-
-<h1>Owners</h1>
-<h1>Owners</h1>
-
-<p>
-    <button type="button" id="btnNewOwner" class="btn btn-primary">New Owner</button>
-</p>
-
-<div class="table-responsive">
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Owner.FirstName)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Owner.LastName)
-                </th>
-                <th class="d-none d-lg-table-cell">
-                    @Html.DisplayNameFor(model => model.Owner.DateOfBirth)
-                </th>
-                <th class="d-none d-sm-table-cell">
-                    @Html.DisplayNameFor(model => model.Owner.MobileNumber)
-                </th>
-                <th class="d-none d-md-table-cell">
-                    @Html.DisplayNameFor(model => model.Owner.Address)
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-    @foreach (var item in Model.Owners) {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.FirstName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.LastName)
-                </td>
-                <td class="d-none d-lg-table-cell">
-                    @Html.DisplayFor(modelItem => item.DateOfBirth)
-                </td>
-                <td class="d-none d-sm-table-cell">
-                    @Html.DisplayFor(modelItem => item.MobileNumber)
-                </td>
-                <td class="d-none d-md-table-cell">
-                    @Html.DisplayFor(modelItem => item.Address)
-                </td>
-                <td>
-                    <div class="w-100 d-grid d-md-flex justify-content-md-end">
-                        <button type="button" data-action="read" data-owner="@JsonConvert.SerializeObject(item)" data-id="@item.Id" class="btn btn-action">
-                            <i data-feather="book-open" stroke-width="0.5"></i>
-                        </button>
-                        <button type="button" data-action="edit" data-owner="@JsonConvert.SerializeObject(item)" data-id="@item.Id" class="btn btn-action">
-                            <i data-feather="edit" stroke-width="0.5"></i>
-                        </button>
-                        <button type="button" data-action="delete" data-owner="@JsonConvert.SerializeObject(item)" data-id="@item.Id" class="btn btn-action">
-                            <i data-feather="trash-2" stroke-width="0.5"></i>
-                        </button>
-                    </div>
-                </td>
-            </tr>
-    }
-        </tbody>
-    </table>
+<div class="content-container p-3">
+    <div class="p-3 dark-5">
+        <div class="d-flex d-row justify-content-between mb-3">
+            <h1>Owners</h1>
+            <div class="m-1">
+                <button type="button" id="btnNewOwner" class="btn btn-outline-light">New Owner</button>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover table-striped" id="ownersTable">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Owner.FirstName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Owner.LastName)
+                        </th>
+                        <th class="d-none d-lg-table-cell">
+                            @Html.DisplayNameFor(model => model.Owner.DateOfBirth)
+                        </th>
+                        <th class="d-none d-sm-table-cell">
+                            @Html.DisplayNameFor(model => model.Owner.MobileNumber)
+                        </th>
+                        <th class="d-none d-md-table-cell">
+                            @Html.DisplayNameFor(model => model.Owner.Address)
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+            @foreach (var item in Model.Owners) {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FirstName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.LastName)
+                        </td>
+                        <td class="d-none d-lg-table-cell">
+                            @Html.DisplayFor(modelItem => item.DateOfBirth)
+                        </td>
+                        <td class="d-none d-sm-table-cell">
+                            @Html.DisplayFor(modelItem => item.MobileNumber)
+                        </td>
+                        <td class="d-none d-md-table-cell">
+                            @Html.DisplayFor(modelItem => item.Address)
+                        </td>
+                        <td>
+                            <div class="w-100 d-grid d-md-flex justify-content-md-end">
+                                <button type="button" data-action="read" data-owner="@JsonConvert.SerializeObject(item)" data-id="@item.Id" class="btn bg-dark btn-action me-1">
+                                    <i data-feather="book-open" stroke-width="1"></i>
+                                </button>
+                                <button type="button" data-action="edit" data-owner="@JsonConvert.SerializeObject(item)" data-id="@item.Id" class="btn bg-dark btn-action me-1">
+                                    <i data-feather="edit" stroke-width="1"></i>
+                                </button>
+                                <button type="button" data-action="delete" data-owner="@JsonConvert.SerializeObject(item)" data-id="@item.Id" class="btn bg-dark btn-action me-1">
+                                    <i data-feather="trash-2" stroke-width="1"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+            }
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
+
 
 
 <partial name="_CrudModal" model="Model.Owner" />
@@ -86,6 +89,7 @@
             setSideBar(menuState, sidebar, content);
 
             $("#ownersNav").addClass("active");
+            $("#ownersNav").addClass("bg-dark");
 
             let inputs = document.querySelectorAll(".form-control");
 
@@ -153,6 +157,17 @@
                 newOrganizeButtons("Owner", title);
                 clearInputs(inputs);
                 $("#crudOwner").modal("show");
+            });
+
+            let table = $("#ownersTable").DataTable();
+
+            $('#ownersTable tbody').on('click', 'tr', function () {
+                if ($(this).hasClass('selected')) {
+                    $(this).removeClass('selected');
+                } else {
+                    table.$('tr.selected').removeClass('selected');
+                    $(this).addClass('selected');
+                }
             });
         });
     </script>

@@ -6,7 +6,7 @@ namespace VetManage.Web.Models
 {
     public class OwnersViewModel
     {
-        public IEnumerable<SelectListItem> Users { get; set; }
+        public IEnumerable<SelectListItem> UsersCombo { get; set; }
 
         public ICollection<OwnerViewModel> Owners { get; set; }
 

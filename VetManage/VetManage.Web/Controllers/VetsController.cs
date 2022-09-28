@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
-using VetManage.Web.Data;
+using VetManage.Web.Data.Repositories;
 using VetManage.Web.Helpers;
 using VetManage.Web.Models;
 

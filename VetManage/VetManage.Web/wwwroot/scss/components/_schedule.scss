@@ -11,6 +11,7 @@
 
         .e-toolbar-items {
             background-color: $dark;
+            background-color: tint-color($dark, 5%);
 
             .e-toolbar-item {
                 &:hover {
@@ -77,6 +78,7 @@
                 tbody {
                     td {
                         background-color: $dark;
+                        background-color: tint-color($dark, 5%);
                         color: #fff;
                         border-color: #fff;
                     }
@@ -94,11 +96,11 @@
                         color: #fff;
                         border-left-color: #fff;
                         background-color: $dark;
+                        background-color: tint-color($dark, 5%);
                     }
                 }
             }
         }
-
         // left time cells
         .e-time-cells-wrap {
             table {
@@ -107,6 +109,7 @@
                         color: #fff;
                         border-right-color: #fff;
                         background-color: $dark;
+                        background-color: tint-color($dark, 5%);
                     }
                 }
             }
@@ -118,7 +121,6 @@
                 }
             }
         }
-
         // top left indent square
         .e-left-indent-wrap {
             table {
@@ -128,6 +130,7 @@
                         border-right-color: #fff;
                         border-bottom-color: #fff;
                         background-color: $dark;
+                        background-color: tint-color($dark, 5%);
                     }
                 }
             }
@@ -147,13 +150,12 @@
     }
 }
 
-
-
 .e-toolbar {
     .e-tbar-btn {
         background-color: $dark;
+        //background-color: tint-color($dark, 5%);
         &.e-btn {
-            .e-icons{
+            .e-icons {
                 color: #fff;
             }
         }

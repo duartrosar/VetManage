@@ -2,7 +2,7 @@
 using System.Linq;
 using VetManage.Web.Data.Entities;
 
-namespace VetManage.Web.Data
+namespace VetManage.Web.Data.Repositories
 {
     public class PetRepository : GenericRepository<Pet>, IPetRepository
     {

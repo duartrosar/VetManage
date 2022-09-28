@@ -4,28 +4,22 @@ let dateOnly;
 let form;
 let scheduler;
 
+let inputs = document.querySelectorAll(".form-control");
+
 document.addEventListener('DOMContentLoaded', function () {
     $.validator.setDefaults({
         ignore: ""
     });
 
-    endInput = document.getElementById('end');
-
     startHidden = document.getElementById('startHidden');
     endHidden = document.getElementById('endHidden');
     form = document.getElementById('appointmentForm');
-
     scheduler = document.getElementById('schedule');
 
     startTime = $("#startTime");
-    endTime= $("#endTime");
-
-    $("#btnOk").click(function () {
-        $("#invalidDateModal").modal("hide");
-        return false;
-    });
-
+    endTime = $("#endTime");
     setDropdownTimes();
+
 });
 
 
@@ -48,12 +42,19 @@ function setDropdownTimes() {
         'listWidth': 1,
     });
 
-    startTime.change(setEndDropDownTimes);
-    endTime.change(setEndTime);
+    startTime.change(onStartTimeChange);
+    endTime.change(onEndTimeChange);
 }
 
 function onPopupOpen(args) {
     args.cancel = true;
+
+    if (args.data.Id === undefined) {
+        clearInputs(inputs);
+        console.log("Do new appointment");
+    } else {
+        populateForm(inputs, args.data);
+    }
 
     // save the date the user has selected
     dateOnly = offsetDateTimezone(args.data.StartTime);
@@ -81,15 +82,12 @@ function onPopupOpen(args) {
     startHidden.value = offsetDateTimezoneToJson(args.data.StartTime);
     endHidden.value = offsetDateTimezoneToJson(args.data.EndTime);
 
-    setEndDropDownTimes();
-
-    //console.log(dateOnly);
-
+    onStartTimeChange();
 }
 
 // Set the allowed times for the end time drop down
 // The end times are chosen based on the selected starttime
-function setEndDropDownTimes() {
+function onStartTimeChange() {
     let selectedTime = $('#startTime').timepicker('getTime');
     let shiftedTime = addMinutes(selectedTime, 30);
     let shiftedTimeString = getShortTimeString(shiftedTime);
@@ -107,7 +105,7 @@ function setEndDropDownTimes() {
 }
 
 
-function setEndTime() {
+function onEndTimeChange() {
     let selectedTime = $('#endTime').timepicker('getTime');
     let selectedTimeString = getShortTimeString(selectedTime);
 
@@ -140,6 +138,13 @@ function getFormattedDate(date, time) {
     return new Date(year, month, day, hours, minutes);
 }
 
+
+
+//function populateForm(appointment) {
+//    console.log(appointment);
+//}
+
+///////// HELPERS /////////
 function offsetDateTimezoneToJson(date) {
     return new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toJSON();
 }

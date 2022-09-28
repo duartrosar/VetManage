@@ -12,6 +12,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using VetManage.Web.Data;
 using VetManage.Web.Data.Entities;
+using VetManage.Web.Data.Repositories;
 using VetManage.Web.Helpers;
 
 namespace VetManage.Web
@@ -56,6 +57,7 @@ namespace VetManage.Web
             services.AddScoped<IOwnerRepository, OwnerRepository>();
             services.AddScoped<IPetRepository, PetRepository>();
             services.AddScoped<IVetRepository, VetRepository>();
+            services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 
             services.AddControllersWithViews();
         }

@@ -70,7 +70,6 @@ namespace VetManage.Web.Helpers
                 Height = model.Height,
                 Weight = model.Weight,
                 Length = model.Length,
-                Owner = model.Owner,
                 OwnerId = model.OwnerId,
             };
         }
@@ -88,8 +87,8 @@ namespace VetManage.Web.Helpers
                 Height = pet.Height,
                 Weight = pet.Weight,
                 Length = pet.Length,
-                Owner = pet.Owner,
                 OwnerId = pet.OwnerId,
+                Owner = pet.Owner,
             };
         }
 
@@ -149,6 +148,50 @@ namespace VetManage.Web.Helpers
             }
 
             return vetViewModels;
+        }
+
+
+        //////// APPOINTMETS ////////
+        public Appointment ToAppointment(AppointmentViewModel model, bool isNew)
+        {
+            return new Appointment
+            {
+                Id = isNew ? 0 : model.Id,
+                Title = model.Title,
+                Subject = model.Subject,
+                StartTime = model.StartTime,
+                EndTime = model.EndTime,
+                Description = model.Description,
+                VetId = model.VetId,
+                PetId = model.PetId
+            };
+        }
+
+        public AppointmentViewModel ToAppointmentViewModel(Appointment appointment)
+        {
+            return new AppointmentViewModel
+            {
+                Id = appointment.Id,
+                Title = appointment.Title,
+                Subject = appointment.Subject,
+                StartTime = appointment.StartTime,
+                EndTime = appointment.EndTime,
+                Description = appointment.Description,
+                VetId = appointment.VetId,
+                PetId = appointment.PetId
+            };
+        }
+
+        public ICollection<AppointmentViewModel> AllToAppointmentViewModel(IQueryable appointments)
+        {
+            List<AppointmentViewModel> appointmentViewModels = new List<AppointmentViewModel>();
+
+            foreach(Appointment appointment in appointments)
+            {
+                appointmentViewModels.Add(ToAppointmentViewModel(appointment));
+            }
+
+            return appointmentViewModels;
         }
     }
 }

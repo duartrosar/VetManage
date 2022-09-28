@@ -4,16 +4,16 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - VetManage.Web</title>
-    @*<link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />*@
     <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css"/>
     <link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/20.2.43/material.css" />
-    <link rel="stylesheet" href="~/css/style.css" />
-    @*<link rel="stylesheet" href="~/lib/timepicker/jquery.timepicker.min.css"/>*@
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/timepicker@1.13.19/jquery.timepicker.min.css">
+    <link type="text/css" rel="stylesheet" href="~/lib/datatables.net-bs5/dataTables.bootstrap5.min.css"/>
+    <link rel="stylesheet" href="~/lib/jquery-timepicker/jquery.timepicker.min.css"/>
 
+    <link rel="stylesheet" href="~/css/style.css" />
+    
     <!-- Scrollbar Custom CSS -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
 </head>
 <body>
     <header>
@@ -35,7 +35,7 @@
         <partial name="_Sidebar"/>
     }
 
-    <div class="container-fluid">
+    <div class="container-fluid p-0">
         
         <main role="main" class="content">
             @RenderBody()
@@ -47,19 +47,21 @@
             &copy; 2022 - VetManage.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
+    
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/js/bootstrap.js"></script>
-    @*<script type="module" src="~/js/site.js" asp-append-version="true"></script>*@
     <script src="~/js/Form.js" asp-append-version="true"></script>
     <script src="~/js/Sidebar.js" asp-append-version="true"></script>
     <script src="https://unpkg.com/feather-icons"></script>
-    @*<script src="~/lib/timepicker/jquery.timepicker.min.js"></script>*@
-    <script src="https://cdn.jsdelivr.net/npm/timepicker@1.13.19/jquery.timepicker.min.js"></script>
+
+    <script type="text/javascript" src="~/lib/datatables/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="~/lib/datatables.net-bs5/dataTables.bootstrap5.min.js"></script>
+    <script type="text/javascript" src="~/lib/jquery-timepicker/jquery.timepicker.min.js"></script>
+
     <!-- Popper.JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
     <script src="https://cdn.syncfusion.com/ej2/20.2.43/dist/ej2.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js" ></script>
-
 
     <ejs-scripts></ejs-scripts>
     @await RenderSectionAsync("Scripts", required: false)

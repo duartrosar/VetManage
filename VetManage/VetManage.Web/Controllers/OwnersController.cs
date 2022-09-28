@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using VetManage.Web.Data;
 using VetManage.Web.Data.Entities;
+using VetManage.Web.Data.Repositories;
 using VetManage.Web.Helpers;
 using VetManage.Web.Models;
 
@@ -35,18 +35,15 @@ namespace VetManage.Web.Controllers
             var owners = _ownerRepository.GetAllWithUsers();
             var users = _ownerRepository.GetComboUsers();
 
-            var ownerViewModels = _converterHelper.AllToOwnerViewModel(owners);
-
-            OwnerViewModel ownerViewModel = new OwnerViewModel
+            OwnersViewModel ownersViewModel = new 
+                OwnersViewModel()
             {
-                Users = users,
-            };
-
-            OwnersViewModel ownersViewModel = new OwnersViewModel()
-            {
-                Users = users,
-                Owners = ownerViewModels,
-                Owner = ownerViewModel
+                UsersCombo = users,
+                Owners = _converterHelper.AllToOwnerViewModel(owners),
+                Owner = new OwnerViewModel
+                {
+                    Users = users,
+                },
             };
 
             return View(ownersViewModel);
@@ -67,7 +64,7 @@ namespace VetManage.Web.Controllers
 
             OwnersViewModel ownersViewModel = new OwnersViewModel()
             {
-                Users = users,
+                UsersCombo = users,
                 Owners = ownerViewModels,
                 Owner = ownerViewModel
             };

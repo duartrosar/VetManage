@@ -70,19 +70,34 @@
     });
 }
 
-<ejs-schedule id="schedule" views="viewOptions" workDays="workDays" eventClick="onEventClick" popupOpen="onPopupOpen" showQuickInfo="false" workHours="workHours" width="100%" height="1000px">
-    <e-schedule-eventsettings dataSource="Model.Appointments" enableTooltip="true"></e-schedule-eventsettings>
-</ejs-schedule>
-
+<div class="content-container p-3">
+    <div class="dark-5 pt-3">
+        <div class="d-flex d-row justify-content-between mx-3 mb-3">
+            <h1>Appointments</h1>
+            <div class="m-1">
+                <button type="button" id="btnNewAppointment" class="btn btn-outline-light">New Appointment</button>
+            </div>
+        </div>
+        <ejs-schedule id="schedule" views="viewOptions" workDays="workDays" eventClick="onEventClick" popupOpen="onPopupOpen" showQuickInfo="false" workHours="workHours" width="100%" height="1000px">
+            <e-schedule-eventsettings dataSource="Model.Appointments" enableTooltip="true"></e-schedule-eventsettings>
+        </ejs-schedule>
+    </div>
+</div>
 @*<ejs-schedule id="schedule" views="viewOptions" showQuickInfo="false" workHours="workHours" width="100%" height="1000px">
     <e-schedule-eventsettings dataSource="Model.Appointments" enableTooltip="true"></e-schedule-eventsettings>
 </ejs-schedule>*@
 
-<partial name="_Create"/>
+<partial name="_Create" model="Model.Appointment"/>
 
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#calendarNav").addClass("active");
+            $("#calendarNav").addClass("bg-dark");
+        });
+    </script>
 }
 
 <script type="text/javascript" src="~/js/Calendar.js"></script>

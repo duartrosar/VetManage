@@ -12,6 +12,8 @@ namespace VetManage.Web.Data
 
         public DbSet<Pet> Pets { get; set; }
 
+        public DbSet<Appointment> Appointments { get; set; }
+
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
     }
 }

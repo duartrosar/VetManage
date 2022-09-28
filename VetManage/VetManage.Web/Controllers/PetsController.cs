@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using VetManage.Web.Data;
 using VetManage.Web.Data.Entities;
+using VetManage.Web.Data.Repositories;
 using VetManage.Web.Helpers;
 using VetManage.Web.Models;
 
@@ -153,9 +154,9 @@ namespace VetManage.Web.Controllers
         }
 
         // POST: Pets/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             var pet = await _petRepository.GetByIdAsync(id);
 

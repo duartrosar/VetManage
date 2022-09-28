@@ -1,14 +1,14 @@
-﻿<nav class="navbar fixed-top navbar-expand-sm box-shadow mb-3 bg-dark">
+﻿<nav class="navbar fixed-top navbar-expand-sm box-shadow dark-5">
     <div class="container-fluid p-0">
-        <div class="menu-burger-container">
+        @*<div class="menu-burger-container">
             <div class="px-4 d-flex flex-row justify-content-start align-items-center">
                 <a class="text-white" id="burgerMenu">
-                    @*<i class="fa fa-bars fa-xl"></i>*@
+                    <i class="fa fa-bars fa-xl"></i>
                     <i data-feather="menu" stroke-width="1"></i>
                 </a>
             </div>
-        </div>
-        <a class="navbar-brand text-white" asp-area="" asp-controller="Home" asp-action="Index">VetManage.Web</a>
+        </div>*@
+        <a class="navbar-brand text-white ms-4" asp-area="" asp-controller="Home" asp-action="Index">VetManage.Web</a>
         <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
             <ul class="navbar-nav flex-grow-1">
                 @if (!User.Identity.IsAuthenticated)

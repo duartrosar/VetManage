@@ -4,71 +4,75 @@
 @{
     ViewData["Title"] = "Index";
 }
+<div class="content-container p-3">
+    <div class="p-3 dark-5">
+        <div class="d-flex d-row justify-content-between mb-3">
+            <h1>Vets</h1>
+            <div class="m-1">
+                <button type="button" id="btnNewVet" class="btn btn-outline-light">New Vet</button>
+            </div>
+        </div>
 
-<h1>Vets</h1>
-
-<p>
-    <button type="button" id="btnNewVet" class="btn btn-primary">New Vet</button>
-</p>
-<div class="table-responsive">
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Vet.FirstName)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Vet.LastName)
-                </th>
-                <th class="d-none d-lg-table-cell">
-                    @Html.DisplayNameFor(model => model.Vet.DateOfBirth)
-                </th>
-                <th class="d-none d-sm-table-cell">
-                    @Html.DisplayNameFor(model => model.Vet.MobileNumber)
-                </th>
-                <th class="d-none d-md-table-cell">
-                    @Html.DisplayNameFor(model => model.Vet.Address)
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-    @foreach (var item in Model.Vets) {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.FirstName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.LastName)
-                </td>
-                <td class="d-none d-lg-table-cell">
-                    @Html.DisplayFor(modelItem => item.DateOfBirth)
-                </td>
-                <td class="d-none d-sm-table-cell">
-                    @Html.DisplayFor(modelItem => item.MobileNumber)
-                </td>
-                <td class="d-none d-md-table-cell">
-                    @Html.DisplayFor(modelItem => item.Address)
-                </td>
-                <td>
-                    <div class="w-100 d-grid d-md-flex justify-content-md-end">
-                        <button type="button" data-action="read" data-vet="@JsonConvert.SerializeObject(item)" data-id="@item.Id" class="btn btn-action">
-                            <i data-feather="book-open" stroke-width="0.5"></i>
-                        </button>
-                        <button type="button" data-action="edit" data-vet="@JsonConvert.SerializeObject(item)" data-id="@item.Id" class="btn btn-action">
-                            <i data-feather="edit" stroke-width="0.5"></i>
-                        </button>
-                        <button type="button" data-action="delete" data-vet="@JsonConvert.SerializeObject(item)" data-id="@item.Id" class="btn btn-action">
-                            <i data-feather="trash-2" stroke-width="0.5"></i>
-                        </button>
-                    </div>
-                </td>
-            </tr>
-    }
-        </tbody>
-    </table>
+        <div class="table-responsive">
+            <table class="table table-hover table-striped" id="vetsTable">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Vet.FirstName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Vet.LastName)
+                        </th>
+                        <th class="d-none d-lg-table-cell">
+                            @Html.DisplayNameFor(model => model.Vet.DateOfBirth)
+                        </th>
+                        <th class="d-none d-sm-table-cell">
+                            @Html.DisplayNameFor(model => model.Vet.MobileNumber)
+                        </th>
+                        <th class="d-none d-md-table-cell">
+                            @Html.DisplayNameFor(model => model.Vet.Address)
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+            @foreach (var item in Model.Vets) {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FirstName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.LastName)
+                        </td>
+                        <td class="d-none d-lg-table-cell">
+                            @Html.DisplayFor(modelItem => item.DateOfBirth)
+                        </td>
+                        <td class="d-none d-sm-table-cell">
+                            @Html.DisplayFor(modelItem => item.MobileNumber)
+                        </td>
+                        <td class="d-none d-md-table-cell">
+                            @Html.DisplayFor(modelItem => item.Address)
+                        </td>
+                        <td>
+                            <div class="w-100 d-grid d-md-flex justify-content-md-end">
+                                <button type="button" data-action="read" data-vet="@JsonConvert.SerializeObject(item)" data-id="@item.Id" class="btn bg-dark btn-action me-1">
+                                    <i data-feather="book-open" stroke-width="1"></i>
+                                </button>
+                                <button type="button" data-action="edit" data-vet="@JsonConvert.SerializeObject(item)" data-id="@item.Id" class="btn bg-dark btn-action me-1">
+                                    <i data-feather="edit" stroke-width="1"></i>
+                                </button>
+                                <button type="button" data-action="delete" data-vet="@JsonConvert.SerializeObject(item)" data-id="@item.Id" class="btn bg-dark btn-action me-1">
+                                    <i data-feather="trash-2" stroke-width="1"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+            }
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
-
 
 <partial name="_CrudModal" model="Model.Vet" />
 
@@ -87,6 +91,7 @@
             let inputs = document.querySelectorAll(".form-control");
 
             $("#vetsNav").addClass("active");
+            $("#vetsNav").addClass("bg-dark");
 
             $(".btn-action").click(function() {
                 // remove errors from ui
@@ -152,6 +157,17 @@
                 newOrganizeButtons("Vet", title);
                 clearInputs(inputs);
                 $("#crudVet").modal("show");
+            });
+
+            let table = $("#vetsTable").DataTable();
+
+            $('#vetsTable tbody').on('click', 'tr', function () {
+                if ($(this).hasClass('selected')) {
+                    $(this).removeClass('selected');
+                } else {
+                    table.$('tr.selected').removeClass('selected');
+                    $(this).addClass('selected');
+                }
             });
         });
     </script>
