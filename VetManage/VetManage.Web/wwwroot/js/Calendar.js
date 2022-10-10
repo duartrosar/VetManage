@@ -4,6 +4,7 @@ let dateOnly;
 let form;
 let scheduler;
 
+let isEditing;
 let inputs = document.querySelectorAll(".form-control");
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -11,15 +12,19 @@ document.addEventListener('DOMContentLoaded', function () {
         ignore: ""
     });
 
-    startHidden = document.getElementById('startHidden');
-    endHidden = document.getElementById('endHidden');
-    form = document.getElementById('appointmentForm');
-    scheduler = document.getElementById('schedule');
+    startHidden = $("#startHidden");
+    console.log(startHidden);
+    endHidden = $("#endHidden");
+    form = $("#appointmentForm");
+    scheduler = $("#schedule");
 
     startTime = $("#startTime");
     endTime = $("#endTime");
     setDropdownTimes();
+    isEditing = false;
 
+
+    $("#enableEditAppointment").click(enableEditAppointment);
 });
 
 
@@ -47,19 +52,34 @@ function setDropdownTimes() {
 }
 
 function onPopupOpen(args) {
+    console.log(args);
+    // cancel the default modal from the scheduler
     args.cancel = true;
 
+    let title = $("#appointmentFormTitle");
+
+    // if the the user clicked an appointment
     if (args.data.Id === undefined) {
         clearInputs(inputs);
-        console.log("Do new appointment");
+        isEditing = false;
+        action = "new";
     } else {
         populateForm(inputs, args.data);
+        isEditing = true;
+        endTime.val(getShortTimeString(args.data.EndTime));
+        action = "read";
     }
+
+    // Hide or Show the buttons depending on the action
+    let readonly = organizeButtons(action, "Appointment", title);
+
+    // Set the fields to readonly or not depending on the action
+    setReadonly(inputs, readonly);
 
     // save the date the user has selected
     dateOnly = offsetDateTimezone(args.data.StartTime);
 
-    let currentDate = new Date(startHidden.dataset.valPastdateNow);
+    let currentDate = new Date(startHidden[0].dataset.valPastdateNow);
 
     //if (!validateDate(currentDate, args.data.StartTime)) {
     //    $("#invalidDateModal").modal("show");
@@ -75,14 +95,14 @@ function onPopupOpen(args) {
         selectedTime = getShortTimeString(args.data.StartTime);
     }
 
-    $("#newAppointmentModal").modal("show");
-
     startTime.val(selectedTime);
 
-    startHidden.value = offsetDateTimezoneToJson(args.data.StartTime);
-    endHidden.value = offsetDateTimezoneToJson(args.data.EndTime);
+    startHidden.val(offsetDateTimezoneToJson(args.data.StartTime));
+    endHidden.val(offsetDateTimezoneToJson(args.data.EndTime));
 
     onStartTimeChange();
+
+    $("#newAppointmentModal").modal("show");
 }
 
 // Set the allowed times for the end time drop down
@@ -94,16 +114,17 @@ function onStartTimeChange() {
     
     endTime.timepicker('option', { 'minTime': shiftedTimeString });
 
-
-    endTime.val(shiftedTimeString);
-
     let fixedStartDate = getFormattedDate(dateOnly, selectedTime);
     let fixedEndDate = getFormattedDate(dateOnly, shiftedTime);
 
-    startHidden.value = offsetDateTimezoneToJson(fixedStartDate);
-    endHidden.value = offsetDateTimezoneToJson(fixedEndDate);
-}
+    startHidden.val(offsetDateTimezoneToJson(fixedStartDate));
 
+    if (!isEditing) {
+        endTime.val(shiftedTimeString);
+        endHidden.val(offsetDateTimezoneToJson(fixedEndDate));
+    }
+
+}
 
 function onEndTimeChange() {
     let selectedTime = $('#endTime').timepicker('getTime');
@@ -111,7 +132,13 @@ function onEndTimeChange() {
 
     let fixedEndDate = getFormattedDate(dateOnly, selectedTime);
 
-    endHidden.value = offsetDateTimezoneToJson(fixedEndDate);
+    endHidden.val(offsetDateTimezoneToJson(fixedEndDate));
+}
+
+function enableEditAppointment() {
+    let title = $("#appointmentFormTitle");
+    enableEdit("Appointment", title);
+    setReadonly(inputs, false);
 }
 
 function getShortTimeString(date) {
@@ -138,8 +165,6 @@ function getFormattedDate(date, time) {
     return new Date(year, month, day, hours, minutes);
 }
 
-
-
 //function populateForm(appointment) {
 //    console.log(appointment);
 //}
@@ -162,5 +187,5 @@ function addMinutes(date, minutes) {
 }
 
 function onEventClick(args) {
-
+    console.log(args);
 }

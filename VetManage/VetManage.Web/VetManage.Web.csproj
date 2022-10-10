@@ -9,6 +9,7 @@
     <Content Remove="wwwroot\scss\bootstrap\_bootstrap.scss" />
     <Content Remove="wwwroot\scss\bootstrap\_overrides.scss" />
     <Content Remove="wwwroot\scss\layouts\_content.scss" />
+    <Content Remove="wwwroot\scss\layouts\_form.scss" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,6 +47,7 @@
     <None Include="wwwroot\scss\bootstrap\_overrides.scss" />
     <None Include="wwwroot\scss\bootstrap\_bootstrap.scss" />
     <None Include="wwwroot\scss\components\_components.scss" />
+    <None Include="wwwroot\scss\layouts\_form.scss" />
     <None Include="wwwroot\scss\layouts\_content.scss" />
     <None Include="wwwroot\scss\layouts\_layout.scss" />
     <None Include="wwwroot\scss\utilities\_utilities.scss" />

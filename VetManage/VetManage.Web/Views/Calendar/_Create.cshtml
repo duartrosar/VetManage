@@ -65,12 +65,17 @@
                     </div>
                 </div>
                 <div class="mb-3">
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
-                        <button asp-action="Edit" id="submitEditOwner" type="submit" class="btn btn-success">Save</button>
-                        <button asp-action="Delete" id="deleteOwner" type="submit" class="btn btn-success">Delete</button>
-                        <button asp-action="Create" id="createOwner" type="submit" class="btn btn-success">Create</button>
-                        <button id="enableEditOwner" type="button" class="btn btn-primary">Edit</button>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+                        <div>
+                            <button asp-action="Delete" id="deleteApp" type="submit" class="btn btn-outline-light">Delete</button>
+
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                            <button asp-action="Edit" id="submitEditAppointment" type="submit" class="btn btn-success">Save</button>
+                            <button asp-action="Create" id="createAppointment" type="submit" class="btn btn-success">Create</button>
+                            <button id="enableEditAppointment" type="button" class="btn btn-primary">Edit</button>
+                        </div>
                     </div>
                 </div>
             </form>

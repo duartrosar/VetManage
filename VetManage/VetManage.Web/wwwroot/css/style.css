@@ -198,6 +198,11 @@ button.accept-policy {
   height: 16px;
 }
 
+.feather-upload {
+  width: 24px;
+  height: 24px;
+}
+
 .e-schedule {
   background-color: #00121c;
   border: 1px solid #fff;
@@ -318,6 +323,16 @@ table.dataTable.table-hover > tbody > tr.selected:hover > * {
 }
 .content.closed {
   margin-left: 80px;
+}
+
+.image-preview {
+  width: 165px;
+  height: 180px;
+  background-position: center top;
+  border: 1px solid #fff;
+  background-size: cover;
+  background-repeat: no-repeat;
+  display: inline-block;
 }
 
 .dark-5 {

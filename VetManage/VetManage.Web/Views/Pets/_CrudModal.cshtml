@@ -14,9 +14,23 @@
       </div>
       <div class="modal-body bg-dark">
           <div class="d-flex align-items-center justify-content-center mt-md-5 pt-md-5">
-              <form class="flex-fill" method="post" id="petsForm" style="max-width: 500px;">
+              <form class="flex-fill" method="post" id="petsForm" style="max-width: 500px;" enctype="multipart/form-data">
                 <div asp-validation-summary="ModelOnly"></div>
                 <input type="hidden" asp-for="Id" class="form-control"/>
+                <div class="mb-3">
+                    @*<label asp-for="ImageFile" class="control-label"></label>*@
+                    <div class="image-preview border-opacity-50 d-flex justify-content-center align-items-center">
+                        <label class="btn btn-outline-light border-0 d-flex flex-column pt-1">
+                            <i data-feather="upload" stroke-width="1"></i>
+                            <input class="img" id="imageFile" type="file" style="width: 0px;height: 0px;overflow: hidden;"/>
+                        </label>
+                    </div>
+                    @*<label class="btn btn-outline-light">
+                        Upload
+                        <input class="img" id="imageFile" type="file" style="width: 0px;height: 0px;overflow: hidden;"/>
+                    </label>*@
+                    @*<span asp-validation-for="ImageFile" class="text-danger"></span>*@
+                </div>
                 <div class="mb-3">
                     <label asp-for="OwnerId" class="control-label"></label>
                     <select asp-for="OwnerId" class ="form-control" asp-items="ViewBag.OwnerId">

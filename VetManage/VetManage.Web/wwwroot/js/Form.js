@@ -1,8 +1,4 @@
-﻿function logSomething() {
-    console.log("Hello World");
-}
-
-function organizeButtons(action, entityName, title) {
+﻿function organizeButtons(action, entityName, title) {
     let readonly;
 
     if (action === "read") {
@@ -77,4 +73,16 @@ function enableEdit(entityName, title) {
     $(`#enableEdit${entityName}`).addClass("d-none");
     $(`#submitEdit${entityName}`).removeClass("d-none");
     title.text("Edit");
+}
+
+function readURL(input) {
+    if (input.files && input.files[0]) {
+        let reader = new FileReader();
+
+        reader.onload = function (e) {
+            $('#imagePreview')
+                .attr('src', e.target.result);
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
 }

@@ -139,10 +139,11 @@
 
             $("#enableEditPet").click(function() {
                 let title = $("#petFormTitle");
-                enableEdit("Pet", title)
+                enableEdit("Pet", title);
                 setReadonly(inputs, false);
             });
 
+            // Datatable
             let table = $("#petsTable").DataTable();
 
             $('#petsTable tbody').on('click', 'tr', function () {
@@ -152,6 +153,46 @@
                     table.$('tr.selected').removeClass('selected');
                     $(this).addClass('selected');
                 }
+            });
+
+            let input = document.getElementById('imageFile');
+
+            // Image preview
+            $(function () {
+                $('#imageFile').on('change', function () {
+                    readURL(input);
+                });
+            });
+
+            //let infoArea = document.getElementById('upload-label');
+
+            //input.addEventListener('change', showFileName);
+
+            //function showFileName( event ) {
+            //  let input = event.srcElement;
+            //  let fileName = input.files[0].name;
+            //  infoArea.textContent = 'File name: ' + fileName;
+            //}
+
+            $(function() {
+                $(document).on("change","#imageFile", function()
+                {
+    		        var uploadFile = $(this);
+                    var files = !!this.files ? this.files : [];
+                    if (!files.length || !window.FileReader) return; // no file selected, or no FileReader support
+ 
+                    if (/^image/.test( files[0].type)){ // only image file
+                        var reader = new FileReader(); // instance of the FileReader
+                        reader.readAsDataURL(files[0]); // read the local file
+ 
+                        reader.onloadend = function(){ // set image data as background of div
+                            //alert(uploadFile.closest(".upimage").find('.imagePreview').length);
+                            //uploadFile.closest(".imgUp").find('.imagePreview').css("background-image", "url("+this.result+")");
+                            $('.image-preview').css("background-image", "url("+this.result+")");
+                        }
+                    }
+      
+                });
             });
         });
     </script>
