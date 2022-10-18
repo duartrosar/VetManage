@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -53,27 +54,6 @@ namespace VetManage.Web.Controllers
             return View(petsViewModel);
         }
 
-        [Route("Pets/IndexPartial")]
-        public IActionResult IndexPartial()
-        {
-            var owners = _ownerRepository.GetAllWithPetsAndUsers();
-            var pets = _petRepository.GetAllWithOwners();
-
-            var ownerViewModels = _converterHelper.AllToOwnerViewModel(owners);
-            var petViewModels = _converterHelper.AllToPetViewModel(pets);
-
-            ViewData["OwnerId"] = new SelectList(ownerViewModels, "Id", "FullName");
-
-            PetsViewModel petsViewModel = new PetsViewModel
-            {
-                Owners = ownerViewModels,
-                Pets = petViewModels,
-                Pet = new PetViewModel()
-            };
-
-            return PartialView("_IndexPartial", petsViewModel);
-        }
-
         // POST: Pets/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -83,11 +63,31 @@ namespace VetManage.Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                var path = string.Empty;
+
+                if(model.ImageFile != null && model.ImageFile.Length > 0)
+                {
+                    var guid = Guid.NewGuid().ToString();
+                    var file = $"{guid}.jpg";
+
+                    path = Path.Combine(
+                        Directory.GetCurrentDirectory(),
+                        "wwwroot\\images\\pets",
+                        file);
+
+                    using(var stream = new FileStream(path, FileMode.Create))
+                    {
+                        await model.ImageFile.CopyToAsync(stream);
+                    }
+
+                    path = $"~/images/pets/{file}";
+                }
+
                 var owner = await _ownerRepository.GetByIdAsync(model.OwnerId);
 
                 if(owner != null)
                 {
-                    var pet = _converterHelper.ToPet(model, true);
+                    var pet = _converterHelper.ToPet(model, true, path);
 
                     await _petRepository.CreateAsync(pet);
                     return RedirectToAction(nameof(Index));
@@ -99,26 +99,6 @@ namespace VetManage.Web.Controllers
         }
 
 
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var pet = await _petRepository.GetByIdAsync(id.Value);
-
-            if (pet == null)
-            {
-                return NotFound();
-            }
-
-            var model = _converterHelper.ToPetViewModel(pet);
-
-            return View(model);
-        }
-
-
         // POST: Pets/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -126,13 +106,34 @@ namespace VetManage.Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                var path = model.ImageUrl;
+
+                if (model.ImageFile != null && model.ImageFile.Length > 0)
+                {
+                    var guid = Guid.NewGuid().ToString();
+                    var file = $"{guid}.jpg";
+
+                    path = Path.Combine(
+                        Directory.GetCurrentDirectory(),
+                        "wwwroot\\images\\pets",
+                        file);
+
+                    using (var stream = new FileStream(path, FileMode.Create))
+                    {
+                        await model.ImageFile.CopyToAsync(stream);
+                    }
+
+                    path = $"~/images/pets/{file}";
+                }
+
                 try
                 {
                     var owner = await _ownerRepository.GetByIdAsync(model.OwnerId);
 
                     if(owner != null)
                     {
-                        var pet = _converterHelper.ToPet(model, false);
+                        // TODO: replace by image path
+                        var pet = _converterHelper.ToPet(model, false, path);
                         await _petRepository.UpdateAsync(pet);
                     }
                     // TODO: Pet could not be updated

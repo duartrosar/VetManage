@@ -17,6 +17,9 @@
                 <thead>
                     <tr>
                         <th>
+                            @Html.DisplayNameFor(model => model.Owner.ImageUrl)
+                        </th>
+                        <th>
                             @Html.DisplayNameFor(model => model.Owner.FirstName)
                         </th>
                         <th>
@@ -37,6 +40,9 @@
                 <tbody>
             @foreach (var item in Model.Owners) {
                     <tr>
+                        <td>
+                            <div class="frame" style="background-image: url(@Url.Content(item.ImageFullPath))"></div>
+                        </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.FirstName)
                         </td>
@@ -110,6 +116,9 @@
                 // Set the value of owner being read, edited or deleted
                 populateForm(inputs, owner);
 
+                // Set the image preview field to the image of the selected pet
+                $('.image-preview').css("background-image", `url("${owner.ImageFullPath}")`);
+
                 $("#crudOwner").modal("show");
 
                 return false;
@@ -159,6 +168,7 @@
                 $("#crudOwner").modal("show");
             });
 
+            // Datatable
             let table = $("#ownersTable").DataTable();
 
             $('#ownersTable tbody').on('click', 'tr', function () {
@@ -168,6 +178,35 @@
                     table.$('tr.selected').removeClass('selected');
                     $(this).addClass('selected');
                 }
+            });
+
+            // Preview image
+            $(function() {
+                $(document).on("change","#imageFile", function()
+                {
+    		        let uploadFile = $(this);
+                    let files = !!this.files ? this.files : [];
+                    if (!files.length || !window.FileReader) return; // no file selected, or no FileReader support
+ 
+                    if (/^image/.test( files[0].type)){ // only image file
+                        let reader = new FileReader(); // instance of the FileReader
+                        reader.readAsDataURL(files[0]); // read the local file
+ 
+                        reader.onloadend = function(){ 
+                            // set image data as background of div
+                            $('.image-preview').css("background-image", "url("+this.result+")");
+
+                            // set the image url property
+                            $('#imageUrl').val(`${files[0].name}`);
+
+                            // remove validation span
+                            $('#imgUrlValidation').removeClass("field-validation-error");
+                            $('#imgUrlValidation').addClass("field-validation-valid");
+                            $('#imageUrl-error').remove();
+                        }
+                    }
+      
+                });
             });
         });
     </script>

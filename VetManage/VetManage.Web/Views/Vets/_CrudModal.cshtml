@@ -14,9 +14,20 @@
       </div>
       <div class="modal-body bg-dark">
         <div class="d-flex align-items-center justify-content-center mt-md-5 pt-md-5">
-            <form class="flex-fill" method="post" style="max-width: 500px;" id="vetsForm">
+            <form class="flex-fill" method="post" style="max-width: 500px;" id="vetsForm" enctype="multipart/form-data">
                 <div asp-validation-summary="ModelOnly"></div>
                 <input type="hidden" asp-for="Id" class="form-control"/>
+                <input asp-for="ImageUrl" id="imageUrl" class="form-control" style="visibility: hidden;"/>
+                <div class="mb-3">
+                    <label asp-for="ImageFile" class="control-label"></label>
+                    <div class="image-preview border-opacity-50 d-flex justify-content-center align-items-center" style="background-image: url(@Url.Content(@Model.ImageUrl))">
+                        <label class="btn btn-outline-light border-0 d-flex flex-column pt-1">
+                            <i data-feather="upload" stroke-width="1"></i>
+                            <input asp-for="ImageFile" class="img" id="imageFile" type="file" style="width: 0px;height: 0px;overflow: hidden;"/>
+                        </label>
+                    </div>
+                    <span asp-validation-for="ImageUrl" class="text-danger" id="imgUrlValidation"></span>
+                </div>
                 <div class="mb-3">
                     <label asp-for="UserId" class="control-label"></label>
                     <select asp-for="UserId" id="userSelect" asp-items="Model.Users" class="form-control">

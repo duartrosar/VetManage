@@ -22,6 +22,9 @@
                 <thead>
                     <tr>
                         <th>
+                            @Html.DisplayNameFor(model => model.Pet.ImageUrl)
+                        </th>
+                        <th>
                             @Html.DisplayNameFor(model => model.Pet.Name)
                         </th>
                         <th>
@@ -45,6 +48,9 @@
                 <tbody>
             @foreach (var item in Model.Pets) {
                     <tr>
+                        <td>
+                            <div class="frame" style="background-image: url(@Url.Content(item.ImageFullPath))"></div>
+                        </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.Name)
                         </td>
@@ -122,6 +128,9 @@
                 // Set the value of owner being read, edited or deleted
                 populateForm(inputs, pet);
 
+                // Set the image preview field to the image of the selected pet
+                $('.image-preview').css("background-image", `url("${pet.ImageFullPath}")`);
+
                 $("#crudPet").modal("show");
                 return false;
             });
@@ -134,6 +143,9 @@
                 setReadonly(inputs, false);
                 newOrganizeButtons("Pet", title);
                 clearInputs(inputs);
+
+                $('.image-preview').css("background-image", "url('/images/noimage.png')");
+
                 $("#crudPet").modal("show");
             });
 
@@ -155,40 +167,29 @@
                 }
             });
 
-            let input = document.getElementById('imageFile');
-
-            // Image preview
-            $(function () {
-                $('#imageFile').on('change', function () {
-                    readURL(input);
-                });
-            });
-
-            //let infoArea = document.getElementById('upload-label');
-
-            //input.addEventListener('change', showFileName);
-
-            //function showFileName( event ) {
-            //  let input = event.srcElement;
-            //  let fileName = input.files[0].name;
-            //  infoArea.textContent = 'File name: ' + fileName;
-            //}
-
+            // Preview image
             $(function() {
                 $(document).on("change","#imageFile", function()
                 {
-    		        var uploadFile = $(this);
-                    var files = !!this.files ? this.files : [];
+    		        let uploadFile = $(this);
+                    let files = !!this.files ? this.files : [];
                     if (!files.length || !window.FileReader) return; // no file selected, or no FileReader support
  
                     if (/^image/.test( files[0].type)){ // only image file
-                        var reader = new FileReader(); // instance of the FileReader
+                        let reader = new FileReader(); // instance of the FileReader
                         reader.readAsDataURL(files[0]); // read the local file
  
-                        reader.onloadend = function(){ // set image data as background of div
-                            //alert(uploadFile.closest(".upimage").find('.imagePreview').length);
-                            //uploadFile.closest(".imgUp").find('.imagePreview').css("background-image", "url("+this.result+")");
+                        reader.onloadend = function(){ 
+                            // set image data as background of div
                             $('.image-preview').css("background-image", "url("+this.result+")");
+
+                            // set the image url property
+                            $('#imageUrl').val(`${files[0].name}`);
+
+                            // remove validation span
+                            $('#imgUrlValidation').removeClass("field-validation-error");
+                            $('#imgUrlValidation').addClass("field-validation-valid");
+                            $('#imageUrl-error').remove();
                         }
                     }
       

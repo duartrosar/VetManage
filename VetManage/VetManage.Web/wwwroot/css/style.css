@@ -343,6 +343,15 @@ table.dataTable.table-hover > tbody > tr.selected:hover > * {
   background-color: #1a2a33;
 }
 
+.frame {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
 option {
   font-weight: 400;
   color: #000;

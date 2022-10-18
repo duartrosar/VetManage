@@ -35,10 +35,26 @@ namespace VetManage.Web.Data.Entities
         [MaxLength(250)]
         public string Address { get; set; }
 
+        [Display(Name = "Image")]
+        public string ImageUrl { get; set; }
+
         public User User { get; set; }
 
         public ICollection<Pet> Pets { get; set; }
 
         public string FullName => $"{FirstName} {LastName}";
+
+        public string ImageFullPath
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(ImageUrl))
+                {
+                    return $"https://localhost:44318/images/noimage.png"; ;
+                }
+
+                return $"https://localhost:44318{ImageUrl.Substring(1)}";
+            }
+        }
     }
 }

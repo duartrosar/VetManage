@@ -22,6 +22,21 @@
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <input id="userIdEdit" type="hidden" asp-for="Id" class="edit-form-control"/>
                 <div class="mb-3">
+                    @*<label asp-for="ImageFile" class="control-label"></label>*@
+                    <label class="control-label">Image</label>
+                    <div class="image-preview border-opacity-50 d-flex justify-content-center align-items-center">
+                        <label class="btn btn-outline-light border-0 d-flex flex-column pt-1">
+                            <i data-feather="upload" stroke-width="1"></i>
+                            <input class="img" id="imageFile" type="file" style="width: 0px;height: 0px;overflow: hidden;"/>
+                        </label>
+                    </div>
+                    @*<label class="btn btn-outline-light">
+                        Upload
+                        <input class="img" id="imageFile" type="file" style="width: 0px;height: 0px;overflow: hidden;"/>
+                    </label>*@
+                    @*<span asp-validation-for="ImageFile" class="text-danger"></span>*@
+                </div>
+                <div class="mb-3">
                     <label asp-for="RoleId" class="control-label"></label>
                     <input asp-for="RoleName" type="hidden" id="roleNameEdit"/>
                     <select asp-for="RoleId" asp-items="Model.Roles" id="selectRoleEdit" class="form-control edit-form-control"></select>

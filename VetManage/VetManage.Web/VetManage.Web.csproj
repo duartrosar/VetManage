@@ -67,6 +67,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="wwwroot\images\owners\" />
+    <Folder Include="wwwroot\images\vets\" />
     <Folder Include="wwwroot\lib\bootstrap\" />
   </ItemGroup>
 

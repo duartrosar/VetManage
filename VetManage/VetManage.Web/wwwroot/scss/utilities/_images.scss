@@ -1,0 +1,10 @@
+@use "../abstracts/abstracts" as *;
+
+.frame {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-position: center top;
+    background-repeat: no-repeat;
+    background-size: cover;
+}

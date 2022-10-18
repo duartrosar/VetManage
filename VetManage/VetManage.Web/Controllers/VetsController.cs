@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.IO;
 using System.Threading.Tasks;
 using VetManage.Web.Data.Repositories;
 using VetManage.Web.Helpers;
@@ -45,30 +47,6 @@ namespace VetManage.Web.Controllers
             return View(vetsViewModel);
         }
 
-        [Route("Vets/IndexPartial")]
-        public IActionResult IndexPartial ()
-        {
-            var vets = _vetRepository.GetAllWithUsers();
-            //var users = _vetRepository.GetComboUsersNoEntity();
-            var users = _vetRepository.GetComboUsers();
-
-            var vetViewModels = _converterHelper.AllToVetViewModel(vets);
-
-            VetViewModel vetViewModel = new VetViewModel
-            {
-                Users = users,
-            };
-
-            VetsViewModel vetsViewModel = new VetsViewModel()
-            {
-                //Users = users,
-                Vets = vetViewModels,
-                Vet = vetViewModel,
-            };
-
-            return PartialView("_IndexPartial", vetsViewModel);
-        }
-
         // POST: Vets/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -76,16 +54,36 @@ namespace VetManage.Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                var path = $"~/images/noimage.png";
+
+                if (model.ImageFile != null && model.ImageFile.Length > 0)
+                {
+                    var guid = Guid.NewGuid().ToString();
+                    var file = $"{guid}.jpg";
+
+                    path = Path.Combine(
+                        Directory.GetCurrentDirectory(),
+                        "wwwroot\\images\\vets",
+                        file);
+
+                    using (var stream = new FileStream(path, FileMode.Create))
+                    {
+                        await model.ImageFile.CopyToAsync(stream);
+                    }
+
+                    path = $"~/images/vets/{file}";
+                }
+
                 var user = await _userHelper.GetUserByIdAsync(model.UserId);
 
                 if (user != null)
                 {
-                    var owner = _converterHelper.ToVet(model, true);
+                    var owner = _converterHelper.ToVet(model, true, path);
 
                     user.HasEntity = true;
                     user.EntityId = owner.Id;
 
-                    // Update the user so that it has a entity related to it
+                    // Update the user so that it has an entity related to it
                     var response = await _userHelper.UpdateUserAsync(user);
 
                     if (response.Succeeded)
@@ -108,6 +106,26 @@ namespace VetManage.Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                var path = model.ImageUrl;
+
+                if (model.ImageFile != null && model.ImageFile.Length > 0)
+                {
+                    var guid = Guid.NewGuid().ToString();
+                    var file = $"{guid}.jpg";
+
+                    path = Path.Combine(
+                        Directory.GetCurrentDirectory(),
+                        "wwwroot\\images\\vets",
+                        file);
+
+                    using (var stream = new FileStream(path, FileMode.Create))
+                    {
+                        await model.ImageFile.CopyToAsync(stream);
+                    }
+
+                    path = $"~/images/vets/{file}";
+                }
+
                 try
                 {
                     // Get the user the user chose from the dropdown with the id
@@ -122,7 +140,7 @@ namespace VetManage.Web.Controllers
                     {
                         model.User = user;
 
-                        var vet = _converterHelper.ToVet(model, false);
+                        var vet = _converterHelper.ToVet(model, false, path);
 
                         await _vetRepository.UpdateAsync(vet);
                     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -79,11 +80,31 @@ namespace VetManage.Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                var path = $"~/images/noimage.png";
+
+                if (model.ImageFile != null && model.ImageFile.Length > 0)
+                {
+                    var guid = Guid.NewGuid().ToString();
+                    var file = $"{guid}.jpg";
+
+                    path = Path.Combine(
+                        Directory.GetCurrentDirectory(),
+                        "wwwroot\\images\\owners",
+                        file);
+
+                    using (var stream = new FileStream(path, FileMode.Create))
+                    {
+                        await model.ImageFile.CopyToAsync(stream);
+                    }
+
+                    path = $"~/images/owners/{file}";
+                }
+
                 var user = await _userHelper.GetUserByIdAsync(model.UserId);
 
                 if(user != null)
                 {
-                    var owner = _converterHelper.ToOwner(model, true);
+                    var owner = _converterHelper.ToOwner(model, true, path);
 
                     user.HasEntity = true;
                     user.EntityId = owner.Id;
@@ -112,6 +133,26 @@ namespace VetManage.Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                var path = model.ImageUrl;
+
+                if (model.ImageFile != null && model.ImageFile.Length > 0)
+                {
+                    var guid = Guid.NewGuid().ToString();
+                    var file = $"{guid}.jpg";
+
+                    path = Path.Combine(
+                        Directory.GetCurrentDirectory(),
+                        "wwwroot\\images\\owners",
+                        file);
+
+                    using (var stream = new FileStream(path, FileMode.Create))
+                    {
+                        await model.ImageFile.CopyToAsync(stream);
+                    }
+
+                    path = $"~/images/owners/{file}";
+                }
+
                 try
                 {
                     // Get the user the user chose from the dropdown with the id
@@ -126,7 +167,7 @@ namespace VetManage.Web.Controllers
                     {
                         model.User = user;
 
-                        var owner = _converterHelper.ToOwner(model, false);
+                        var owner = _converterHelper.ToOwner(model, false, path);
 
                         await _ownerRepository.UpdateAsync(owner);
                     }

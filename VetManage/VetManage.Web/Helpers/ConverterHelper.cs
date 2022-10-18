@@ -8,7 +8,7 @@ namespace VetManage.Web.Helpers
     public class ConverterHelper : IConverterHelper
     {
         //////// OWNERS ////////
-        public Owner ToOwner(OwnerViewModel model, bool isNew)
+        public Owner ToOwner(OwnerViewModel model, bool isNew, string path)
         {
             return new Owner
             {
@@ -21,6 +21,7 @@ namespace VetManage.Web.Helpers
                 MobileNumber = model.MobileNumber,
                 Pets = model.Pets,
                 User = model.User,
+                ImageUrl = path
             };
         }
 
@@ -38,6 +39,7 @@ namespace VetManage.Web.Helpers
                 Pets = owner.Pets,
                 User = owner.User,
                 UserId = owner.User.Id,
+                ImageUrl = owner.ImageUrl
             };
         }
 
@@ -57,7 +59,7 @@ namespace VetManage.Web.Helpers
 
 
         //////// PETS ////////
-        public Pet ToPet(PetViewModel model, bool isNew)
+        public Pet ToPet(PetViewModel model, bool isNew, string path)
         {
             return new Pet
             {
@@ -71,6 +73,7 @@ namespace VetManage.Web.Helpers
                 Weight = model.Weight,
                 Length = model.Length,
                 OwnerId = model.OwnerId,
+                ImageUrl = path,
             };
         }
 
@@ -89,6 +92,7 @@ namespace VetManage.Web.Helpers
                 Length = pet.Length,
                 OwnerId = pet.OwnerId,
                 Owner = pet.Owner,
+                ImageUrl = pet.ImageUrl,
             };
         }
 
@@ -107,7 +111,7 @@ namespace VetManage.Web.Helpers
 
 
         //////// VETS ////////
-        public Vet ToVet(VetViewModel model, bool isNew)
+        public Vet ToVet(VetViewModel model, bool isNew, string path)
         {
             return new Vet
             {
@@ -119,6 +123,7 @@ namespace VetManage.Web.Helpers
                 Address = model.Address,
                 MobileNumber = model.MobileNumber,
                 User = model.User,
+                ImageUrl = path,
             };
         }
 
@@ -135,6 +140,7 @@ namespace VetManage.Web.Helpers
                 MobileNumber = vet.MobileNumber,
                 User = vet.User,
                 UserId = vet.User.Id,
+                ImageUrl = vet.ImageUrl
             };
         }
 

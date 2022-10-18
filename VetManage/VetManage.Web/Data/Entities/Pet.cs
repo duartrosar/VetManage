@@ -40,5 +40,22 @@ namespace VetManage.Web.Data.Entities
         public Owner Owner { get; set; }
 
         public int OwnerId { get; set; }
+
+        [Required]
+        [Display(Name = "Image")]
+        public string ImageUrl { get; set; }
+
+        public string ImageFullPath
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(ImageUrl))
+                {
+                    return $"https://localhost:44318/images/noimage.png";
+                }
+
+                return $"https://localhost:44318{ImageUrl.Substring(1)}";
+            }
+        }
     }
 }
