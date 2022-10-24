@@ -1,11 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using VetManage.Web.Data.Entities;
 using VetManage.Web.Data.Repositories;
 using VetManage.Web.Helpers;
-using VetManage.Web.Models;
+using VetManage.Web.Models.Vets;
 
 namespace VetManage.Web.Controllers
 {
@@ -32,16 +34,17 @@ namespace VetManage.Web.Controllers
 
             var vetViewModels = _converterHelper.AllToVetViewModel(vets);
 
-            VetViewModel vetViewModel = new VetViewModel
+            RegisterVetViewModel registerVetViewModel = new RegisterVetViewModel
             {
-                Users = users,
+                VetViewModel = new VetViewModel(),
             };
 
-            VetsViewModel vetsViewModel = new VetsViewModel()
+            VetsManagingViewModel vetsViewModel = new VetsManagingViewModel()
             {
                 //Users = users,
                 Vets = vetViewModels,
-                Vet = vetViewModel,
+                RegisterVetViewModel = registerVetViewModel,
+                EditVetViewModel = new EditVetViewModel(),
             };
 
             return View(vetsViewModel);
@@ -50,13 +53,13 @@ namespace VetManage.Web.Controllers
         // POST: Vets/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(VetViewModel model)
+        public async Task<IActionResult> Create(RegisterVetViewModel model)
         {
             if (ModelState.IsValid)
             {
                 var path = $"~/images/noimage.png";
 
-                if (model.ImageFile != null && model.ImageFile.Length > 0)
+                if (model.VetViewModel.ImageFile != null && model.VetViewModel.ImageFile.Length > 0)
                 {
                     var guid = Guid.NewGuid().ToString();
                     var file = $"{guid}.jpg";
@@ -68,33 +71,66 @@ namespace VetManage.Web.Controllers
 
                     using (var stream = new FileStream(path, FileMode.Create))
                     {
-                        await model.ImageFile.CopyToAsync(stream);
+                        await model.VetViewModel.ImageFile.CopyToAsync(stream);
                     }
 
                     path = $"~/images/vets/{file}";
                 }
 
-                var user = await _userHelper.GetUserByIdAsync(model.UserId);
-
-                if (user != null)
+                try
                 {
-                    var owner = _converterHelper.ToVet(model, true, path);
+                    var user = await _userHelper.GetUserByEmailAsync(model.Username);
 
-                    user.HasEntity = true;
-                    user.EntityId = owner.Id;
-
-                    // Update the user so that it has an entity related to it
-                    var response = await _userHelper.UpdateUserAsync(user);
-
-                    if (response.Succeeded)
+                    if (user == null)
                     {
-                        owner.User = user;
+                        // Create new user
+                        user = new User
+                        {
+                            FirstName = model.VetViewModel.FirstName,
+                            LastName = model.VetViewModel.LastName,
+                            Email = model.Username,
+                            UserName = model.Username,
+                            Address = model.VetViewModel.Address,
+                            PhoneNumber = model.VetViewModel.MobileNumber,
+                        };
 
-                        await _vetRepository.CreateAsync(owner);
+                        var result = await _userHelper.AddUserAsync(user, model.Password);
+
+                        if (result != IdentityResult.Success)
+                        {
+                            ModelState.AddModelError(string.Empty, "The User could not be created.");
+
+                            return View(model);
+                        }
+
+                        // Add role or roles to user
+                        await _userHelper.AddUserToRoleAsync(user, "Employee");
+
+                        if (model.IsAdmin)
+                        {
+                            await _userHelper.AddUserToRoleAsync(user, "Admin");
+                        }
+
+                        // get the newly created user and set it as the vet's user
+                        model.VetViewModel.User = await _userHelper.GetUserByEmailAsync(model.Username);
+
+                        var vet = _converterHelper.ToVet(model.VetViewModel, true, path);
+
+                        await _vetRepository.CreateAsync(vet);
+
                         return RedirectToAction(nameof(Index));
+                        // TODO: Vet could not be created
                     }
-                    // TODO: Vet could not be created
+                    else
+                    {
+                        // TODO: User already exists
+                    }
                 }
+                catch (Exception ex)
+                {
+
+                }
+                // Check if user exists
             }
             return RedirectToAction(nameof(Index));
         }
@@ -130,8 +166,11 @@ namespace VetManage.Web.Controllers
                 {
                     // Get the user the user chose from the dropdown with the id
                     var user = await _userHelper.GetUserByIdAsync(model.UserId);
-                    user.HasEntity = true;
-                    user.EntityId = model.Id;
+
+                    user.PhoneNumber = model.MobileNumber;
+                    user.FirstName = model.FirstName;
+                    user.LastName = model.LastName;
+                    user.Address = model.Address;
 
                     // Update the user so that it has an entity related to it
                     var response = await _userHelper.UpdateUserAsync(user);
@@ -163,25 +202,32 @@ namespace VetManage.Web.Controllers
         }
 
         // POST: Owners/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             var vet = await _vetRepository.GetWithUserByIdAsync(id);
-
             var user = await _userHelper.GetUserByIdAsync(vet.User.Id);
-            user.HasEntity = false;
-            user.EntityId = -1;
 
-            // Update the user so that it has an entity related to it
-            var response = await _userHelper.UpdateUserAsync(user);
-
-            if (response.Succeeded)
+            try
             {
                 await _vetRepository.DeleteAsync(vet);
+                await _userHelper.DeleteUserAsync(user);
                 return RedirectToAction(nameof(Index));
+
             }
-            // TODO: Vet could not be deleted
+            catch (Exception ex)
+            {
+                // TODO: Vet could not be deleted
+                if (!await _vetRepository.ExistsAsync(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
 
             return RedirectToAction(nameof(Index));
         }

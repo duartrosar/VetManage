@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using VetManage.Web.Data.Entities;
 using VetManage.Web.Helpers;
-using VetManage.Web.Models;
+using VetManage.Web.Models.Account;
 
 namespace VetManage.Web.Controllers
 {
@@ -57,7 +57,7 @@ namespace VetManage.Web.Controllers
                     // That is only allowed to signed in users
                     if (Request.Query.Keys.Contains("ReturnUrl"))
                     {
-                        // Redirect to the area the user wa trying to access
+                        // Redirect to the area the user was trying to access
                         return Redirect(Request.Query["ReturnUrl"].First());
                     }
                     return RedirectToAction("Index", "Home");

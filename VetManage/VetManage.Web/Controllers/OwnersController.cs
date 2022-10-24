@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using VetManage.Web.Data.Entities;
 using VetManage.Web.Data.Repositories;
 using VetManage.Web.Helpers;
-using VetManage.Web.Models;
+using VetManage.Web.Models.Owners;
 
 namespace VetManage.Web.Controllers
 {
@@ -50,29 +51,6 @@ namespace VetManage.Web.Controllers
             return View(ownersViewModel);
         }
 
-        [Route("Owners/IndexPartial")]
-        public IActionResult IndexPartial()
-        {
-            var owners = _ownerRepository.GetAllWithUsers();
-            var users = _ownerRepository.GetComboUsers();
-
-            var ownerViewModels = _converterHelper.AllToOwnerViewModel(owners);
-
-            OwnerViewModel ownerViewModel = new OwnerViewModel
-            {
-                Users = users,
-            };
-
-            OwnersViewModel ownersViewModel = new OwnersViewModel()
-            {
-                UsersCombo = users,
-                Owners = ownerViewModels,
-                Owner = ownerViewModel
-            };
-
-            return PartialView("_IndexPartial",ownersViewModel);
-        }
-
         // POST: Owners/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -100,26 +78,49 @@ namespace VetManage.Web.Controllers
                     path = $"~/images/owners/{file}";
                 }
 
-                var user = await _userHelper.GetUserByIdAsync(model.UserId);
-
-                if(user != null)
+                try
                 {
-                    var owner = _converterHelper.ToOwner(model, true, path);
+                    var user = await _userHelper.GetUserByEmailAsync(model.Username);
 
-                    user.HasEntity = true;
-                    user.EntityId = owner.Id;
-
-                    // Update the user so that it has a entity related to it
-                    var response = await _userHelper.UpdateUserAsync(user);
-
-                    if (response.Succeeded)
+                    if (user == null)
                     {
-                        owner.User = user;
+                        // Create new user
+                        user = new User
+                        {
+                            FirstName = model.FirstName,
+                            LastName = model.LastName,
+                            Email = model.Username,
+                            UserName = model.Username,
+                            Address = model.Address,
+                            PhoneNumber = model.MobileNumber,
+                        };
 
-                        await _ownerRepository.CreateAsync(owner);
+                        var result = await _userHelper.AddUserAsync(user, model.Password);
+
+                        if (result != IdentityResult.Success)
+                        {
+                            ModelState.AddModelError(string.Empty, "The User could not be created.");
+
+                            return View(model);
+                        }
+
+                        // Add role or roles to user
+                        await _userHelper.AddUserToRoleAsync(user, "Employee");
+
+                        // get the newly created user and set it as the vet's user
+                        model.User = await _userHelper.GetUserByEmailAsync(model.Username);
+
+                        var vet = _converterHelper.ToOwner(model, true, path);
+
+                        await _ownerRepository.CreateAsync(vet);
+
                         return RedirectToAction(nameof(Index));
+                        // TODO: Vet could not be created
                     }
-                    // TODO: Owner could not be created
+                }
+                catch (Exception ex)
+                {
+
                 }
             }
             return RedirectToAction(nameof(Index));

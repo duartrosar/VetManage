@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace VetManage.Web.Models
+namespace VetManage.Web.Models.Account
 {
     public class LoginViewModel
     {

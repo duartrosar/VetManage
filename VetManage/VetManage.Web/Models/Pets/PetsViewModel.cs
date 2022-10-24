@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using VetManage.Web.Models.Owners;
 
-namespace VetManage.Web.Models
+namespace VetManage.Web.Models.Pets
 {
     public class PetsViewModel
     {

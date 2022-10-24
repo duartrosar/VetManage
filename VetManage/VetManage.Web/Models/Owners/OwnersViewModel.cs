@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using VetManage.Web.Data.Entities;
 
-namespace VetManage.Web.Models
+namespace VetManage.Web.Models.Owners
 {
     public class OwnersViewModel
     {

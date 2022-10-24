@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using VetManage.Web.Data.Entities;
-using VetManage.Web.Models;
+using VetManage.Web.Models.Account;
 
 namespace VetManage.Web.Helpers
 {

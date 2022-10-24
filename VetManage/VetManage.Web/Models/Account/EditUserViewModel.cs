@@ -1,42 +1,31 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using VetManage.Web.Data.Entities;
 
-namespace VetManage.Web.Models
+namespace VetManage.Web.Models.Account
 {
-    public class RegisterNewUserViewModel
+    public class EditUserViewModel
     {
+        public string Id { get; set; }
+
         [Required]
         [Display(Name = "First Name")]
         public string FirstName { get; set; }
-
 
         [Required]
         [Display(Name = "Last Name")]
         public string LastName { get; set; }
 
-
-        [Required]
-        [DataType(DataType.EmailAddress)]
-        public string Username { get; set; }
-
-
-        [MaxLength(100, ErrorMessage = "The field {0} can only contain {1} characters length.")]
+        [MaxLength(100, ErrorMessage = "The field {0} only can contain {1} characters length.")]
         public string Address { get; set; }
 
 
-        [MaxLength(100, ErrorMessage = "The field {0} can only contain {1} characters length.")]
+        [MaxLength(20, ErrorMessage = "The field {0} only can contain {1} characters length.")]
         public string PhoneNumber { get; set; }
 
-        [Required]
-        [MinLength(6)]
-        public string Password { get; set; }
-
-
-        [Required]
-        [Compare("Password")]
-        public string Confirm { get; set; }
-
+        [Display(Name = "Email")]
+        public string Email { get; set; }
 
         [Display(Name = "Role")]
         [Range(1, int.MaxValue, ErrorMessage = "You must select a role")]

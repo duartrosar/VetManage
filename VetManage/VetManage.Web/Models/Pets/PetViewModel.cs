@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using VetManage.Web.Data.Entities;
 
-namespace VetManage.Web.Models
+namespace VetManage.Web.Models.Pets
 {
     public class PetViewModel : Pet
     {

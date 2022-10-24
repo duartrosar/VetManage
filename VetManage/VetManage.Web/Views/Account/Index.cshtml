@@ -1,7 +1,7 @@
 ﻿@using System.Text.Json.Serialization
 @using Newtonsoft.Json
 
-@model VetManage.Web.Models.AccountViewModel
+@model VetManage.Web.Models.Account.AccountViewModel
 @{
     ViewData["Title"] = "Index";
 }
@@ -63,8 +63,8 @@
     </tbody>
 </table>
 
-<partial name="_Edit" model="@new EditUserViewModel()"/>
-<partial name="_Register" model="@new RegisterNewUserViewModel()"/>
+<partial name="_Edit" model="@new VetManage.Web.Models.Account.EditUserViewModel()"/>
+<partial name="_Register" model="@new VetManage.Web.Models.Account.RegisterNewUserViewModel()"/>
 
 @section Scripts{
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

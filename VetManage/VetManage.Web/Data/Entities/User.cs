@@ -39,5 +39,22 @@ namespace VetManage.Web.Data.Entities
 
         [Display(Name = "Name")]
         public string FullName => $"{FirstName} {LastName}";
+
+        // Save the path to the user's profile image, this will be the same as its entity
+        [Display(Name = "Image")]
+        public string ImageUrl { get; set; }
+
+        public string ImageFullPath
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(ImageUrl))
+                {
+                    return $"https://localhost:44318/images/noimage.png"; ;
+                }
+
+                return $"https://localhost:44318{ImageUrl.Substring(1)}";
+            }
+        }
     }
 }

@@ -1,5 +1,5 @@
 ﻿@using Newtonsoft.Json
-@model VetManage.Web.Models.VetsViewModel
+@model VetManage.Web.Models.Vets.VetsManagingViewModel
 
 @{
     ViewData["Title"] = "Index";
@@ -80,7 +80,8 @@
     </div>
 </div>
 
-<partial name="_CrudModal" model="Model.Vet" />
+<partial name="_RegisterModal" model="Model.RegisterVetViewModel" />
+<partial name="_EditModal" model="Model.RegisterVetViewModel.VetViewModel" />
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
@@ -101,12 +102,14 @@
 
             $(".btn-action").click(function() {
                 // remove errors from ui
-                $("#vetsForm").find('.field-validation-error span').empty();
+                $("#registerVetsForm").find('.field-validation-error span').empty();
 
                 let vet = $(this).data("vet");
                 let action = $(this).data("action");
                 let title = $("#vetFormTitle");
-                
+
+                console.log(vet);
+
                 // Hide or Show the buttons depending on the action
                 let readonly = organizeButtons(action, "Vet", title);
 
@@ -119,7 +122,7 @@
                 // Set the image preview field to the image of the selected pet
                 $('.image-preview').css("background-image", `url("${vet.ImageFullPath}")`);
 
-                $("#crudVet").modal("show");
+                $("#editVet").modal("show");
 
                 return false;
             });
@@ -165,7 +168,7 @@
                 setReadonly(inputs, false);
                 newOrganizeButtons("Vet", title);
                 clearInputs(inputs);
-                $("#crudVet").modal("show");
+                $("#registerVet").modal("show");
             });
 
             // Datatable

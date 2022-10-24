@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using VetManage.Web.Data.Entities;
 
-namespace VetManage.Web.Models
+namespace VetManage.Web.Models.Account
 {
     public class AccountViewModel
     {

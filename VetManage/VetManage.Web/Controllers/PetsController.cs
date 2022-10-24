@@ -10,7 +10,7 @@ using VetManage.Web.Data;
 using VetManage.Web.Data.Entities;
 using VetManage.Web.Data.Repositories;
 using VetManage.Web.Helpers;
-using VetManage.Web.Models;
+using VetManage.Web.Models.Pets;
 
 namespace VetManage.Web.Controllers
 {

@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using VetManage.Web.Models;
+using VetManage.Web.Models.Account;
 
 namespace VetManage.Web.Controllers
 {

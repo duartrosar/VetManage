@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using VetManage.Web.Data.Entities;
 using VetManage.Web.Helpers;
-using VetManage.Web.Models;
+using VetManage.Web.Models.Account;
 
 namespace VetManage.Web.Controllers
 {
@@ -31,7 +31,7 @@ namespace VetManage.Web.Controllers
             
             RegisterNewUserViewModel registerViewModel = new RegisterNewUserViewModel()
             {
-                Roles = roles,
+                //Roles = roles,
             };
 
             EditUserViewModel editViewModel = new EditUserViewModel()
@@ -61,7 +61,7 @@ namespace VetManage.Web.Controllers
 
             RegisterNewUserViewModel registerViewModel = new RegisterNewUserViewModel()
             {
-                Roles = roles,
+                //Roles = roles,
             };
 
             EditUserViewModel editViewModel = new EditUserViewModel()
@@ -98,8 +98,8 @@ namespace VetManage.Web.Controllers
                         UserName = model.Username,
                         Address = model.Address,
                         PhoneNumber = model.PhoneNumber,
-                        RoleId = model.RoleId,
-                        RoleName = model.RoleName,
+                        //RoleId = model.RoleId,
+                        //RoleName = model.RoleName,
                         HasEntity = false,
                     };
 
@@ -112,7 +112,7 @@ namespace VetManage.Web.Controllers
                         return View(model);
                     }
 
-                    await _userHelper.AddUserToRoleAsync(user, model.RoleName);
+                    //await _userHelper.AddUserToRoleAsync(user, model.RoleName);
 
                     // Login the newly created user
                     LoginViewModel loginViewModel = new LoginViewModel
