@@ -9,10 +9,8 @@ namespace VetManage.Web.Models.Vets
 
         public ICollection<VetViewModel> Vets { get; set; }
 
-        public VetViewModel Vet { get; set; }
+        public VetViewModel VetViewModel { get; set; }
 
         public RegisterVetViewModel RegisterVetViewModel { get; set; }
-
-        public EditVetViewModel EditVetViewModel { get; set; }
     }
 }

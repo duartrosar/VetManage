@@ -16,7 +16,6 @@
         <div class="d-flex align-items-center justify-content-center mt-md-5 pt-md-5">
             <form class="flex-fill" method="post" style="max-width: 500px;" id="registerVetsForm" enctype="multipart/form-data">
                 <div asp-validation-summary="ModelOnly"></div>
-                @*<input type="hidden" asp-for="VetViewModel.Id" class="form-control"/>*@
                 <input asp-for="VetViewModel.ImageUrl" id="imageUrl" class="form-control" style="visibility: hidden;"/>
                 <div class="mb-3">
                     <label asp-for="VetViewModel.ImageFile" class="control-label"></label>
@@ -28,13 +27,6 @@
                     </div>
                     <span asp-validation-for="VetViewModel.ImageUrl" class="text-danger" id="imgUrlValidation"></span>
                 </div>
-                @*<div class="mb-3">
-                    <label asp-for="VetViewModel.UserId" class="control-label"></label>
-                    <select asp-for="VetViewModel.UserId" id="userSelect" asp-items="Model.Users" class="form-control">
-                        <option value="">-- Select a User --</option>
-                    </select>
-                    <span asp-validation-for="VetViewModel.UserId" class="text-danger"></span>
-                </div>*@
                 <div class="mb-3">
                     <label asp-for="VetViewModel.FirstName">First Name</label>
                     <input id="firstName" asp-for="VetViewModel.FirstName" class="form-control"/>

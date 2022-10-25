@@ -37,15 +37,17 @@ namespace VetManage.Web.Controllers
             var owners = _ownerRepository.GetAllWithUsers();
             var users = _ownerRepository.GetComboUsers();
 
-            OwnersViewModel ownersViewModel = new 
-                OwnersViewModel()
+            RegisterOwnerViewModel registerOwnerViewModel = new RegisterOwnerViewModel()
             {
-                UsersCombo = users,
+                OwnerViewModel = new OwnerViewModel(),
+            };
+
+            OwnersManagingViewModel ownersViewModel = new 
+                OwnersManagingViewModel()
+            {
                 Owners = _converterHelper.AllToOwnerViewModel(owners),
-                Owner = new OwnerViewModel
-                {
-                    Users = users,
-                },
+                OwnerViewModel = new OwnerViewModel(),
+                RegisterOwnerViewModel = registerOwnerViewModel,
             };
 
             return View(ownersViewModel);
@@ -54,13 +56,13 @@ namespace VetManage.Web.Controllers
         // POST: Owners/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(OwnerViewModel model)
+        public async Task<IActionResult> Create(RegisterOwnerViewModel model)
         {
             if (ModelState.IsValid)
             {
                 var path = $"~/images/noimage.png";
 
-                if (model.ImageFile != null && model.ImageFile.Length > 0)
+                if (model.OwnerViewModel.ImageFile != null && model.OwnerViewModel.ImageFile.Length > 0)
                 {
                     var guid = Guid.NewGuid().ToString();
                     var file = $"{guid}.jpg";
@@ -72,7 +74,7 @@ namespace VetManage.Web.Controllers
 
                     using (var stream = new FileStream(path, FileMode.Create))
                     {
-                        await model.ImageFile.CopyToAsync(stream);
+                        await model.OwnerViewModel.ImageFile.CopyToAsync(stream);
                     }
 
                     path = $"~/images/owners/{file}";
@@ -87,12 +89,12 @@ namespace VetManage.Web.Controllers
                         // Create new user
                         user = new User
                         {
-                            FirstName = model.FirstName,
-                            LastName = model.LastName,
+                            FirstName = model.OwnerViewModel.FirstName,
+                            LastName = model.OwnerViewModel.LastName,
                             Email = model.Username,
                             UserName = model.Username,
-                            Address = model.Address,
-                            PhoneNumber = model.MobileNumber,
+                            Address = model.OwnerViewModel.Address,
+                            PhoneNumber = model.OwnerViewModel.MobileNumber,
                         };
 
                         var result = await _userHelper.AddUserAsync(user, model.Password);
@@ -108,11 +110,11 @@ namespace VetManage.Web.Controllers
                         await _userHelper.AddUserToRoleAsync(user, "Employee");
 
                         // get the newly created user and set it as the vet's user
-                        model.User = await _userHelper.GetUserByEmailAsync(model.Username);
+                        model.OwnerViewModel.User = await _userHelper.GetUserByEmailAsync(model.Username);
 
-                        var vet = _converterHelper.ToOwner(model, true, path);
+                        var owner = _converterHelper.ToOwner(model.OwnerViewModel, true, path);
 
-                        await _ownerRepository.CreateAsync(vet);
+                        await _ownerRepository.CreateAsync(owner);
 
                         return RedirectToAction(nameof(Index));
                         // TODO: Vet could not be created
@@ -158,8 +160,11 @@ namespace VetManage.Web.Controllers
                 {
                     // Get the user the user chose from the dropdown with the id
                     var user = await _userHelper.GetUserByIdAsync(model.UserId);
-                    user.HasEntity = true;
-                    user.EntityId = model.Id;
+
+                    user.PhoneNumber = model.MobileNumber;
+                    user.FirstName = model.FirstName;
+                    user.LastName = model.LastName;
+                    user.Address = model.Address;
 
                     // Update the user so that it has an entity related to it
                     var response = await _userHelper.UpdateUserAsync(user);
@@ -191,27 +196,32 @@ namespace VetManage.Web.Controllers
         }
 
         // POST: Owners/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             var owner = await _ownerRepository.GetWithUserByIdAsync(id);
-
             var user = await _userHelper.GetUserByIdAsync(owner.User.Id);
-            user.HasEntity = false;
-            user.EntityId = -1;
 
-            // Update the user so that it has an entity related to it
-            var response = await _userHelper.UpdateUserAsync(user);
-
-            if (response.Succeeded)
+            try
             {
                 await _ownerRepository.DeleteAsync(owner);
+                await _userHelper.DeleteUserAsync(user);
                 return RedirectToAction(nameof(Index));
-            }
-            // TODO: Owner could not be deleted
 
-            return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                // TODO: Vet could not be deleted
+                if (!await _ownerRepository.ExistsAsync(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
         }
 
         [HttpPost]

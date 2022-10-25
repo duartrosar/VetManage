@@ -43,8 +43,8 @@ namespace VetManage.Web.Controllers
             {
                 //Users = users,
                 Vets = vetViewModels,
+                VetViewModel = new VetViewModel(),
                 RegisterVetViewModel = registerVetViewModel,
-                EditVetViewModel = new EditVetViewModel(),
             };
 
             return View(vetsViewModel);
@@ -228,8 +228,6 @@ namespace VetManage.Web.Controllers
                     throw;
                 }
             }
-
-            return RedirectToAction(nameof(Index));
         }
 
         [HttpPost]

@@ -1,0 +1,90 @@
+﻿@model VetManage.Web.Models.Owners.RegisterOwnerViewModel
+
+<!-- Form Modal -->
+<div class="modal fade bg-dark" id="registerOwner" tabindex="-1" role="dialog" aria-labelledby="ownerFormTitle" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header bg-dark">
+        <div class="container">
+            <div class="d-flex align-items-center justify-content-center">
+                <h5 class="modal-title" id="ownerFormTitle">New Owner</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+        </div>
+      </div>
+      <div class="modal-body bg-dark">
+        <div class="d-flex align-items-center justify-content-center mt-md-5 pt-md-5">
+            <form class="flex-fill" method="post" style="max-width: 500px;" id="registerOwnersForm" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly"></div>
+                <input asp-for="OwnerViewModel.ImageUrl" id="imageUrl" class="form-control" style="visibility: hidden;"/>
+                <div class="mb-3">
+                    <label asp-for="OwnerViewModel.ImageFile" class="control-label"></label>
+                    <div class="image-preview border-opacity-50 d-flex justify-content-center align-items-center" style="background-image: url(@Url.Content(@Model.OwnerViewModel.ImageUrl))">
+                        <label class="btn btn-outline-light border-0 d-flex flex-column pt-1">
+                            <i data-feather="upload" stroke-width="1"></i>
+                            <input asp-for="OwnerViewModel.ImageFile" class="img" id="imageFile" type="file" style="width: 0px;height: 0px;overflow: hidden;"/>
+                        </label>
+                    </div>
+                    <span asp-validation-for="OwnerViewModel.ImageUrl" class="text-danger" id="imgUrlValidation"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="OwnerViewModel.FirstName">First Name</label>
+                    <input id="firstName" asp-for="OwnerViewModel.FirstName" class="form-control"/>
+                    <span asp-validation-for="OwnerViewModel.FirstName" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="OwnerViewModel.LastName">Last Name</label>
+                    <input id="lastName" asp-for="OwnerViewModel.LastName" class="form-control"/>
+                    <span asp-validation-for="OwnerViewModel.LastName" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="OwnerViewModel.Gender">Gender</label>
+                    <input id="gender" asp-for="OwnerViewModel.Gender" class="form-control"/>
+                    <span asp-validation-for="OwnerViewModel.Gender" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="OwnerViewModel.DateOfBirth">DateOfBirth</label>
+                    <input id="dateOfBirth" asp-for="OwnerViewModel.DateOfBirth" class="form-control"/>
+                    <span asp-validation-for="OwnerViewModel.DateOfBirth" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="OwnerViewModel.Address">Address</label>
+                    <input id="address" asp-for="OwnerViewModel.Address" class="form-control" />
+                    <span asp-validation-for="OwnerViewModel.Address" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="OwnerViewModel.MobileNumber">Mobile Number</label>
+                    <input id="mobileNumber" asp-for="OwnerViewModel.MobileNumber" class="form-control" />
+                    <span asp-validation-for="OwnerViewModel.MobileNumber" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Username">Username</label>
+                    <input id="username" asp-for="Username" class="form-control" />
+                    <span asp-validation-for="Username" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Password">Password</label>
+                    <input id="password" asp-for="Password" class="form-control" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Confirm">Confirm Password</label>
+                    <input id="confirm" asp-for="Confirm" class="form-control" />
+                    <span asp-validation-for="Confirm" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button id="btnCancel" type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                        <button asp-action="Create" type="submit" class="btn btn-success">Create</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

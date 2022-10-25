@@ -1,7 +1,7 @@
 ﻿@model VetManage.Web.Models.Owners.OwnerViewModel
 
 <!-- Form Modal -->
-<div class="modal fade bg-dark" id="crudOwner" tabindex="-1" role="dialog" aria-labelledby="ownerFormTitle" aria-hidden="true">
+<div class="modal fade bg-dark" id="editOwner" tabindex="-1" role="dialog" aria-labelledby="ownerFormTitle" aria-hidden="true">
   <div class="modal-dialog modal-fullscreen modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header bg-dark">
@@ -14,9 +14,10 @@
       </div>
       <div class="modal-body bg-dark">
         <div class="d-flex align-items-center justify-content-center mt-md-5 pt-md-5">
-            <form class="flex-fill" method="post" style="max-width: 500px;" id="ownersForm" enctype="multipart/form-data">
+            <form class="flex-fill" method="post" style="max-width: 500px;" id="editOwnersForm" enctype="multipart/form-data">
                 <div asp-validation-summary="ModelOnly"></div>
                 <input type="hidden" asp-for="Id" class="form-control"/>
+                <input asp-for="UserId" id="userId" class="form-control" style="visibility: hidden;"/>
                 <input asp-for="ImageUrl" id="imageUrl" class="form-control" style="visibility: hidden;"/>
                 <div class="mb-3">
                     <label asp-for="ImageFile" class="control-label"></label>
@@ -64,21 +65,6 @@
                     <label asp-for="MobileNumber">Mobile Number</label>
                     <input id="mobileNumber" asp-for="MobileNumber" class="form-control" />
                     <span asp-validation-for="MobileNumber" class="text-danger"></span>
-                </div>
-                <div class="mb-3">
-                    <label asp-for="Username">Username</label>
-                    <input id="username" asp-for="Username" class="form-control" />
-                    <span asp-validation-for="Username" class="text-danger"></span>
-                </div>
-                <div class="mb-3">
-                    <label asp-for="Password">Password</label>
-                    <input id="password" asp-for="Password" class="form-control" />
-                    <span asp-validation-for="Password" class="text-danger"></span>
-                </div>
-                <div class="mb-3">
-                    <label asp-for="Confirm">Confirm Password</label>
-                    <input id="confirm" asp-for="Confirm" class="form-control" />
-                    <span asp-validation-for="Confirm" class="text-danger"></span>
                 </div>
                 <div class="mb-3">
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">

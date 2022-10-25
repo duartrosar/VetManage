@@ -18,22 +18,22 @@
                 <thead>
                     <tr>
                         <th>
-                            @Html.DisplayNameFor(model => model.Vet.ImageUrl)
+                            @Html.DisplayNameFor(model => model.VetViewModel.ImageUrl)
                         </th>
                         <th>
-                            @Html.DisplayNameFor(model => model.Vet.FirstName)
+                            @Html.DisplayNameFor(model => model.VetViewModel.FirstName)
                         </th>
                         <th>
-                            @Html.DisplayNameFor(model => model.Vet.LastName)
+                            @Html.DisplayNameFor(model => model.VetViewModel.LastName)
                         </th>
                         <th class="d-none d-lg-table-cell">
-                            @Html.DisplayNameFor(model => model.Vet.DateOfBirth)
+                            @Html.DisplayNameFor(model => model.VetViewModel.DateOfBirth)
                         </th>
                         <th class="d-none d-sm-table-cell">
-                            @Html.DisplayNameFor(model => model.Vet.MobileNumber)
+                            @Html.DisplayNameFor(model => model.VetViewModel.MobileNumber)
                         </th>
                         <th class="d-none d-md-table-cell">
-                            @Html.DisplayNameFor(model => model.Vet.Address)
+                            @Html.DisplayNameFor(model => model.VetViewModel.Address)
                         </th>
                         <th></th>
                     </tr>
@@ -81,7 +81,7 @@
 </div>
 
 <partial name="_RegisterModal" model="Model.RegisterVetViewModel" />
-<partial name="_EditModal" model="Model.RegisterVetViewModel.VetViewModel" />
+<partial name="_EditModal" model="Model.VetViewModel" />
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
@@ -107,8 +107,6 @@
                 let vet = $(this).data("vet");
                 let action = $(this).data("action");
                 let title = $("#vetFormTitle");
-
-                console.log(vet);
 
                 // Hide or Show the buttons depending on the action
                 let readonly = organizeButtons(action, "Vet", title);
@@ -161,9 +159,8 @@
 
             $("#btnNewVet").click(function() {
                 // remove errors from ui
-                $("#vetsForm").find('.field-validation-error span').empty();
+                $("#registerVetsForm").find('.field-validation-error span').empty();
 
-                console.log($("#vetsForm"));
                 let title = $("#vetFormTitle");
                 setReadonly(inputs, false);
                 newOrganizeButtons("Vet", title);

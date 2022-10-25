@@ -1,5 +1,5 @@
 ﻿@using Newtonsoft.Json
-@model VetManage.Web.Models.Owners.OwnersViewModel
+@model VetManage.Web.Models.Owners.OwnersManagingViewModel
 
 @{
     ViewData["Title"] = "Index";
@@ -17,22 +17,22 @@
                 <thead>
                     <tr>
                         <th>
-                            @Html.DisplayNameFor(model => model.Owner.ImageUrl)
+                            @Html.DisplayNameFor(model => model.OwnerViewModel.ImageUrl)
                         </th>
                         <th>
-                            @Html.DisplayNameFor(model => model.Owner.FirstName)
+                            @Html.DisplayNameFor(model => model.OwnerViewModel.FirstName)
                         </th>
                         <th>
-                            @Html.DisplayNameFor(model => model.Owner.LastName)
+                            @Html.DisplayNameFor(model => model.OwnerViewModel.LastName)
                         </th>
                         <th class="d-none d-lg-table-cell">
-                            @Html.DisplayNameFor(model => model.Owner.DateOfBirth)
+                            @Html.DisplayNameFor(model => model.OwnerViewModel.DateOfBirth)
                         </th>
                         <th class="d-none d-sm-table-cell">
-                            @Html.DisplayNameFor(model => model.Owner.MobileNumber)
+                            @Html.DisplayNameFor(model => model.OwnerViewModel.MobileNumber)
                         </th>
                         <th class="d-none d-md-table-cell">
-                            @Html.DisplayNameFor(model => model.Owner.Address)
+                            @Html.DisplayNameFor(model => model.OwnerViewModel.Address)
                         </th>
                         <th></th>
                     </tr>
@@ -79,9 +79,8 @@
     </div>
 </div>
 
-
-
-<partial name="_CrudModal" model="Model.Owner" />
+<partial name="_RegisterModal" model="Model.RegisterOwnerViewModel" />
+<partial name="_EditModal" model="Model.OwnerViewModel" />
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
@@ -101,7 +100,7 @@
 
             $(".btn-action").click(function() {
                 // remove errors from ui
-                $("#ownersForm").find('.field-validation-error span').empty();
+                $("#registerOwnersForm").find('.field-validation-error span').empty();
 
                 let owner = $(this).data("owner");
                 let action = $(this).data("action");
@@ -119,7 +118,7 @@
                 // Set the image preview field to the image of the selected pet
                 $('.image-preview').css("background-image", `url("${owner.ImageFullPath}")`);
 
-                $("#crudOwner").modal("show");
+                $("#editOwner").modal("show");
 
                 return false;
             });
@@ -158,14 +157,13 @@
 
             $("#btnNewOwner").click(function() {
                 // remove errors from ui
-                $("#ownersForm").find('.field-validation-error span').empty();
+                $("#registerOwnersForm").find('.field-validation-error span').empty();
 
-                console.log($("#ownersForm"));
                 let title = $("#ownerFormTitle");
                 setReadonly(inputs, false);
                 newOrganizeButtons("Owner", title);
                 clearInputs(inputs);
-                $("#crudOwner").modal("show");
+                $("#registerOwner").modal("show");
             });
 
             // Datatable
