@@ -44,6 +44,10 @@ namespace VetManage.Web.Data.Entities
         [Display(Name = "Image")]
         public string ImageUrl { get; set; }
 
+
+        // Keep record if user has changed its password before the first login
+        public bool PasswordChanged { get; set; }
+
         public string ImageFullPath
         {
             get

@@ -43,7 +43,8 @@ namespace VetManage.Web.Data
                     Email = "duartrosar@gmail.com",
                     UserName = "duartrosar@gmail.com",
                     PhoneNumber = "214658973",
-                    Address = "Rua do Cocho"
+                    Address = "Rua do Cocho",
+                    PasswordChanged = true,
                 };
 
                 var result = await _userHelper.AddUserAsync(user, "123456");
@@ -52,6 +53,12 @@ namespace VetManage.Web.Data
                 {
                     throw new InvalidOperationException("Could not create the user in seeder.");
                 }
+
+                await _userHelper.AddUserToRoleAsync(user, Roles.Admin.ToString());
+
+                var token = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
+
+                await _userHelper.ConfirmEmailAsync(user, token);
 
                 await _context.SaveChangesAsync();
             }

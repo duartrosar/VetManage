@@ -95,6 +95,7 @@ namespace VetManage.Web.Controllers
                             UserName = model.Username,
                             Address = model.OwnerViewModel.Address,
                             PhoneNumber = model.OwnerViewModel.MobileNumber,
+                            PasswordChanged = false,
                         };
 
                         var result = await _userHelper.AddUserAsync(user, model.Password);

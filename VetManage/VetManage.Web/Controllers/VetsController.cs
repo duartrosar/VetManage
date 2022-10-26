@@ -16,15 +16,18 @@ namespace VetManage.Web.Controllers
         private readonly IVetRepository _vetRepository;
         private readonly IConverterHelper _converterHelper;
         private readonly IUserHelper _userHelper;
+        private readonly IMailHelper _mailHelper;
 
         public VetsController(
             IVetRepository vetRepository,
             IConverterHelper converterHelper,
-            IUserHelper userHelper)
+            IUserHelper userHelper,
+            IMailHelper mailHelper)
         {
             _vetRepository = vetRepository;
             _converterHelper = converterHelper;
             _userHelper = userHelper;
+            _mailHelper = mailHelper;
         }
         public IActionResult Index()
         {
@@ -92,6 +95,7 @@ namespace VetManage.Web.Controllers
                             UserName = model.Username,
                             Address = model.VetViewModel.Address,
                             PhoneNumber = model.VetViewModel.MobileNumber,
+                            PasswordChanged = false,
                         };
 
                         var result = await _userHelper.AddUserAsync(user, model.Password);
@@ -117,6 +121,27 @@ namespace VetManage.Web.Controllers
                         var vet = _converterHelper.ToVet(model.VetViewModel, true, path);
 
                         await _vetRepository.CreateAsync(vet);
+
+                        // Send confirmation and change password email
+                        string myToken = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
+                        string tokenLink = Url.Action("ConfirmEmail", "Account", new
+                        {
+                            userId = user.Id,
+                            token = myToken,
+                        }, protocol: HttpContext.Request.Scheme);
+
+                        Response response = _mailHelper.SendEmail(
+                            model.Username,
+                            "Email Confirmation",
+                            $"<h1>Email Confirmation</h1>" +
+                            $"To allow the user, " +
+                            $"plase click in this link:</br></br><a href = \"{tokenLink}\">Confirm Email</a>");
+
+                        if (response.IsSuccess)
+                        {
+                            ViewBag.Message = "Confirmation email has been sent";
+                            return RedirectToAction(nameof(Index));
+                        }
 
                         return RedirectToAction(nameof(Index));
                         // TODO: Vet could not be created

@@ -54,6 +54,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="MailKit" Version="3.4.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.17" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.17" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.17" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.17" />
@@ -68,6 +70,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\images\owners\" />
+    <Folder Include="wwwroot\images\pets\" />
     <Folder Include="wwwroot\images\vets\" />
     <Folder Include="wwwroot\lib\bootstrap\" />
   </ItemGroup>
