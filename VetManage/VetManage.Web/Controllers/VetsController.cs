@@ -123,19 +123,23 @@ namespace VetManage.Web.Controllers
                         await _vetRepository.CreateAsync(vet);
 
                         // Send confirmation and change password email
-                        string myToken = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
-                        string tokenLink = Url.Action("ConfirmEmail", "Account", new
+                        string confirmationToken = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
+                        string passwordToken = await _userHelper.GeneratePasswordResetTokenAsync(user);
+                        string tokenLink = Url.Action(
+                            "ConfirmEmail", 
+                            "Account", new
                         {
                             userId = user.Id,
-                            token = myToken,
+                            confirmationToken = confirmationToken,
+                            passwordToken = passwordToken
+                            
                         }, protocol: HttpContext.Request.Scheme);
 
                         Response response = _mailHelper.SendEmail(
                             model.Username,
                             "Email Confirmation",
                             $"<h1>Email Confirmation</h1>" +
-                            $"To allow the user, " +
-                            $"plase click in this link:</br></br><a href = \"{tokenLink}\">Confirm Email</a>");
+                            $"To activate your account please click the link and set up a new password:</br></br><a href = \"{tokenLink}\">Confirm Account</a>");
 
                         if (response.IsSuccess)
                         {
@@ -197,7 +201,7 @@ namespace VetManage.Web.Controllers
                     user.LastName = model.LastName;
                     user.Address = model.Address;
 
-                    // Update the user so that it has an entity related to it
+                    // Update the user 
                     var response = await _userHelper.UpdateUserAsync(user);
 
                     if (response.Succeeded)
@@ -207,6 +211,8 @@ namespace VetManage.Web.Controllers
                         var vet = _converterHelper.ToVet(model, false, path);
 
                         await _vetRepository.UpdateAsync(vet);
+
+                        return RedirectToAction(nameof(Index));
                     }
                     // TODO: Vet could not be updated
                 }
@@ -221,7 +227,6 @@ namespace VetManage.Web.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
             return View(model);
         }

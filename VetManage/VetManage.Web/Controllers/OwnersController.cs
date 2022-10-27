@@ -19,15 +19,18 @@ namespace VetManage.Web.Controllers
         private readonly IOwnerRepository _ownerRepository;
         private readonly IConverterHelper _converterHelper;
         private readonly IUserHelper _userHelper;
+        private readonly IMailHelper _mailHelper;
 
         public OwnersController(
             IOwnerRepository ownerRepository,
             IConverterHelper converterHelper,
-            IUserHelper userHelper)
+            IUserHelper userHelper,
+            IMailHelper mailHelper)
         {
             _ownerRepository = ownerRepository;
             _converterHelper = converterHelper;
             _userHelper = userHelper;
+            _mailHelper = mailHelper;
         }
 
         // GET: Owners
@@ -117,8 +120,36 @@ namespace VetManage.Web.Controllers
 
                         await _ownerRepository.CreateAsync(owner);
 
+                        // Send confirmation and change password email
+                        string confirmationToken = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
+                        string passwordToken = await _userHelper.GeneratePasswordResetTokenAsync(user);
+                        string tokenLink = Url.Action(
+                            "ConfirmEmail",
+                            "Account", new
+                            {
+                                userId = user.Id,
+                                confirmationToken = confirmationToken,
+                                passwordToken = passwordToken
+
+                            }, protocol: HttpContext.Request.Scheme);
+
+                        Response response = _mailHelper.SendEmail(
+                            model.Username,
+                            "Email Confirmation",
+                            $"<h1>Email Confirmation</h1>" +
+                            $"To activate your account please click the link and set up a new password:</br></br><a href = \"{tokenLink}\">Confirm Account</a>");
+
+                        if (response.IsSuccess)
+                        {
+                            ViewBag.Message = "Confirmation email has been sent";
+                            return RedirectToAction(nameof(Index));
+                        }
+
                         return RedirectToAction(nameof(Index));
-                        // TODO: Vet could not be created
+                        // TODO: Owner could not be created
+                    } else
+                    {
+                        // TODO: Owner already exists
                     }
                 }
                 catch (Exception ex)

@@ -97,28 +97,93 @@ namespace VetManage.Web.Controllers
         }
 
 
-        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        public async Task<IActionResult> ConfirmEmail(string userId, string confirmationToken, string passwordToken)
         {
-            if(string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token))
+            if(string.IsNullOrEmpty(userId) || 
+                string.IsNullOrEmpty(confirmationToken) || 
+                string.IsNullOrEmpty(passwordToken))
             {
                 return NotFound();
             }
 
-            var user = await _userHelper.GetUserByIdAsync(userId);
-
-            if(user == null)
+            var model = new ConfirmAccountViewModel()
             {
-                return NotFound();
-            }
+                UserId = userId,
+                ConfirmationToken = confirmationToken,
+                PasswordToken = passwordToken,
+            };
 
-            var result = await _userHelper.ConfirmEmailAsync(user, token);
+            return View(model);
+        }
 
-            if (!result.Succeeded)
+        [HttpPost]
+        public async Task<IActionResult> ConfirmEmail(ConfirmAccountViewModel model)
+        {
+            if (ModelState.IsValid)
             {
-                return NotFound();
-            }
+                var user = await _userHelper.GetUserByIdAsync(model.UserId);
 
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                var result = await _userHelper.ConfirmEmailAsync(user, model.ConfirmationToken);
+
+                if (!result.Succeeded)
+                {
+                    return NotFound();
+                }
+
+                var result2 = await _userHelper.ResetPasswordAsync(user, model.PasswordToken, model.Password);
+
+                if (result2.Succeeded)
+                {
+                    try
+                    {
+                        // User has changed its password after its account was first created
+                        user.PasswordChanged = true;
+
+                        // Update the user 
+                        var response = await _userHelper.UpdateUserAsync(user);
+
+                        if (response.Succeeded)
+                        {
+                            ViewBag.Message = "Password changed and account confirmed. You may now login.";
+                            return RedirectToAction(nameof(Login));
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        throw;
+                    }
+
+                }
+            }
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            var user = await _userHelper.GetUserByEmailAsync(model.Username);
+
+            if(user != null)
+            {
+                var result = await _userHelper.ResetPasswordAsync(user, model.Token, model.Password);
+                if (result.Succeeded)
+                {
+                    this.ViewBag.Nessage = "Password reset successfull";
+                    return RedirectToAction(nameof(Login));
+                }
+
+                ViewBag.Message = "Error while resetting the password.";
+
+                return View(model);
+            }
+
+            ViewBag.Message = "User not found.";
+            return View(model);
         }
 
 
