@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,7 @@ using VetManage.Web.Models.Pets;
 
 namespace VetManage.Web.Controllers
 {
+    [Authorize]
     public class PetsController : Controller
     {
         private readonly DataContext _context;
@@ -36,22 +38,43 @@ namespace VetManage.Web.Controllers
         // GET: Pets
         public IActionResult Index()
         {
-            var owners = _ownerRepository.GetAllWithPetsAndUsers();
-            var pets = _petRepository.GetAllWithOwners();
+            return View(_petRepository
+                .GetAll()
+                .OrderBy(p => p.Name));
+        }
 
-            var ownerViewModels = _converterHelper.AllToOwnerViewModel(owners);
-            var petViewModels = _converterHelper.AllToPetViewModel(pets);
 
-            ViewData["OwnerId"] = new SelectList(ownerViewModels, "Id", "FullName");
-
-            PetsViewModel petsViewModel = new PetsViewModel
+        // GET: Vets/Create
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
             {
-                Owners = ownerViewModels,
-                Pets = petViewModels,
-                Pet = new PetViewModel()
+                // vet not found
+                return NotFound();
+            }
+
+            var pet = await _petRepository.GetWithOwnerByIdAsync(id.Value);
+
+            if (pet == null)
+            {
+                // pet not found
+                return NotFound();
+            }
+
+            var model = new PetDetailsViewModel
+            {
+                PetViewModel = _converterHelper.ToPetViewModel(pet),
+                Owner = pet.Owner
             };
 
-            return View(petsViewModel);
+
+
+            return View(model);
+        }
+
+        public IActionResult Create()
+        {
+            return View();
         }
 
         // POST: Pets/Create

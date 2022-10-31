@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -14,6 +15,7 @@ using VetManage.Web.Models.Owners;
 
 namespace VetManage.Web.Controllers
 {
+    [Authorize(Roles = "Admin,Employee")]
     public class OwnersController : Controller
     {
         private readonly IOwnerRepository _ownerRepository;
@@ -37,23 +39,42 @@ namespace VetManage.Web.Controllers
         //[Route("Owners/Index")]
         public IActionResult Index()
         {
-            var owners = _ownerRepository.GetAllWithUsers();
-            var users = _ownerRepository.GetComboUsers();
+            return View(_ownerRepository
+                .GetAll()
+                .OrderBy(o => o.FirstName)
+                .ThenBy(o => o.LastName));
+        }
 
-            RegisterOwnerViewModel registerOwnerViewModel = new RegisterOwnerViewModel()
+        // GET: Vets/Create
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
             {
-                OwnerViewModel = new OwnerViewModel(),
+                // vet not found
+                return NotFound();
+            }
+
+            var owner = await _ownerRepository.GetWithUserByIdAsync(id.Value);
+
+            if (owner == null)
+            {
+                // owner not found
+                return NotFound();
+            }
+
+            var model = new OwnerDetailsViewModel
+            {
+                OwnerViewModel = _converterHelper.ToOwnerViewModel(owner),
+                Username = owner.User.UserName,
             };
 
-            OwnersManagingViewModel ownersViewModel = new 
-                OwnersManagingViewModel()
-            {
-                Owners = _converterHelper.AllToOwnerViewModel(owners),
-                OwnerViewModel = new OwnerViewModel(),
-                RegisterOwnerViewModel = registerOwnerViewModel,
-            };
+            return View(model);
+        }
 
-            return View(ownersViewModel);
+        // GET: Vets/Create
+        public IActionResult Create()
+        {
+            return View();
         }
 
         // POST: Owners/Create
@@ -101,7 +122,10 @@ namespace VetManage.Web.Controllers
                             PasswordChanged = false,
                         };
 
-                        var result = await _userHelper.AddUserAsync(user, model.Password);
+                        // Generate random password
+                        var password = Guid.NewGuid().ToString();
+
+                        var result = await _userHelper.AddUserAsync(user, password);
 
                         if (result != IdentityResult.Success)
                         {
@@ -160,6 +184,27 @@ namespace VetManage.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // GET: Owners/Edit/5
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                // vet not found
+                return NotFound();
+            }
+
+            var owner = await _ownerRepository.GetWithUserByIdAsync(id.Value);
+
+            if (owner == null)
+            {
+                // owner not found
+                return NotFound();
+            }
+
+            var model = _converterHelper.ToOwnerViewModel(owner);
+
+            return View(model);
+        }
 
         // POST: Owners/Edit/5
         [HttpPost]
@@ -227,12 +272,15 @@ namespace VetManage.Web.Controllers
             return View(model);
         }
 
-        // POST: Owners/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int? id)
         {
-            var owner = await _ownerRepository.GetWithUserByIdAsync(id);
+            if (id == null)
+            {
+                // vet not found
+                return NotFound();
+            }
+
+            var owner = await _ownerRepository.GetWithUserByIdAsync(id.Value);
             var user = await _userHelper.GetUserByIdAsync(owner.User.Id);
 
             try
@@ -245,7 +293,7 @@ namespace VetManage.Web.Controllers
             catch (Exception ex)
             {
                 // TODO: Vet could not be deleted
-                if (!await _ownerRepository.ExistsAsync(id))
+                if (!await _ownerRepository.ExistsAsync(id.Value))
                 {
                     return NotFound();
                 }

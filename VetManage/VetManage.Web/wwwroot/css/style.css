@@ -71,27 +71,35 @@ button.accept-policy {
   position: fixed;
   left: 0;
   top: 0;
-  padding-top: 57px;
+  padding-top: 70px;
   z-index: 100;
-  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.05);
+  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.5);
   background-color: #0d1e27;
 }
 .sidebar.closed {
   width: 80px;
 }
 .sidebar.open {
-  width: 200px;
+  width: 250px;
 }
 .sidebar .sidebar-item {
   min-height: 70px;
+  color: #aaa;
 }
 .sidebar .sidebar-item:hover {
+  color: #e3008c;
+}
+.sidebar .sidebar-item:hover p {
   color: #e3008c;
 }
 .sidebar .sidebar-item.active {
   color: #e3008c;
 }
+.sidebar .sidebar-item.active p {
+  color: #e3008c;
+}
 .sidebar .sidebar-item p {
+  color: #aaa;
   font-weight: 600;
   font-size: 14px;
 }
@@ -140,60 +148,64 @@ button.accept-policy {
 .btn .feather-trash-2 {
   color: white;
 }
+.navbar {
+  height: 70px;
+}
+
 .feather-menu {
-  width: 24px;
-  height: 24px;
+  width: 16px;
+  height: 16px;
 }
 
 .feather-grid {
-  width: 24px;
-  height: 24px;
+  width: 16px;
+  height: 16px;
 }
 
 .feather-shield {
-  width: 24px;
-  height: 24px;
+  width: 16px;
+  height: 16px;
 }
 
 .feather-user {
-  width: 24px;
-  height: 24px;
+  width: 16px;
+  height: 16px;
 }
 
 .feather-shopping-cart {
-  width: 24px;
-  height: 24px;
+  width: 16px;
+  height: 16px;
 }
 
 .feather-plus-circle {
-  width: 24px;
-  height: 24px;
+  width: 16px;
+  height: 16px;
 }
 
 .feather-users {
-  width: 24px;
-  height: 24px;
+  width: 16px;
+  height: 16px;
 }
 
 .feather-calendar {
-  width: 24px;
-  height: 24px;
+  width: 16px;
+  height: 16px;
 }
 
 .feather-book-open {
-  color: white;
+  color: #aaa;
   width: 16px;
   height: 16px;
 }
 
 .feather-edit {
-  color: white;
+  color: #aaa;
   width: 16px;
   height: 16px;
 }
 
 .feather-trash-2 {
-  color: white;
+  color: #aaa;
   width: 16px;
   height: 16px;
 }
@@ -314,21 +326,21 @@ table.dataTable.table-hover > tbody > tr.selected:hover > * {
 }
 
 .content {
-  margin-left: 200px;
-  margin-top: 57px;
+  margin-left: 0;
+  margin-top: 70px;
   min-height: 90vh;
 }
 .content.open {
-  margin-left: 200px;
+  margin-left: 250px;
 }
 .content.closed {
   margin-left: 80px;
 }
 
 .image-preview {
-  width: 165px;
-  height: 180px;
-  background-position: center top;
+  width: 100%;
+  height: 100%;
+  background-position: center;
   border: 1px solid #fff;
   background-size: cover;
   background-repeat: no-repeat;

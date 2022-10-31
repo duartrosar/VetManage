@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using VetManage.Web.Data.Entities;
 using VetManage.Web.Data.Repositories;
@@ -11,6 +13,7 @@ using VetManage.Web.Models.Vets;
 
 namespace VetManage.Web.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class VetsController : Controller
     {
         private readonly IVetRepository _vetRepository;
@@ -31,26 +34,42 @@ namespace VetManage.Web.Controllers
         }
         public IActionResult Index()
         {
-            var vets = _vetRepository.GetAllWithUsers();
-            //var users = _vetRepository.GetComboUsersNoEntity();
-            var users = _vetRepository.GetComboUsers();
+            return View(_vetRepository.GetAll()
+                .OrderBy(v => v.FirstName)
+                .ThenBy(v => v.LastName));
+        }
 
-            var vetViewModels = _converterHelper.AllToVetViewModel(vets);
 
-            RegisterVetViewModel registerVetViewModel = new RegisterVetViewModel
+        // GET: Vets/Create
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
             {
-                VetViewModel = new VetViewModel(),
+                // vet not found
+                return NotFound();
+            }
+
+            var vet = await _vetRepository.GetWithUserByIdAsync(id.Value);
+
+            if (vet == null)
+            {
+                // vet not found
+                return NotFound();
+            }
+
+            var model = new VetDetailsViewModel
+            {
+                VetViewModel = _converterHelper.ToVetViewModel(vet),
+                Username = vet.User.UserName,
             };
 
-            VetsManagingViewModel vetsViewModel = new VetsManagingViewModel()
-            {
-                //Users = users,
-                Vets = vetViewModels,
-                VetViewModel = new VetViewModel(),
-                RegisterVetViewModel = registerVetViewModel,
-            };
+            return View(model);
+        }
 
-            return View(vetsViewModel);
+        // GET: Vets/Create
+        public IActionResult Create()
+        {
+            return View();
         }
 
         // POST: Vets/Create
@@ -98,7 +117,10 @@ namespace VetManage.Web.Controllers
                             PasswordChanged = false,
                         };
 
-                        var result = await _userHelper.AddUserAsync(user, model.Password);
+                        // Generate random password
+                        var password = Guid.NewGuid().ToString();
+
+                        var result = await _userHelper.AddUserAsync(user, password);
 
                         if (result != IdentityResult.Success)
                         {
@@ -164,6 +186,28 @@ namespace VetManage.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // GET: Vets/Edit/5
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if(id == null)
+            {
+                // vet not found
+                return NotFound();
+            }
+
+            var vet = await _vetRepository.GetWithUserByIdAsync(id.Value);
+
+            if(vet == null)
+            {
+                // vet not found
+                return NotFound();
+            }
+
+            var model = _converterHelper.ToVetViewModel(vet);
+
+            return View(model);
+        }
+
         // POST: Vets/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -215,6 +259,7 @@ namespace VetManage.Web.Controllers
                         return RedirectToAction(nameof(Index));
                     }
                     // TODO: Vet could not be updated
+                    ModelState.AddModelError(string.Empty, "An error ocurred whilst tryng to update the vet, please try again.");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -231,12 +276,15 @@ namespace VetManage.Web.Controllers
             return View(model);
         }
 
-        // POST: Owners/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int? id)
         {
-            var vet = await _vetRepository.GetWithUserByIdAsync(id);
+            if (id == null)
+            {
+                // vet not found
+                return NotFound();
+            }
+
+            var vet = await _vetRepository.GetWithUserByIdAsync(id.Value);
             var user = await _userHelper.GetUserByIdAsync(vet.User.Id);
 
             try
@@ -249,7 +297,7 @@ namespace VetManage.Web.Controllers
             catch (Exception ex)
             {
                 // TODO: Vet could not be deleted
-                if (!await _vetRepository.ExistsAsync(id))
+                if (!await _vetRepository.ExistsAsync(id.Value))
                 {
                     return NotFound();
                 }

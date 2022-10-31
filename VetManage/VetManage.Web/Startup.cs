@@ -78,6 +78,12 @@ namespace VetManage.Web
             services.AddScoped<IVetRepository, VetRepository>();
             services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Account/NotAuthorized";
+                options.AccessDeniedPath = "/Account/NotAuthorized";
+            });
+
             services.AddControllersWithViews();
         }
 

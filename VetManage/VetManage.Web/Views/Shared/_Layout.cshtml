@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="~/lib/jquery-timepicker/jquery.timepicker.min.css"/>
 
     <link rel="stylesheet" href="~/css/style.css" />
+    <script src="https://unpkg.com/feather-icons"></script>
     
     <!-- Scrollbar Custom CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
@@ -36,9 +37,19 @@
     }
 
     <div class="container-fluid p-0">
-        <main role="main" class="content">
-            @RenderBody()
-        </main>
+        @if (User.Identity.IsAuthenticated)
+        {
+            <main role="main" class="content open">
+                @RenderBody()
+            </main>
+        }
+        else
+        {
+            <main role="main" class="content">
+                @RenderBody()
+            </main>
+        }
+        
     </div>
 
     <footer class="footer text-muted">
@@ -51,8 +62,7 @@
     <script src="~/lib/bootstrap/js/bootstrap.js"></script>
     <script src="~/js/Form.js" asp-append-version="true"></script>
     <script src="~/js/Sidebar.js" asp-append-version="true"></script>
-    <script src="https://unpkg.com/feather-icons"></script>
-
+    
     <script type="text/javascript" src="~/lib/datatables/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript" src="~/lib/datatables.net-bs5/dataTables.bootstrap5.min.js"></script>
     <script type="text/javascript" src="~/lib/jquery-timepicker/jquery.timepicker.min.js"></script>

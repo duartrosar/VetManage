@@ -1,0 +1,70 @@
+﻿@model VetManage.Web.Models.Pets.PetDetailsViewModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+
+<div class="content-container p-3">
+    <div class="dark-5">
+        <div class="p-3 d-flex justify-content-between align-items-center border-bottom">
+            <a asp-action="Index" class="btn btn-outline-light">Back</a>
+            <h2>Vet Details</h2>
+        </div>
+        <div class="p-3">
+            <div class="flex-fill" method="post" style="max-width: 1200px;">
+                <div class="row">
+                    <div class="col">
+                        <div class="h-100">
+                            <div class="image-preview border-opacity-50 d-flex justify-content-center align-items-center" style="background-image: url(@Url.Content(@Model.PetViewModel.ImageUrl))">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="mb-4">
+                            <label asp-for="PetViewModel.Name">Name</label>
+                            <input id="firstName" asp-for="PetViewModel.Name" class="form-control"readonly/>
+                        </div>
+                        <div class="mb-4">
+                            <label asp-for="PetViewModel.Type">Species</label>
+                            <input id="lastName" asp-for="PetViewModel.Type" class="form-control"readonly/>
+                        </div>
+                        </div>
+                        <div class="mb-4">
+                            <label asp-for="PetViewModel.Breed">Breed</label>
+                            <input id="gender" asp-for="PetViewModel.Breed" class="form-control"readonly/>
+                        </div>
+                        <div class="mb-4">
+                            <label asp-for="PetViewModel.Gender">Gender</label>
+                            <input id="gender" asp-for="PetViewModel.Gender" class="form-control"readonly/>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="mb-4">
+                            <label asp-for="PetViewModel.DateOfBirth">DateOfBirth</label>
+                            <input id="dateOfBirth" asp-for="PetViewModel.DateOfBirth" class="form-control"readonly/>
+                        </div>
+                        <div class="mb-4">
+                            <label asp-for="PetViewModel.Weight">Weight</label>
+                            <input id="address" asp-for="PetViewModel.Weight" class="form-control" readonly/>
+                        </div>
+                        <div class="mb-4">
+                            <label asp-for="PetViewModel.Height">Height</label>
+                            <input id="mobileNumber" asp-for="PetViewModel.Height" class="form-control" readonly/>
+                        </div>
+                        <div class="mb-4">
+                            <label asp-for="PetViewModel.Length">Length</label>
+                            <input id="mobileNumber" asp-for="PetViewModel.Length" class="form-control" readonly/>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a asp-action="Edit" asp-route-id="@Model.PetViewModel.Id" class="btn btn-primary">Edit</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

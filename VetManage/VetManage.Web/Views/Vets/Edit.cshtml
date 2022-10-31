@@ -1,0 +1,111 @@
+﻿@model VetManage.Web.Models.Vets.VetViewModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<div class="content-container p-3">
+    <div class="dark-5">
+        <div class="p-3 d-flex justify-content-between align-items-center border-bottom">
+            <a asp-action="Index" class="btn btn-outline-light">Back</a>
+            <h2>Edit Vet</h2>
+        </div>
+        <div class="p-3">
+            <form asp-action="Edit" class="flex-fill" method="post" style="max-width: 1200px;" id="registerVetsForm" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly"></div>
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="UserId" />
+                <input asp-for="ImageUrl" id="imageUrl" class="form-control" style="visibility: hidden;"/>
+                <div class="row">
+                    <div class="col">
+                        <div class="h-100">
+                            @*<label asp-for="ImageFile" class="control-label"></label>*@
+                            <div class="image-preview border-opacity-50 d-flex justify-content-center align-items-center" style="background-image: url(@Url.Content(@Model.ImageUrl))">
+                                <label class="btn btn-outline-light border-0 d-flex flex-column pt-1">
+                                    <i data-feather="upload" stroke-width="1"></i>
+                                    <input asp-for="ImageFile" class="img" id="imageFile" type="file" style="width: 0px;height: 0px;overflow: hidden;"/>
+                                </label>
+                            </div>
+                            <span asp-validation-for="ImageUrl" class="text-danger" id="imgUrlValidation"></span>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="mb-4">
+                            <label asp-for="FirstName">First Name</label>
+                            <input id="firstName" asp-for="FirstName" class="form-control"/>
+                            <span asp-validation-for="FirstName" class="text-danger"></span>
+                        </div>
+                        <div class="mb-4">
+                            <label asp-for="LastName">Last Name</label>
+                            <input id="lastName" asp-for="LastName" class="form-control"/>
+                            <span asp-validation-for="LastName" class="text-danger"></span>
+                        </div>
+                        <div class="mb-4">
+                            <label asp-for="Gender">Gender</label>
+                            <input id="gender" asp-for="Gender" class="form-control"/>
+                            <span asp-validation-for="Gender" class="text-danger"></span>
+                        </div>
+                        <div class="mb-4">
+                            <label asp-for="DateOfBirth">DateOfBirth</label>
+                            <input id="dateOfBirth" asp-for="DateOfBirth" class="form-control"/>
+                            <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col">                        
+                        <div class="mb-4">
+                            <label asp-for="Address">Address</label>
+                            <input id="address" asp-for="Address" class="form-control" />
+                            <span asp-validation-for="Address" class="text-danger"></span>
+                        </div>
+                        <div class="mb-4">
+                            <label asp-for="MobileNumber">Mobile Number</label>
+                            <input id="mobileNumber" asp-for="MobileNumber" class="form-control" />
+                            <span asp-validation-for="MobileNumber" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a asp-action="Index" class="btn btn-danger">Cancel</a>
+                        <button type="submit" class="btn btn-success">Confirm</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script type="text/javascript">
+        // Preview image
+            $(function() {
+                $(document).on("change","#imageFile", function()
+                {
+    		        let uploadFile = $(this);
+                    let files = !!this.files ? this.files : [];
+                    if (!files.length || !window.FileReader) return; // no file selected, or no FileReader support
+ 
+                    if (/^image/.test( files[0].type)){ // only image file
+                        let reader = new FileReader(); // instance of the FileReader
+                        reader.readAsDataURL(files[0]); // read the local file
+ 
+                        reader.onloadend = function(){ 
+                            // set image data as background of div
+                            $('.image-preview').css("background-image", "url("+this.result+")");
+
+                            // set the image url property
+                            $('#imageUrl').val(`${files[0].name}`);
+
+                            // remove validation span
+                            $('#imgUrlValidation').removeClass("field-validation-error");
+                            $('#imgUrlValidation').addClass("field-validation-valid");
+                            $('#imageUrl-error').remove();
+                        }
+                    }
+      
+                });
+            });
+    </script>
+}

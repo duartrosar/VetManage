@@ -14,5 +14,7 @@ namespace VetManage.Web.Models.Vets
 
         [Display(Name = "Image")]
         public IFormFile ImageFile { get; set; }
+
+
     }
 }

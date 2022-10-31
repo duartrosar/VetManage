@@ -9,13 +9,5 @@ namespace VetManage.Web.Models.Owners
         [Required]
         [DataType(DataType.EmailAddress)]
         public string Username { get; set; }
-
-        [Required]
-        [MinLength(6)]
-        public string Password { get; set; }
-
-        [Required]
-        [Compare("Password")]
-        public string Confirm { get; set; }
     }
 }

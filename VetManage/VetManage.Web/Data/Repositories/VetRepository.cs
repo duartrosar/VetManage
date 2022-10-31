@@ -18,7 +18,10 @@ namespace VetManage.Web.Data.Repositories
 
         public IQueryable GetAllWithUsers()
         {
-            return _context.Vets.Include(v => v.User);
+            return _context.Vets
+                .Include(v => v.User)
+                .OrderBy(v => v.FirstName)
+                .ThenBy(v => v.LastName);
         }
 
         public IEnumerable<SelectListItem> GetComboUsersNoEntity()

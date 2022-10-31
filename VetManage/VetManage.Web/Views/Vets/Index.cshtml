@@ -1,5 +1,5 @@
 ﻿@using Newtonsoft.Json
-@model VetManage.Web.Models.Vets.VetsManagingViewModel
+@model IEnumerable<VetManage.Web.Data.Entities.Vet>
 
 @{
     ViewData["Title"] = "Index";
@@ -9,7 +9,7 @@
         <div class="d-flex d-row justify-content-between mb-3">
             <h1>Vets</h1>
             <div class="m-1">
-                <button type="button" id="btnNewVet" class="btn btn-outline-light">New Vet</button>
+                <a asp-action="Create" class="btn btn-outline-light">New Vet</a>
             </div>
         </div>
 
@@ -18,58 +18,58 @@
                 <thead>
                     <tr>
                         <th>
-                            @Html.DisplayNameFor(model => model.VetViewModel.ImageUrl)
+                            @Html.DisplayNameFor(model => model.ImageUrl)
                         </th>
                         <th>
-                            @Html.DisplayNameFor(model => model.VetViewModel.FirstName)
+                            @Html.DisplayNameFor(model => model.FirstName)
                         </th>
                         <th>
-                            @Html.DisplayNameFor(model => model.VetViewModel.LastName)
+                            @Html.DisplayNameFor(model => model.LastName)
                         </th>
                         <th class="d-none d-lg-table-cell">
-                            @Html.DisplayNameFor(model => model.VetViewModel.DateOfBirth)
+                            @Html.DisplayNameFor(model => model.DateOfBirth)
                         </th>
                         <th class="d-none d-sm-table-cell">
-                            @Html.DisplayNameFor(model => model.VetViewModel.MobileNumber)
+                            @Html.DisplayNameFor(model => model.MobileNumber)
                         </th>
                         <th class="d-none d-md-table-cell">
-                            @Html.DisplayNameFor(model => model.VetViewModel.Address)
+                            @Html.DisplayNameFor(model => model.Address)
                         </th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
-            @foreach (var item in Model.Vets) {
+            @foreach (var item in Model) {
                     <tr>
-                        <td>
+                        <td class="align-middle">
                             <div class="frame" style="background-image: url(@Url.Content(item.ImageFullPath))"></div>
                         </td>
-                        <td>
+                        <td class="align-middle">
                             @Html.DisplayFor(modelItem => item.FirstName)
                         </td>
-                        <td>
+                        <td class="align-middle">
                             @Html.DisplayFor(modelItem => item.LastName)
                         </td>
-                        <td class="d-none d-lg-table-cell">
+                        <td class="d-none d-lg-table-cell align-middle">
                             @Html.DisplayFor(modelItem => item.DateOfBirth)
                         </td>
-                        <td class="d-none d-sm-table-cell">
+                        <td class="d-none d-sm-table-cell align-middle">
                             @Html.DisplayFor(modelItem => item.MobileNumber)
                         </td>
-                        <td class="d-none d-md-table-cell">
+                        <td class="d-none d-md-table-cell align-middle">
                             @Html.DisplayFor(modelItem => item.Address)
                         </td>
-                        <td>
-                            <div class="w-100 d-grid d-md-flex justify-content-md-end">
-                                <button type="button" data-action="read" data-vet="@JsonConvert.SerializeObject(item)" data-id="@item.Id" class="btn bg-dark btn-action me-1">
+                        <td class="align-middle">
+                            <div class="w-100 d-grid d-md-flex justify-content-md-end" id="@item.Id">
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn bg-dark btn-action me-1">
                                     <i data-feather="book-open" stroke-width="1"></i>
-                                </button>
-                                <button type="button" data-action="edit" data-vet="@JsonConvert.SerializeObject(item)" data-id="@item.Id" class="btn bg-dark btn-action me-1">
+                                </a>
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn bg-dark btn-action me-1">
                                     <i data-feather="edit" stroke-width="1"></i>
-                                </button>
-                                <button type="button" data-action="delete" data-vet="@JsonConvert.SerializeObject(item)" data-id="@item.Id" class="btn bg-dark btn-action me-1">
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn bg-dark btn-action me-1" id="btnDeleteVet">
                                     <i data-feather="trash-2" stroke-width="1"></i>
-                                </button>
+                                </a>
                             </div>
                         </td>
                     </tr>
@@ -80,15 +80,30 @@
     </div>
 </div>
 
-<partial name="_RegisterModal" model="Model.RegisterVetViewModel" />
-<partial name="_EditModal" model="Model.VetViewModel" />
+<div class="modal fade" id="deleteDialog" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteDialogLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark border border-light">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="deleteDialogLabel">Delete vet?</h1>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this vet?
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btnNoDelete" class="btn btn-danger" data-bs-dismiss="modal">No</button>
+                <button type="button" id="btnYesDelete" class="btn btn-success">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
     <script type="text/javascript">
         $(document).ready(function() {
-
+            let id = 0;
             let sidebar = $(".sidebar");
             let content = $(".content");
             let menuState = localStorage.getItem("menuState");
@@ -100,72 +115,21 @@
             $("#vetsNav").addClass("active");
             $("#vetsNav").addClass("bg-dark");
 
-            $(".btn-action").click(function() {
-                // remove errors from ui
-                $("#registerVetsForm").find('.field-validation-error span').empty();
-
-                let vet = $(this).data("vet");
-                let action = $(this).data("action");
-                let title = $("#vetFormTitle");
-
-                // Hide or Show the buttons depending on the action
-                let readonly = organizeButtons(action, "Vet", title);
-
-                // Set the fields to readonly or not depending on the action
-                setReadonly(inputs, readonly);
-
-                // Set the value of vet being read, edited or deleted
-                populateForm(inputs, vet);
-
-                // Set the image preview field to the image of the selected pet
-                $('.image-preview').css("background-image", `url("${vet.ImageFullPath}")`);
-
-                $("#editVet").modal("show");
-
+            // Delete
+            $("a[id*=btnDeleteVet]").click(function() {
+                id = $(this).parent()[0].id;
+                console.log($(this).parent()[0].id);
+                $("#deleteDialog").modal("show");
                 return false;
             });
 
-            $("#userSelect").change(function() {
-                $.ajax({
-                    url: '@Url.Action("GetUserAsync","Vets")',
-                    type: 'POST',
-                    dataType: 'json',
-                    data: { userId: $("#userSelect").val() },
-                    success: function(user) {
-
-                        if(user == null){
-                            console.log("No user selected");
-                            clearInputs();
-                            return;
-                        }
-
-                        $("#firstName").val(user.firstName);
-                        $("#lastName").val(user.lastName);
-                        $("#mobileNumber").val(user.phoneNumber);
-                        $("#address").val(user.address);
-                    },
-                    error: function(ex) {
-                        debugger;
-                        alert('Failed to retrieve user.\n' + ex)
-                    }
-                });
+            $("#btnNoDelete").click(function() {
+                $("#deleteDialog").modal("hide");
+                return false;
             });
 
-            $("#enableEditVet").click(function() {
-                let title = $("#vetFormTitle");
-                enableEdit("Vet", title)
-                setReadonly(inputs, false);
-            });
-
-            $("#btnNewVet").click(function() {
-                // remove errors from ui
-                $("#registerVetsForm").find('.field-validation-error span').empty();
-
-                let title = $("#vetFormTitle");
-                setReadonly(inputs, false);
-                newOrganizeButtons("Vet", title);
-                clearInputs(inputs);
-                $("#registerVet").modal("show");
+            $("#btnYesDelete").click(function() {
+                window.location.href = "/Vets/Delete/" + id;
             });
 
             // Datatable
@@ -178,35 +142,6 @@
                     table.$('tr.selected').removeClass('selected');
                     $(this).addClass('selected');
                 }
-            });
-
-            // Preview image
-            $(function() {
-                $(document).on("change","#imageFile", function()
-                {
-    		        let uploadFile = $(this);
-                    let files = !!this.files ? this.files : [];
-                    if (!files.length || !window.FileReader) return; // no file selected, or no FileReader support
- 
-                    if (/^image/.test( files[0].type)){ // only image file
-                        let reader = new FileReader(); // instance of the FileReader
-                        reader.readAsDataURL(files[0]); // read the local file
- 
-                        reader.onloadend = function(){ 
-                            // set image data as background of div
-                            $('.image-preview').css("background-image", "url("+this.result+")");
-
-                            // set the image url property
-                            $('#imageUrl').val(`${files[0].name}`);
-
-                            // remove validation span
-                            $('#imgUrlValidation').removeClass("field-validation-error");
-                            $('#imgUrlValidation').addClass("field-validation-valid");
-                            $('#imageUrl-error').remove();
-                        }
-                    }
-      
-                });
             });
         });
     </script>
