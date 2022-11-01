@@ -1,0 +1,75 @@
+﻿@model IEnumerable<VetManage.Web.Data.Entities.Owner>
+
+<div class="modal fade" id="chooseOwner" tabindex="-1" role="dialog" aria-labelledby="chooseOwnerTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" style="display:table;">
+        <div class="modal-content bg-dark">
+            <div class="modal-header bg-dark">
+                <div class="container">
+                    <div class="d-flex align-items-center justify-content-center">
+                        <h5 class="modal-title" id="chooseOwnerTitle">Choose an Owner</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body bg-dark">
+                <div class="table-responsive" style="min-width: 1200px;">
+                    <table class="table table-hover table-striped" id="ownersTable">
+                        <thead>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.ImageUrl)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.FirstName)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.LastName)
+                                </th>
+                                <th class="d-none d-lg-table-cell">
+                                    @Html.DisplayNameFor(model => model.DateOfBirth)
+                                </th>
+                                <th class="d-none d-sm-table-cell">
+                                    @Html.DisplayNameFor(model => model.MobileNumber)
+                                </th>
+                                <th class="d-none d-md-table-cell">
+                                    @Html.DisplayNameFor(model => model.Address)
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model) {
+                                <tr>
+                                    <td class="align-middle">
+                                        <div class="frame" style="background-image: url(@Url.Content(item.ImageFullPath))"></div>
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => item.FirstName)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => item.LastName)
+                                    </td>
+                                    <td class="d-none d-lg-table-cell align-middle">
+                                        @Html.DisplayFor(modelItem => item.DateOfBirth)
+                                    </td>
+                                    <td class="d-none d-sm-table-cell align-middle">
+                                        @Html.DisplayFor(modelItem => item.MobileNumber)
+                                    </td>
+                                    <td class="d-none d-md-table-cell align-middle">
+                                        @Html.DisplayFor(modelItem => item.Address)
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer bg-dark">
+                <div class="container">
+                    <div class="d-flex align-items-end justify-content-center">
+                        <button type="button" id="confirmSelection" class="btn btn-outline-light">Confirm Selection</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

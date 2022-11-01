@@ -11,6 +11,7 @@ using VetManage.Web.Data;
 using VetManage.Web.Data.Entities;
 using VetManage.Web.Data.Repositories;
 using VetManage.Web.Helpers;
+using VetManage.Web.Models.Owners;
 using VetManage.Web.Models.Pets;
 
 namespace VetManage.Web.Controllers
@@ -74,7 +75,19 @@ namespace VetManage.Web.Controllers
 
         public IActionResult Create()
         {
-            return View();
+            var pets = _petRepository.GetAllWithOwners();
+            var owners = _ownerRepository.GetAllWithUsers();
+
+            //var petViewModels = (ICollection<PetViewModel>)_converterHelper.AllToPetViewModel(pets);
+            //var ownerViewModels = (ICollection<OwnerViewModel>)_converterHelper.AllToOwnerViewModel(owners);
+
+            PetsManagingViewModel petsViewModel = new PetsManagingViewModel
+            {
+                Pets = (ICollection<PetViewModel>)_converterHelper.AllToPetViewModel(pets),
+                Owners = (ICollection<OwnerViewModel>)_converterHelper.AllToOwnerViewModel(owners),
+            };
+
+            return View(petsViewModel);
         }
 
         // POST: Pets/Create

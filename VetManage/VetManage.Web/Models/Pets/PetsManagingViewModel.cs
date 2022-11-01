@@ -3,12 +3,12 @@ using VetManage.Web.Models.Owners;
 
 namespace VetManage.Web.Models.Pets
 {
-    public class PetsViewModel
+    public class PetsManagingViewModel
     {
         public ICollection<OwnerViewModel> Owners { get; set; }
 
         public ICollection<PetViewModel> Pets { get; set; }
 
-        public PetViewModel Pet { get; set; }
+        public PetViewModel PetViewModel { get; set; }
     }
 }

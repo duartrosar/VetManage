@@ -1,4 +1,4 @@
-﻿@model VetManage.Web.Models.Pets.PetViewModel
+﻿@model VetManage.Web.Models.Pets.PetsManagingViewModel
 
 @{
     ViewData["Title"] = "New Pet";
@@ -13,61 +13,68 @@
         <div class="p-3">
             <form asp-action="Create" class="flex-fill" method="post" style="max-width: 1200px;" id="registerVetsForm" enctype="multipart/form-data">
                 <div asp-validation-summary="ModelOnly"></div>
-                <input asp-for="ImageUrl" id="imageUrl" class="form-control" style="visibility: hidden;"/>
+                <input asp-for="PetViewModel.ImageUrl" id="imageUrl" class="form-control" style="visibility: hidden;"/>
+                <div class="row">
+                    <div class="mb-4">
+                        <label asp-for="PetViewModel.Name">Owner</label>
+                        <input type="text" id="owner" class="form-control"/>
+                        <span asp-validation-for="PetViewModel.Owner.Id" class="text-danger"></span>
+                    </div>
+                </div>
                 <div class="row">
                     <div class="col">
                         <div class="h-100">
                             <div class="image-preview border-opacity-50 d-flex justify-content-center align-items-center" style="background-image: url('@Url.Content("~/images/noimage.png")')">
                                 <label class="btn btn-outline-light border-0 d-flex flex-column pt-1">
                                     <i data-feather="upload" stroke-width="1"></i>
-                                    <input asp-for="ImageFile" class="img" id="imageFile" type="file" style="width: 0px;height: 0px;overflow: hidden;"/>
+                                    <input asp-for="PetViewModel.ImageFile" class="img" id="imageFile" type="file" style="width: 0px;height: 0px;overflow: hidden;"/>
                                 </label>
                             </div>
-                            <span asp-validation-for="ImageUrl" class="text-danger" id="imgUrlValidation"></span>
+                            <span asp-validation-for="PetViewModel.ImageUrl" class="text-danger" id="imgUrlValidation"></span>
                         </div>
                     </div>
                     <div class="col">
                         <div class="mb-4">
-                            <label asp-for="Name">Name</label>
-                            <input id="firstName" asp-for="Name" class="form-control"/>
-                            <span asp-validation-for="Name" class="text-danger"></span>
+                            <label asp-for="PetViewModel.Name">Name</label>
+                            <input id="firstName" asp-for="PetViewModel.Name" class="form-control"/>
+                            <span asp-validation-for="PetViewModel.Name" class="text-danger"></span>
                         </div>
                         <div class="mb-4">
-                            <label asp-for="Type">Species</label>
-                            <input id="lastName" asp-for="Type" class="form-control"/>
-                            <span asp-validation-for="Type" class="text-danger"></span>
+                            <label asp-for="PetViewModel.Type">Species</label>
+                            <input id="lastName" asp-for="PetViewModel.Type" class="form-control"/>
+                            <span asp-validation-for="PetViewModel.Type" class="text-danger"></span>
                         </div>
                         <div class="mb-4">
-                            <label asp-for="Breed">Breed</label>
-                            <input id="username" asp-for="Breed" class="form-control" />
-                            <span asp-validation-for="Breed" class="text-danger"></span>
+                            <label asp-for="PetViewModel.Breed">Breed</label>
+                            <input id="username" asp-for="PetViewModel.Breed" class="form-control" />
+                            <span asp-validation-for="PetViewModel.Breed" class="text-danger"></span>
                         </div>
                         <div class="mb-4">
-                            <label asp-for="Gender">Gender</label>
-                            <input id="gender" asp-for="Gender" class="form-control"/>
-                            <span asp-validation-for="Gender" class="text-danger"></span>
+                            <label asp-for="PetViewModel.Gender">Gender</label>
+                            <input id="gender" asp-for="PetViewModel.Gender" class="form-control"/>
+                            <span asp-validation-for="PetViewModel.Gender" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col">
                         <div class="mb-4">
-                            <label asp-for="DateOfBirth">DateOfBirth</label>
-                            <input id="dateOfBirth" asp-for="DateOfBirth" class="form-control"/>
-                            <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                            <label asp-for="PetViewModel.DateOfBirth">DateOfBirth</label>
+                            <input id="dateOfBirth" asp-for="PetViewModel.DateOfBirth" class="form-control"/>
+                            <span asp-validation-for="PetViewModel.DateOfBirth" class="text-danger"></span>
                         </div>
                         <div class="mb-4">
-                            <label asp-for="Weight">Weight</label>
-                            <input id="address" asp-for="Weight" class="form-control" />
-                            <span asp-validation-for="Weight" class="text-danger"></span>
+                            <label asp-for="PetViewModel.Weight">Weight</label>
+                            <input id="address" asp-for="PetViewModel.Weight" class="form-control" />
+                            <span asp-validation-for="PetViewModel.Weight" class="text-danger"></span>
                         </div>
                         <div class="mb-4">
-                            <label asp-for="Height">Height</label>
-                            <input id="mobileNumber" asp-for="Height" class="form-control" />
-                            <span asp-validation-for="Height" class="text-danger"></span>
+                            <label asp-for="PetViewModel.Height">Height</label>
+                            <input id="mobileNumber" asp-for="PetViewModel.Height" class="form-control" />
+                            <span asp-validation-for="PetViewModel.Height" class="text-danger"></span>
                         </div>
                         <div class="mb-4">
-                            <label asp-for="Length">Length</label>
-                            <input id="mobileNumber" asp-for="Length" class="form-control" />
-                            <span asp-validation-for="Length" class="text-danger"></span>
+                            <label asp-for="PetViewModel.Length">Length</label>
+                            <input id="mobileNumber" asp-for="PetViewModel.Length" class="form-control" />
+                            <span asp-validation-for="PetViewModel.Length" class="text-danger"></span>
                         </div>
                     </div>
                 </div>
@@ -82,10 +89,36 @@
     </div>
 </div>
 
+<partial name="_OwnersModal" model="Model.Owners" />
+
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
     <script type="text/javascript">
+        $(document).ready(function() {
+            // Datatable
+            let table = $("#ownersTable").DataTable({
+                "pageLength": 5
+            });
+
+            $('#ownersTable tbody').on('click', 'tr', function () {
+                if ($(this).hasClass('selected')) {
+                    $(this).removeClass('selected');
+                } else {
+                    table.$('tr.selected').removeClass('selected');
+                    $(this).addClass('selected');
+                }
+            });
+
+            $("#owner").focus(function(){
+                $("#chooseOwner").modal("show");
+            });
+
+            $("#chooseOwner").on('hide.bs.modal', function(e){
+                console.log(e);
+            });
+        });
+
         // Preview image
             $(function() {
                 $(document).on("change","#imageFile", function()
