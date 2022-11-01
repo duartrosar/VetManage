@@ -39,9 +39,7 @@ namespace VetManage.Web.Controllers
         // GET: Pets
         public IActionResult Index()
         {
-            return View(_petRepository
-                .GetAll()
-                .OrderBy(p => p.Name));
+            return View(_petRepository.GetAllWithOwners());
         }
 
 
@@ -62,37 +60,20 @@ namespace VetManage.Web.Controllers
                 return NotFound();
             }
 
-            var model = new PetDetailsViewModel
-            {
-                PetViewModel = _converterHelper.ToPetViewModel(pet),
-                Owner = pet.Owner
-            };
-
-
+            var model = _converterHelper.ToPetViewModel(pet);
 
             return View(model);
         }
 
         public IActionResult Create()
         {
-            var pets = _petRepository.GetAllWithOwners();
             var owners = _ownerRepository.GetAllWithUsers();
 
-            //var petViewModels = (ICollection<PetViewModel>)_converterHelper.AllToPetViewModel(pets);
-            //var ownerViewModels = (ICollection<OwnerViewModel>)_converterHelper.AllToOwnerViewModel(owners);
+            ViewData["Owners"] = _converterHelper.AllToOwnerViewModel(owners);
 
-            PetsManagingViewModel petsViewModel = new PetsManagingViewModel
-            {
-                Pets = (ICollection<PetViewModel>)_converterHelper.AllToPetViewModel(pets),
-                Owners = (ICollection<OwnerViewModel>)_converterHelper.AllToOwnerViewModel(owners),
-            };
-
-            return View(petsViewModel);
+            return View();
         }
 
-        // POST: Pets/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(PetViewModel model)
@@ -131,9 +112,34 @@ namespace VetManage.Web.Controllers
                 // TODO: Pet could not be created
             }
 
-            return RedirectToAction(nameof(Index));
+            return View(model);
         }
 
+        // GET: Vets/Edit
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                // vet not found
+                return NotFound();
+            }
+
+            var pet = await _petRepository.GetWithOwnerByIdAsync(id.Value);
+
+            if (pet == null)
+            {
+                // pet not found
+                return NotFound();
+            }
+
+            var owners = _ownerRepository.GetAllWithUsers();
+
+            ViewData["Owners"] = _converterHelper.AllToOwnerViewModel(owners);
+
+            var model = _converterHelper.ToPetViewModel(pet);
+
+            return View(model);
+        }
 
         // POST: Pets/Edit/5
         [HttpPost]
@@ -190,15 +196,34 @@ namespace VetManage.Web.Controllers
             return View(model);
         }
 
-        // POST: Pets/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(int id)
-        {
-            var pet = await _petRepository.GetByIdAsync(id);
 
-            await _petRepository.DeleteAsync(pet);
-            return RedirectToAction(nameof(Index));
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                // vet not found
+                return NotFound();
+            }
+
+            var pet = await _petRepository.GetByIdAsync(id.Value);
+
+            try
+            {
+                await _petRepository.DeleteAsync(pet);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception)
+            {
+                if (!await _petRepository.ExistsAsync(id.Value))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+                throw;
+            }
         }
     }
 }

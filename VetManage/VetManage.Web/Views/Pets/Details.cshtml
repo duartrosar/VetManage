@@ -1,68 +1,101 @@
-﻿@model VetManage.Web.Models.Pets.PetDetailsViewModel
+﻿@model VetManage.Web.Models.Pets.PetViewModel
 
 @{
     ViewData["Title"] = "Details";
 }
 
-
 <div class="content-container p-3">
     <div class="dark-5">
         <div class="p-3 d-flex justify-content-between align-items-center border-bottom">
             <a asp-action="Index" class="btn btn-outline-light">Back</a>
-            <h2>Vet Details</h2>
+            <h2>Pet Details</h2>
         </div>
         <div class="p-3">
-            <div class="flex-fill" method="post" style="max-width: 1200px;">
+            <div class="flex-fill" style="max-width: 1200px;">
+                <div asp-validation-summary="ModelOnly"></div>
+                <div class="row">
+                    <div class="col">
+                        <div class="mb-4">
+                            <label asp-for="OwnerId">Owner Id</label>
+                            <input asp-for="OwnerId" type="text" id="ownerId" class="form-control" readonly/>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="mb-4">
+                            <label asp-for="Owner.FirstName">Owner's First Name</label>
+                            <input asp-for="Owner.FirstName" type="text" class="form-control" readonly/>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="mb-4">
+                            <label asp-for="Owner.LastName">Owner's Last Name</label>
+                            <input asp-for="Owner.LastName" type="text" class="form-control" readonly/>
+                        </div>
+                    </div>
+                </div>
                 <div class="row">
                     <div class="col">
                         <div class="h-100">
-                            <div class="image-preview border-opacity-50 d-flex justify-content-center align-items-center" style="background-image: url(@Url.Content(@Model.PetViewModel.ImageUrl))">
+                            <div class="image-preview border-opacity-50 d-flex justify-content-center align-items-center" style="background-image: url(@Url.Content(@Model.ImageUrl))">
+                                <label class="btn btn-outline-light border-0 d-flex flex-column pt-1">
+                                    <i data-feather="upload" stroke-width="1"></i>
+                                    <input asp-for="ImageFile" class="img" id="imageFile" type="file" style="width: 0px;height: 0px;overflow: hidden;" readonly/>
+                                </label>
                             </div>
+                            <span asp-validation-for="ImageUrl" class="text-danger" id="imgUrlValidation"></span>
                         </div>
                     </div>
                     <div class="col">
                         <div class="mb-4">
-                            <label asp-for="PetViewModel.Name">Name</label>
-                            <input id="firstName" asp-for="PetViewModel.Name" class="form-control"readonly/>
+                            <label asp-for="Name">Name</label>
+                            <input asp-for="Name" class="form-control" readonly/>
+                            <span asp-validation-for="Name" class="text-danger"></span>
                         </div>
                         <div class="mb-4">
-                            <label asp-for="PetViewModel.Type">Species</label>
-                            <input id="lastName" asp-for="PetViewModel.Type" class="form-control"readonly/>
-                        </div>
-                        </div>
-                        <div class="mb-4">
-                            <label asp-for="PetViewModel.Breed">Breed</label>
-                            <input id="gender" asp-for="PetViewModel.Breed" class="form-control"readonly/>
+                            <label asp-for="Type">Species</label>
+                            <input asp-for="Type" class="form-control" readonly/>
+                            <span asp-validation-for="Type" class="text-danger"></span>
                         </div>
                         <div class="mb-4">
-                            <label asp-for="PetViewModel.Gender">Gender</label>
-                            <input id="gender" asp-for="PetViewModel.Gender" class="form-control"readonly/>
+                            <label asp-for="Breed">Breed</label>
+                            <input asp-for="Breed" class="form-control"  readonly/>
+                            <span asp-validation-for="Breed" class="text-danger"></span>
+                        </div>
+                        <div class="mb-4">
+                            <label asp-for="Gender">Gender</label>
+                            <input asp-for="Gender" class="form-control" readonly/>
+                            <span asp-validation-for="Gender" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col">
                         <div class="mb-4">
-                            <label asp-for="PetViewModel.DateOfBirth">DateOfBirth</label>
-                            <input id="dateOfBirth" asp-for="PetViewModel.DateOfBirth" class="form-control"readonly/>
+                            <label asp-for="DateOfBirth">DateOfBirth</label>
+                            <input id="dateOfBirth" asp-for="DateOfBirth" class="form-control" readonly/>
+                            <span asp-validation-for="DateOfBirth" class="text-danger"></span>
                         </div>
                         <div class="mb-4">
-                            <label asp-for="PetViewModel.Weight">Weight</label>
-                            <input id="address" asp-for="PetViewModel.Weight" class="form-control" readonly/>
+                            <label asp-for="Weight">Weight</label>
+                            <input asp-for="Weight" class="form-control"  readonly/>
+                            <span asp-validation-for="Weight" class="text-danger"></span>
                         </div>
                         <div class="mb-4">
-                            <label asp-for="PetViewModel.Height">Height</label>
-                            <input id="mobileNumber" asp-for="PetViewModel.Height" class="form-control" readonly/>
+                            <label asp-for="Height">Height</label>
+                            <input asp-for="Height" class="form-control"  readonly/>
+                            <span asp-validation-for="Height" class="text-danger"></span>
                         </div>
                         <div class="mb-4">
-                            <label asp-for="PetViewModel.Length">Length</label>
-                            <input id="mobileNumber" asp-for="PetViewModel.Length" class="form-control" readonly/>
+                            <label asp-for="Length">Length</label>
+                            <input asp-for="Length" class="form-control"  readonly/>
+                            <span asp-validation-for="Length" class="text-danger"></span>
                         </div>
                     </div>
                 </div>
                 <div class="mb-4">
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                        <a asp-action="Edit" asp-route-id="@Model.PetViewModel.Id" class="btn btn-primary">Edit</a>
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
                     </div>
                 </div>
+                <input asp-for="ImageUrl" id="imageUrl" class="form-control" style="visibility: hidden; height: 0px;"/>
             </div>
         </div>
     </div>

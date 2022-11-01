@@ -39,6 +39,7 @@ namespace VetManage.Web.Data.Entities
 
         public Owner Owner { get; set; }
 
+        [Range(1, int.MaxValue, ErrorMessage = "You must select an owner")]
         public int OwnerId { get; set; }
 
         [Required]
