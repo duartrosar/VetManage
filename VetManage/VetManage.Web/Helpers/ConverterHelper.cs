@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using VetManage.Web.Data.Entities;
 using VetManage.Web.Models.Calendar;
@@ -163,6 +164,13 @@ namespace VetManage.Web.Helpers
         //////// APPOINTMETS ////////
         public Appointment ToAppointment(AppointmentViewModel model, bool isNew)
         {
+            // Get the correct start and time and add them to the DateTime objects
+            TimeSpan startTime = TimeSpan.Parse(model.StartTimeString);
+            TimeSpan endTime = TimeSpan.Parse(model.EndTimeString);
+
+            model.StartTime = model.StartTime.Date + startTime;
+            model.EndTime = model.StartTime.Date + endTime;
+
             return new Appointment
             {
                 Id = isNew ? 0 : model.Id,
@@ -186,6 +194,8 @@ namespace VetManage.Web.Helpers
                 StartTime = appointment.StartTime,
                 EndTime = appointment.EndTime,
                 Description = appointment.Description,
+                Vet = appointment.Vet,
+                Pet = appointment.Pet,
                 VetId = appointment.VetId,
                 PetId = appointment.PetId
             };

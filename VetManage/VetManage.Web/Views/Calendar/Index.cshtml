@@ -75,14 +75,15 @@
         <div class="d-flex d-row justify-content-between mx-3 mb-3">
             <h1>Appointments</h1>
             <div class="m-1">
-                <button type="button" id="btnNewAppointment" class="btn btn-outline-light">New Appointment</button>
+                <a asp-action="Create" id="btnNewAppointment" class="btn btn-outline-light">New Appointment</a>
             </div>
         </div>
-        <ejs-schedule id="schedule" views="viewOptions" workDays="workDays" eventClick="onEventClick" popupOpen="onPopupOpen" showQuickInfo="false" workHours="workHours" width="100%" height="1000px">
+        <ejs-schedule id="schedule" views="viewOptions" workDays="workDays" popupOpen="onPopupOpen" resizeStop="onDragStop" dragStart="onDragStart"  dragStop="onDragStop" showQuickInfo="false" workHours="workHours" width="100%" height="1000px">
             <e-schedule-eventsettings dataSource="Model.Appointments" enableTooltip="true"></e-schedule-eventsettings>
         </ejs-schedule>
     </div>
 </div>
+
 @*<ejs-schedule id="schedule" views="viewOptions" showQuickInfo="false" workHours="workHours" width="100%" height="1000px">
     <e-schedule-eventsettings dataSource="Model.Appointments" enableTooltip="true"></e-schedule-eventsettings>
 </ejs-schedule>*@
@@ -96,11 +97,73 @@
         $(document).ready(function() {
             $("#calendarNav").addClass("active");
             $("#calendarNav").addClass("bg-dark");
-
-
-
         });
     </script>
 }
+<script type="text/javascript">
+    function onPopupOpen(args) {
+            // cancel the default modal from the scheduler
+            args.cancel = true;
 
-<script type="text/javascript" src="~/js/Calendar.js"></script>
+            let date = offsetDateTimezoneToJson(args.data.StartTime);
+
+            console.log(args);
+            // if the the user clicked an appointment
+            if (args.data.Id === undefined) {
+                window.location.href = "/Calendar/Create/?" + `date=${date}`;
+            } else {
+                window.location.href = "/Calendar/Edit/" + args.data.Id;
+            }
+        }
+
+    function onDragStart(args) {
+        //console.log(args);
+    }
+
+    function onDragStop(args) {
+        console.log(args);
+        let startTime = new Date(args.data.StartTime)
+        let endTime = new Date(args.data.EndTime)
+
+        args.data.StartTime = offsetDateTimezoneToJson(args.data.StartTime);
+        args.data.EndTime = offsetDateTimezoneToJson(args.data.EndTime);
+        args.data.StartTimeString = getShortTimeString(startTime);
+        args.data.EndTimeString = getShortTimeString(endTime);
+
+        $.ajax({
+            type: "POST",
+            url: "/Calendar/EventDrag",
+            data: args.data,
+            //contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                alert("Hello: " + response.Name + ".\nCurrent Date and Time: " + response.DateTime);
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+
+    function onResizeStop(args){
+        console.log(args);
+    }
+
+    function getShortTimeString(date) {
+        let hours = date.getHours();
+        let minutes = date.getMinutes();
+
+        if (minutes === 0) {
+            return `${hours}:${minutes}0`;
+        } else {
+            return `${hours}:${minutes}`;
+        }
+    }
+
+    function offsetDateTimezoneToJson(date) {
+        return new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toJSON();
+    }
+</script>

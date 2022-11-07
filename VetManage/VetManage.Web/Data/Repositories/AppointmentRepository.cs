@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using VetManage.Web.Data.Entities;
 
 namespace VetManage.Web.Data.Repositories
@@ -12,6 +14,14 @@ namespace VetManage.Web.Data.Repositories
         public AppointmentRepository(DataContext context) : base(context)
         {
             _context = context;
+        }
+
+        public Task<Appointment> GetWithMembersByIdAsync(int id)
+        {
+            return _context.Appointments
+                .Include(a => a.Vet)
+                .Include(a => a.Pet)
+                .FirstOrDefaultAsync(a => a.Id == id);
         }
 
         public IEnumerable<SelectListItem> GetComboPets()

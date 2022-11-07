@@ -1,37 +1,19 @@
-﻿let startHidden;
-let endHidden;
-let dateOnly;
-let form;
-let scheduler;
+﻿//let dateOnly;
+//let form = $("#appointmentForm");
+//let scheduler = $("#schedule");
+let startTimePicker = $("#startTimeString");
+let endTimePicker = $("#endTimeString");
 
-let isEditing;
-let inputs = document.querySelectorAll(".form-control");
-
-document.addEventListener('DOMContentLoaded', function () {
-    $.validator.setDefaults({
-        ignore: ""
-    });
-
-    startHidden = $("#startHidden");
-    console.log(startHidden);
-    endHidden = $("#endHidden");
-    form = $("#appointmentForm");
-    scheduler = $("#schedule");
-
-    startTime = $("#startTime");
-    endTime = $("#endTime");
-    setDropdownTimes();
-    isEditing = false;
-
-
-    $("#enableEditAppointment").click(enableEditAppointment);
-});
-
+//setDropdownTimes();
 
 // Set the allowed times for the start time drop down
 // Allowed times are from 7:00 to 17:00, in 30 min steps
-function setDropdownTimes() {
-    startTime.timepicker({
+function setDropdownTimes(startDate, endDate = null) {
+
+    console.log(endDate);
+
+    // initialize the time pickers
+    startTimePicker.timepicker({
         'timeFormat': 'H:i',
         'minTime': '7:00',
         'maxTime': '17:30',
@@ -39,7 +21,7 @@ function setDropdownTimes() {
         'listWidth': 1,
     });
 
-    endTime.timepicker({
+    endTimePicker.timepicker({
         'timeFormat': 'H:i',
         'minTime': '7:00',
         'maxTime': '18:00',
@@ -47,99 +29,63 @@ function setDropdownTimes() {
         'listWidth': 1,
     });
 
-    startTime.change(onStartTimeChange);
-    endTime.change(onEndTimeChange);
-}
+    startTimePicker.change(onStartTimeChange);
+    endTimePicker.change(onEndTimeChange);
 
-function onPopupOpen(args) {
-    console.log(args);
-    // cancel the default modal from the scheduler
-    args.cancel = true;
+    let startTime = new Date(startDate);
 
-    let title = $("#appointmentFormTitle");
+    //get the minimum allowed time for the endTimePicker
+    let shiftedTime = addMinutes(startTime, 30);;
 
-    // if the the user clicked an appointment
-    if (args.data.Id === undefined) {
-        clearInputs(inputs);
-        isEditing = false;
-        action = "new";
+    let endTime;
+
+    if (endDate === null) {
+        endTime = shiftedTime;
     } else {
-        populateForm(inputs, args.data);
-        isEditing = true;
-        endTime.val(getShortTimeString(args.data.EndTime));
-        action = "read";
+        endTime = new Date(endDate);
     }
+    
+    // Set the timePickers times
+    startTimePicker.timepicker('setTime', startTime);
+    endTimePicker.timepicker('setTime', endTime);
 
-    // Hide or Show the buttons depending on the action
-    let readonly = organizeButtons(action, "Appointment", title);
+    // set the minimum time for the endTimePicker
+    endTimePicker.timepicker('option', { 'minTime': getShortTimeString(shiftedTime) });
 
-    // Set the fields to readonly or not depending on the action
-    setReadonly(inputs, readonly);
-
-    // save the date the user has selected
-    dateOnly = offsetDateTimezone(args.data.StartTime);
-
-    let currentDate = new Date(startHidden[0].dataset.valPastdateNow);
-
-    //if (!validateDate(currentDate, args.data.StartTime)) {
-    //    $("#invalidDateModal").modal("show");
-    //    return;
-    //}
-
-    let selectedTime;
-
-    // if the user clicked a a cell in the monthly view
-    if (args.data.StartTime.getHours() === 0) {
-        selectedTime = "7:00";
-    } else {
-        selectedTime = getShortTimeString(args.data.StartTime);
-    }
-
-    startTime.val(selectedTime);
-
-    startHidden.val(offsetDateTimezoneToJson(args.data.StartTime));
-    endHidden.val(offsetDateTimezoneToJson(args.data.EndTime));
-
-    onStartTimeChange();
-
-    $("#newAppointmentModal").modal("show");
+    // set the value of the hidden inputs, these values are the ones that will be used in the backEnd
+    $("#startTimeHidden").attr('value', getShortTimeString(startTime));
+    $("#endTimeHidden").attr('value', getShortTimeString(endTime));
 }
 
 // Set the allowed times for the end time drop down
 // The end times are chosen based on the selected starttime
 function onStartTimeChange() {
-    let selectedTime = $('#startTime').timepicker('getTime');
+    // Get the selected value of the start time and end time
+    let selectedTime = startTimePicker.timepicker('getTime');
+
+    // Shift the selected start time by 30 minutes
     let shiftedTime = addMinutes(selectedTime, 30);
+
+    // get the start time and the shifted(end) time in a "hh:mm" formatted string
+    let selectedTimeString = getShortTimeString(selectedTime);
     let shiftedTimeString = getShortTimeString(shiftedTime);
-    
-    endTime.timepicker('option', { 'minTime': shiftedTimeString });
 
-    let fixedStartDate = getFormattedDate(dateOnly, selectedTime);
-    let fixedEndDate = getFormattedDate(dateOnly, shiftedTime);
+    // Set the minimum allowed time for the end time
+    endTimePicker.timepicker('option', { 'minTime': shiftedTimeString });
 
-    startHidden.val(offsetDateTimezoneToJson(fixedStartDate));
+    // set the value of the hidden inputs, these values are the ones that will be used in the backEnd
+    $("#startTimeHidden").attr('value', selectedTimeString);
+    $("#endTimeHidden").attr('value', shiftedTimeString);
 
-    if (!isEditing) {
-        endTime.val(shiftedTimeString);
-        endHidden.val(offsetDateTimezoneToJson(fixedEndDate));
-    }
-
+    endTimePicker.timepicker('setTime', shiftedTime);
 }
 
 function onEndTimeChange() {
-    let selectedTime = $('#endTime').timepicker('getTime');
-    let selectedTimeString = getShortTimeString(selectedTime);
+    let selectedTime = endTimePicker.timepicker('getTime');
 
-    let fixedEndDate = getFormattedDate(dateOnly, selectedTime);
-
-    endHidden.val(offsetDateTimezoneToJson(fixedEndDate));
+    $("#endTimeHidden").attr('value', getShortTimeString(selectedTime));
 }
 
-function enableEditAppointment() {
-    let title = $("#appointmentFormTitle");
-    enableEdit("Appointment", title);
-    setReadonly(inputs, false);
-}
 
 function getShortTimeString(date) {
     let hours = date.getHours();
@@ -152,6 +98,28 @@ function getShortTimeString(date) {
     }
 }
 
+// add a specific amount of minutes to a date
+function addMinutes(date, minutes) {
+    return new Date(date.getTime() + minutes * 60000);
+}
+
+///////// HELPERS /////////
+function offsetDateTimezoneToJson(date) {
+    return new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toJSON();
+}
+
+// (NOT BEING USED)
+function offsetDateTimezone(date) {
+    return new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
+}
+
+// (NOT BEING USED)
+// check if a date is not in the past 
+function validateDate(currentDate, dateToBeChecked) {
+    return dateToBeChecked >= currentDate;
+}
+
+// (NOT BEING USED)
 // Calculate the new date maintaining the date of the cell the user clicked on
 // But changing the time
 function getFormattedDate(date, time) {
@@ -163,29 +131,4 @@ function getFormattedDate(date, time) {
 
 
     return new Date(year, month, day, hours, minutes);
-}
-
-//function populateForm(appointment) {
-//    console.log(appointment);
-//}
-
-///////// HELPERS /////////
-function offsetDateTimezoneToJson(date) {
-    return new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toJSON();
-}
-
-function offsetDateTimezone(date) {
-    return new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
-}
-
-function validateDate(currentDate, dateToBeChecked) {
-    return dateToBeChecked >= currentDate;
-}
-
-function addMinutes(date, minutes) {
-    return new Date(date.getTime() + minutes * 60000);
-}
-
-function onEventClick(args) {
-    console.log(args);
 }

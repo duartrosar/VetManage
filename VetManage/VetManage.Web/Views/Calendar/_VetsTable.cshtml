@@ -1,0 +1,68 @@
+﻿@using Newtonsoft.Json
+@model IEnumerable<VetManage.Web.Data.Entities.Vet>
+
+@{
+    ViewData["Title"] = "Index";
+
+    JsonSerializerSettings serializerSettings =  new JsonSerializerSettings 
+    { 
+        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+    };
+}
+<div class="content-container p-3">
+    <div class="p-3 dark-5">
+        <div class="table-responsive">
+            <table class="table table-hover table-striped" id="vetsTable">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.ImageUrl)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.FirstName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.LastName)
+                        </th>
+                        <th class="d-none d-lg-table-cell">
+                            @Html.DisplayNameFor(model => model.DateOfBirth)
+                        </th>
+                        <th class="d-none d-sm-table-cell">
+                            @Html.DisplayNameFor(model => model.MobileNumber)
+                        </th>
+                        <th class="d-none d-md-table-cell">
+                            @Html.DisplayNameFor(model => model.Address)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="vetTableBody">
+            @foreach (var item in Model) {
+                    <tr data-vet="@JsonConvert.SerializeObject(item, Formatting.None, serializerSettings)">
+                        <td class="align-middle">
+                            <div class="frame" style="background-image: url(@Url.Content(item.ImageFullPath))"></div>
+                        </td>
+                        <td class="align-middle">
+                            @Html.DisplayFor(modelItem => item.FirstName)
+                        </td>
+                        <td class="align-middle">
+                            @Html.DisplayFor(modelItem => item.LastName)
+                        </td>
+                        <td class="d-none d-lg-table-cell align-middle">
+                            @Html.DisplayFor(modelItem => item.DateOfBirth)
+                        </td>
+                        <td class="d-none d-sm-table-cell align-middle">
+                            @Html.DisplayFor(modelItem => item.MobileNumber)
+                        </td>
+                        <td class="d-none d-md-table-cell align-middle">
+                            @Html.DisplayFor(modelItem => item.Address)
+                        </td>
+                    </tr>
+            }
+                </tbody>
+            </table>
+            <div class="d-flex align-items-end justify-content-center">
+                <button type="button" id="confirmVetSelection" class="btn btn-outline-light">Confirm Selection</button>
+            </div>
+        </div>
+    </div>
+</div>

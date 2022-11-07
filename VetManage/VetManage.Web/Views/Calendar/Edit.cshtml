@@ -1,0 +1,129 @@
+﻿@model VetManage.Web.Models.Calendar.AppointmentViewModel;
+
+<div class="content-container p-3">
+    <div class="dark-5">
+        <div class="p-3 d-flex justify-content-between align-items-center border-bottom">
+            <a asp-action="Index" class="btn btn-outline-light">Back</a>
+            <h2>Edit Appointment</h2>
+        </div>
+        <div class="p-3">
+            <form class="flex-fill" id="appointmentForm" method="post" style="max-width: 1600px;">
+                <div asp-validation-summary="ModelOnly"></div>
+                <input asp-for="Id" type="hidden"/>
+                <div class="row mb-4">
+                    <div class="col">
+                        <partial name="_PetData" model="@Model.Pet"/>
+                        <div class="p-3" id="choosePetBtnContainer">
+                            <a class="btn btn-outline-light mt-2" id="choosePetBtn">Choose Pet</a>
+                        </div>
+                        <span asp-validation-for="PetId" class="text-danger"></span>
+                        <input asp-for="PetId" style="visibility: hidden;" />
+                    </div>
+                    <div class="col">
+                        <partial name="_VetData" model="@Model.Vet"/>
+                        <div class="p-3" id="chooseVetBtnContainer">
+                            <a class="btn btn-outline-light mt-2" id="chooseVetBtn">Choose Vet</a>
+                        </div>
+                        <span asp-validation-for="VetId" class="text-danger"></span>
+                        <input asp-for="VetId" style="visibility: hidden;" />
+                    </div>
+                </div>
+                <div class="mb-4 d-none" id="petsTableContainer">
+                    <h4>Pets</h4>
+                    <partial name="_PetsTable" model="@ViewData["Pets"]" />
+                </div>
+                <div class="mb-4 d-none" id="vetsTableContainer">
+                    <h4>Vets</h4>
+                    <partial name="_VetsTable" model="@ViewData["Vets"]" />
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="mb-4">
+                            <label asp-for="Subject">Subject</label>
+                            <input asp-for="Subject" class="form-control"/>
+                            <span asp-validation-for="Subject" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="mb-4">
+                            <label asp-for="Title">Title</label>
+                            <input asp-for="Title" class="form-control"/>
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label asp-for="Description">Description</label>
+                    <textarea asp-for="Description" class="form-control"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+                <div class="row mb-4">
+                    <div class="col">
+                        <label asp-for="StartTime">Date</label>
+                        <input asp-for="StartTime" type="date" class="form-control"/>
+                        <span asp-validation-for="StartTime" class="text-danger"></span>
+                        <input asp-for="EndTime" type="hidden" class="form-control"/>
+                    </div>
+                    <div class="col">
+                        <label asp-for="StartTimeString">Start Time</label>
+                        <input id="startTimeString" class="timepicker form-control" name="timepicker"/>
+                        <input asp-for="StartTimeString" id="startTimeHidden" type="hidden"/>
+                        <span asp-validation-for="StartTimeString" class="text-danger"></span>
+                    </div>
+                    <div class="col">
+                        <label asp-for="EndTimeString">End Time</label>
+                        <input id="endTimeString" class="timepicker form-control" name="timepicker"/>
+                        <input asp-for="EndTimeString" id="endTimeHidden" type="hidden"/>
+                        <span asp-validation-for="EndTimeString" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <div class="d-grid gap-2 d-flex justify-content-between">
+                        <div>
+                            <a asp-action="Delete" asp-route-id="@Model.Id" id="createAppointment" type="submit" class="btn btn-outline-light">Delete</a>
+                        </div>
+                        <div>
+                            <a asp-action="Index" class="btn btn-danger" data-bs-dismiss="modal">Cancel</a>
+                            <button asp-action="Edit" id="createAppointment" type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#calendarNav").addClass("active");
+            $("#calendarNav").addClass("bg-dark");
+
+            let startDateShort = '@Model.StartDateShort';
+            let startDateLong = '@Model.StartDateLong';
+            let endDateLong = '@Model.EndDateLong';
+
+            let selectedDate = '@ViewData["Date"]';
+
+            //$('#StartTime').attr('value', startDateShort);
+            //$('#EndTime').attr('value', startDateShort);
+
+            $('#StartTime').change(function() {
+                $('#StartTime').attr('value', $(this).val());
+                $('#EndTime').attr('value', $(this).val());
+            });
+
+            setDropdownTimes(startDateLong, endDateLong);
+
+            $("#petData").removeClass("d-none");
+            $("#vetData").removeClass("d-none");
+
+            $("#petSelectionMessage").addClass("d-none");
+            $("#vetSelectionMessage").addClass("d-none");
+        });
+    </script>
+
+    <script type="text/javascript" src="~/js/AppointmentMemberSelection.js"></script>
+    <script type="text/javascript" src="~/js/Calendar.js"></script>
+}

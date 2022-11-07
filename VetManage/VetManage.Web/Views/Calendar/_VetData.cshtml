@@ -1,0 +1,44 @@
+﻿@model VetManage.Web.Data.Entities.Vet;
+
+<div id="vetDataContainer">
+    <h4>Vet</h4>
+    <div class="table-responsive">
+        <table class="table table-hover table-striped" id="vetDataTable">
+            <thead>
+                <tr>
+                    <th>
+                        
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.FirstName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.LastName)
+                    </th>
+                    <th>
+                        Speciality
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="d-none" id="vetData">
+                    <td class="align-middle">
+                        <div class="frame" id="vetImage" style="background-image: url(@Url.Content(Model.ImageFullPath)"></div>
+                    </td>
+                    <td class="align-middle" id="vetName">
+                        @Html.DisplayFor(modelItem => Model.FirstName)
+                    </td>
+                    <td class="align-middle" id="vetType">
+                        @Html.DisplayFor(modelItem => Model.LastName)
+                    </td>
+                    <td class="align-middle" id="vetBreed">
+                        Vet Master
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div id="vetSelectionMessage">
+            <h4>No vet selected</h4>
+        </div>
+    </div>
+</div>
