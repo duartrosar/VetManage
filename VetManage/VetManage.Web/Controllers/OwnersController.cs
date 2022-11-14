@@ -22,17 +22,20 @@ namespace VetManage.Web.Controllers
         private readonly IConverterHelper _converterHelper;
         private readonly IUserHelper _userHelper;
         private readonly IMailHelper _mailHelper;
+        private readonly IMessageHelper _messageHelper;
 
         public OwnersController(
             IOwnerRepository ownerRepository,
             IConverterHelper converterHelper,
             IUserHelper userHelper,
-            IMailHelper mailHelper)
+            IMailHelper mailHelper,
+            IMessageHelper messageHelper)
         {
             _ownerRepository = ownerRepository;
             _converterHelper = converterHelper;
             _userHelper = userHelper;
             _mailHelper = mailHelper;
+            _messageHelper = messageHelper;
         }
 
         // GET: Owners
@@ -140,9 +143,13 @@ namespace VetManage.Web.Controllers
                         // get the newly created user and set it as the vet's user
                         model.OwnerViewModel.User = await _userHelper.GetUserByEmailAsync(model.Username);
 
+                        // Create Owner
                         var owner = _converterHelper.ToOwner(model.OwnerViewModel, true, path);
 
                         await _ownerRepository.CreateAsync(owner);
+
+                        // Create user's MessageBox
+                        await _messageHelper.InitializeMessageBox(user.Id);
 
                         // Send confirmation and change password email
                         string confirmationToken = await _userHelper.GenerateEmailConfirmationTokenAsync(user);

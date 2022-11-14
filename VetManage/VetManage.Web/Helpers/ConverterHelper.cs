@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using VetManage.Web.Data.Entities;
 using VetManage.Web.Models.Calendar;
+using VetManage.Web.Models.Messages;
 using VetManage.Web.Models.Owners;
 using VetManage.Web.Models.Pets;
 using VetManage.Web.Models.Vets;
@@ -211,6 +212,16 @@ namespace VetManage.Web.Helpers
             }
 
             return appointmentViewModels;
+        }
+
+        public Message ToMessage(MessageViewModel model)
+        {
+            return new Message
+            {
+                Body = model.Body,
+                Subject = model.Subject,
+                //Recipients = model.RecipientsList, // Todo
+            };
         }
     }
 }

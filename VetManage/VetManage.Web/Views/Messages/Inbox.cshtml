@@ -1,0 +1,118 @@
+﻿@model IEnumerable<VetManage.Web.Data.Entities.Message>
+
+@{
+    ViewData["Title"] = "Inbox";
+}
+
+<div class="content-container p-3">
+    <div class="dark-5">
+        <div class="p-3 d-flex justify-content-between align-items-center border-bottom">
+            <a asp-action="Create" class="btn btn-outline-light">New Message</a>
+            <h2>Inbox</h2>
+        </div>
+        <div class="row">
+            <div class="col-2 pe-0">
+                <partial name="_SidebarMessages"/>
+            </div>
+            <div class="col-10 pt-3 ps-0">
+                <div class="table-responsive">
+                    <table class="table" id="inboxTable">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                    @foreach (var item in Model) {
+                            <tr data-itemId="@item.Id">
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => item.Sender.User.FullName)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => item.Subject)
+                                    </td>
+                                    <td class="align-middle fw-lighter">
+                                        @Html.DisplayFor(modelItem => item.Body)
+                                    </td>
+                                    @*<td class="align-middle">
+                                        <div class="w-100 d-grid d-md-flex justify-content-md-end" id="@item.Id">
+                                            <a asp-action="Details" asp-route-id="@item.Id" class="btn bg-dark btn-action me-1">
+                                                <i data-feather="book-open" stroke-width="1"></i>
+                                            </a>
+                                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn bg-dark btn-action me-1">
+                                                <i data-feather="edit" stroke-width="1"></i>
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn bg-dark btn-action me-1" id="btnDeletePet">
+                                                <i data-feather="trash-2" stroke-width="1"></i>
+                                            </a>
+                                        </div>
+                                    </td>*@
+                            </tr>
+                    }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            let id = 0;
+            let sidebar = $(".sidebar");
+            let content = $(".content");
+
+            let inputs = document.querySelectorAll(".form-control");
+
+            $("#messagesNav").addClass("active");
+            $("#messagesNav").addClass("bg-dark");
+
+            $("#inboxNav").addClass("active");
+            $("#inboxNav").addClass("bg-dark");
+
+            // Delete
+            $("a[id*=btnDeleteVet]").click(function() {
+                id = $(this).parent()[0].id;
+                console.log($(this).parent()[0].id);
+                $("#deleteDialog").modal("show");
+                return false;
+            });
+
+            $("#btnNoDelete").click(function() {
+                $("#deleteDialog").modal("hide");
+                return false;
+            });
+
+            $("#btnYesDelete").click(function() {
+                window.location.href = "/Vets/Delete/" + id;
+            });
+
+            // Datatable
+            let table = $("#inboxTable").DataTable({
+                columnDefs: [ {
+                    targets: 2,
+                    render: $.fn.dataTable.render.ellipsis( 150, true )
+                } ],
+                ordering:  false,
+                lengthChange: false,
+                pageLength: 20,
+                info: false
+            } );
+
+            $('tr').hover(
+                function () {
+                    $(this).addClass('selected');
+                },
+                function() {
+                    $(this).removeClass('selected');
+                }        //table.$('tr.selected').removeClass('selected');
+            );
+        });
+    </script>
+}

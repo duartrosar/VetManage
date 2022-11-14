@@ -5,14 +5,12 @@
     ViewData["Title"] = "Index";
 }
 <div class="content-container p-3">
-    <div class="p-3 dark-5">
-        <div class="d-flex d-row justify-content-between mb-3">
-            <h1>Owners</h1>
-            <div class="m-1">
-                <a asp-action="Create" class="btn btn-outline-light">New Vet</a>
-            </div>
+    <div class="dark-5">
+        <div class="p-3 d-flex justify-content-between align-items-center border-bottom">
+            <a asp-action="Create" class="btn btn-outline-light">New Vet</a>
+            <h2>Owners</h2>
         </div>
-        <div class="table-responsive">
+        <div class="p-3 table-responsive">
             <table class="table table-hover table-striped" id="ownersTable">
                 <thead>
                     <tr>

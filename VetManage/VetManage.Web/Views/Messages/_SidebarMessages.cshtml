@@ -1,0 +1,20 @@
+﻿<div class="sidebar-messages flex-column border-end h-100">
+        <div class="nav-item border-bottom">
+            <a class="text-light w-100" asp-area="" asp-controller="Messages" asp-action="Inbox">
+                <div class="px-4 py-2 d-flex flex-row justify-content-start align-items-center sidebar-item"  id="inboxNav">
+                @*<i class="bi bi-house fa-xl"></i>*@
+                <i data-feather="grid" stroke-width="1"></i>
+                <p class="mx-2 my-0">Inbox</p>
+                </div>
+            </a>
+        </div>
+        <div class="nav-item border-bottom">
+            <a class="text-light w-100" asp-area="" asp-controller="Messages" asp-action="Outbox">
+                <div class="px-4 py-2 d-flex flex-row justify-content-start align-items-center sidebar-item" id="outboxNav">
+                    @*<i class="bi bi-shield fa-xl"></i>*@
+                    <i data-feather="shield" stroke-width="1"></i>
+                    <p class="mx-2 my-0">Outbox</p>
+                </div>
+            </a>
+        </div>
+</div>

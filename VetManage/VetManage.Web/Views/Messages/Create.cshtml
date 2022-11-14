@@ -1,0 +1,132 @@
+﻿@model VetManage.Web.Models.Messages.MessageViewModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<div class="content-container p-3">
+    <div class="dark-5">
+        <div class="p-3 d-flex justify-content-between align-items-center border-bottom">
+            <a asp-action="Create" class="btn btn-outline-light">New Message</a>
+            <h2>Outbox</h2>
+        </div>
+        <div class="row">
+            <div class="col-2">
+                <partial name="_SidebarMessages"/>
+            </div>
+            <div class="col-10">
+                <div class="form-container p-3">
+                    <form asp-action="Create" method="post" id="MessageForm">
+                        <div asp-validation-summary="ModelOnly"></div>
+                        <div class="row mb-2">
+                            <label class="col-1 col-form-label">To: </label>
+                            <div class="col-11">
+                                <ejs-multiselect id="Recipients" ejs-for="Recipients" name="Recipients" placeholder="Recipients" cssClass="form-control" selectedAll="onSelectedAll" select="onSelect" removed="onRemoved" enableSelectionOrder="false" dataSource="@ViewData["Recipients"]" mode="CheckBox" allowFiltering="true" showSelectAll="true" filterBarPlaceholder="Recipients">
+                                    <e-multiselect-fields text="Username" value="Id"></e-multiselect-fields>
+                                </ejs-multiselect>
+                                <span asp-validation-for="Recipients" class="text-danger"></span>
+                                @*<input asp-for="Recipients" type="text" value="" class="form-control" />*@
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <label class="col-1 col-form-label">Subject: </label>
+                            <div class="col-11">
+                                <input asp-for="Subject" type="text" value="" class="form-control" />
+                                <span asp-validation-for="Subject" class="text-danger"></span>
+
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-12">
+                                <textarea asp-for="Body" class="form-control text-dark" style="resize: none;" rows="20"></textarea>
+                                <span asp-validation-for="Body" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <a asp-action="Inbox" class="btn btn-danger">Cancel</a>
+                                <button type="submit" class="btn btn-success">Send</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script type="text/javascript">
+        let subject = $("#Subject");
+        let body = $("#Body");
+        let message = {};
+
+        //$('#MessageForm').submit(function(args) {
+        //     //Check if user has inputed a subject and a body
+        //    if (subject.val() !== "" || body.val() !== "") {
+        //        message.Subject = subject.val() + "from ajax";
+        //        message.Body = body.val();
+        //        console.log(recipients);
+        //        message.Recipients = [
+        //            {Id: 1, MessageBoxId: 1},
+        //            {Id: 2, MessageBoxId: 2}
+        //        ];
+
+        //        $.ajax({
+        //            type: "POST",
+        //            url: "/Messages/Create",
+        //            data: message,
+        //            contentType: "application/json; charset=utf-8",
+        //            dataType: "json",
+        //            success: function (response) {
+        //                alert("Hello: " + response.Name + ".\nCurrent Date and Time: " + response.DateTime);
+        //            },
+        //            failure: function (response) {
+        //                alert(response.responseText);
+        //            },
+        //            error: function (response) {
+        //                alert(response.responseText);
+        //            }
+        //        });
+
+        //        console.log(args);
+        //    }
+        //});
+    </script>
+}
+
+
+<script type="text/javascript">
+    let recipients = [];
+
+    function onSelectedAll(args){
+        if (args.isChecked) {
+            addAllRecipients(args.itemData);
+        } else {
+            recipients = [];
+        }
+
+        console.log(recipients);
+    }
+
+    function addAllRecipients(data) {
+        for (let i = 0; i < data; i++) {
+            recipients.push(data);
+        }
+    }
+
+    function onRemoved(args) {
+        let index = recipients.indexOf(args.itemData);
+
+        if (index > -1) { 
+            recipients.splice(index, 1);
+        }
+    }
+
+    function onSelect(args){
+        recipients.push(args.itemData);
+    }
+</script>

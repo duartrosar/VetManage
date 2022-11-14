@@ -71,12 +71,14 @@ namespace VetManage.Web
             services.AddScoped<IUserHelper, UserHelper>();
             services.AddScoped<IConverterHelper, ConverterHelper>();
             services.AddScoped<IMailHelper, MailHelper>();
+            services.AddScoped<IMessageHelper, MessageHelper>();
 
             // Repositories
             services.AddScoped<IOwnerRepository, OwnerRepository>();
             services.AddScoped<IPetRepository, PetRepository>();
             services.AddScoped<IVetRepository, VetRepository>();
             services.AddScoped<IAppointmentRepository, AppointmentRepository>();
+            services.AddScoped<IMessageBoxRepository, MessageBoxRepository>();
 
             services.ConfigureApplicationCookie(options =>
             {

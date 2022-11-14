@@ -20,7 +20,6 @@ $pagination-border-color: $dark;
 $pagination-focus-color: $secondary;
 $pagination-focus-bg: $dark;
 $pagination-focus-box-shadow: none;
-//$pagination-focus-outline: 0;
 
 $pagination-hover-color: $secondary;
 $pagination-hover-bg: $dark;
@@ -39,19 +38,19 @@ $table-color: white;
 $table-bg: tint-color($dark, 10%);
 $table-accent-bg: tint-color($dark, 5%);
 
-$table-striped-color: white;
-$table-striped-bg-factor: 1;
+
+:root {
+    --ck-color-text: black;
+}
+//$table-striped-color: white;
+//$table-striped-bg-factor: 1;
+
 //$table-striped-bg: red;
 
 //$table-hover-color: $table-color;
 //$table-hover-bg-factor: 1;
 //$table-hover-bg: rgba(red, $table-hover-bg-factor);
 
-//option {
-//    font-weight: 400;
-//    color: #000;
-    //text-align: center;
-//}
 
 // import bootsrap
 @import '../../lib/bootstrap/scss/bootstrap.scss';

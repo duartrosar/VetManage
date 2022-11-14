@@ -10,14 +10,12 @@
     };
 }
 <div class="content-container p-3">
-    <div class="p-3 dark-5">
-        <div class="d-flex d-row justify-content-between mb-3">
-            <h1>Pets</h1>
-            <div class="m-1">
-                <a asp-action="Create" id="btnNewPet" class="btn btn-outline-light">New Pet</a>
-            </div>
+    <div class="dark-5">
+        <div class="p-3 d-flex justify-content-between align-items-center border-bottom">
+            <a asp-action="Create" id="btnNewPet" class="btn btn-outline-light">New Pet</a>
+            <h2>Pets</h2>
         </div>
-        <div class="table-responsive">
+        <div class="p-3 table-responsive">
             <table class="table table-hover table-striped" id="petsTable">
                 <thead>
                     <tr>

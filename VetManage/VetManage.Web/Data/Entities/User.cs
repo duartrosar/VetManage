@@ -60,5 +60,7 @@ namespace VetManage.Web.Data.Entities
                 return $"https://localhost:44318{ImageUrl.Substring(1)}";
             }
         }
+
+        public MessageBox MessageBox { get; set; }
     }
 }

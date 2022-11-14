@@ -2,6 +2,7 @@
 using System.Linq;
 using VetManage.Web.Data.Entities;
 using VetManage.Web.Models.Calendar;
+using VetManage.Web.Models.Messages;
 using VetManage.Web.Models.Owners;
 using VetManage.Web.Models.Pets;
 using VetManage.Web.Models.Vets;
@@ -28,5 +29,7 @@ namespace VetManage.Web.Helpers
         Appointment ToAppointment(AppointmentViewModel model, bool isNew);
         AppointmentViewModel ToAppointmentViewModel(Appointment appointment);
         ICollection<AppointmentViewModel> AllToAppointmentViewModel(IQueryable appointments);
+
+        Message ToMessage(MessageViewModel model);
     }
 }

@@ -20,17 +20,20 @@ namespace VetManage.Web.Controllers
         private readonly IConverterHelper _converterHelper;
         private readonly IUserHelper _userHelper;
         private readonly IMailHelper _mailHelper;
+        private readonly IMessageHelper _messageHelper;
 
         public VetsController(
             IVetRepository vetRepository,
             IConverterHelper converterHelper,
             IUserHelper userHelper,
-            IMailHelper mailHelper)
+            IMailHelper mailHelper,
+            IMessageHelper messageHelper)
         {
             _vetRepository = vetRepository;
             _converterHelper = converterHelper;
             _userHelper = userHelper;
             _mailHelper = mailHelper;
+            _messageHelper = messageHelper;
         }
         public IActionResult Index()
         {
@@ -140,9 +143,13 @@ namespace VetManage.Web.Controllers
                         // get the newly created user and set it as the vet's user
                         model.VetViewModel.User = await _userHelper.GetUserByEmailAsync(model.Username);
 
+                        // Create Vet
                         var vet = _converterHelper.ToVet(model.VetViewModel, true, path);
 
                         await _vetRepository.CreateAsync(vet);
+
+                        // Create user's MessageBox
+                        await _messageHelper.InitializeMessageBox(user.Id);
 
                         // Send confirmation and change password email
                         string confirmationToken = await _userHelper.GenerateEmailConfirmationTokenAsync(user);

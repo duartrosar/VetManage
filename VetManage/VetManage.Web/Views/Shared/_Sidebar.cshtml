@@ -1,8 +1,8 @@
 ﻿<aside>
     <div class="sidebar flex-column open" id="sidebar">
           <div class="nav-item my-1">
-            <a class="text-light w-100" asp-area="" asp-controller="Home" asp-action="Index" id="homeNav">
-              <div class="px-4 d-flex flex-row justify-content-start align-items-center sidebar-item">
+            <a class="text-light w-100" asp-area="" asp-controller="Home" asp-action="Index">
+              <div class="px-4 d-flex flex-row justify-content-start align-items-center sidebar-item" id="homeNav">
                 @*<i class="bi bi-house fa-xl"></i>*@
                 <i data-feather="grid" stroke-width="1"></i>
                 <p class="mx-2 my-0">Home</p>
@@ -60,6 +60,15 @@
                     @*<i class="bi bi-people fa-xl"></i>*@
                     <i data-feather="calendar" stroke-width="1"></i>
                     <p class="mx-2 my-0">Calendar</p>
+                </div>
+            </a>
+          </div>
+          <div class="nav-item my-1">
+            <a class="text-light w-100" asp-area="" asp-controller="Messages" asp-action="Inbox">
+                <div class="px-4 d-flex flex-row justify-content-start align-items-center sidebar-item" id="messagesNav">
+                    @*<i class="bi bi-people fa-xl"></i>*@
+                    <i data-feather="calendar" stroke-width="1"></i>
+                    <p class="mx-2 my-0">Messages</p>
                 </div>
             </a>
           </div>

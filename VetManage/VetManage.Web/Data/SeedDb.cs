@@ -4,6 +4,7 @@ using System;
 using System.Threading.Tasks;
 using VetManage.Web.Constants;
 using VetManage.Web.Data.Entities;
+using VetManage.Web.Data.Repositories;
 using VetManage.Web.Helpers;
 
 namespace VetManage.Web.Data
@@ -12,11 +13,16 @@ namespace VetManage.Web.Data
     {
         private readonly DataContext _context;
         private readonly IUserHelper _userHelper;
+        private readonly IMessageHelper _messageHelper;
 
-        public SeedDb(DataContext context, IUserHelper userHelper)
+        public SeedDb(
+            DataContext context, 
+            IUserHelper userHelper,
+            IMessageHelper messageHelper)
         {
             _context = context;
             _userHelper = userHelper;
+            _messageHelper = messageHelper;
         }
 
         public async Task SeedAsync()
@@ -61,6 +67,8 @@ namespace VetManage.Web.Data
                 await _userHelper.ConfirmEmailAsync(user, token);
 
                 await _context.SaveChangesAsync();
+
+                await _messageHelper.InitializeMessageBox(user.Id);
             }
         }
     }

@@ -3,21 +3,38 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VetManage.Web.Data;
 
 namespace VetManage.Web.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20221110162057_AddMessagesAndMessageBoxes")]
+    partial class AddMessagesAndMessageBoxes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.17")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("MessageMessageBox", b =>
+                {
+                    b.Property<int>("OutboxId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RecipientsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("OutboxId", "RecipientsId");
+
+                    b.HasIndex("RecipientsId");
+
+                    b.ToTable("MessageMessageBox");
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -204,9 +221,6 @@ namespace VetManage.Web.Migrations
                     b.Property<int>("SenderId")
                         .HasColumnType("int");
 
-                    b.Property<string>("SenderUsername")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Subject")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -238,24 +252,6 @@ namespace VetManage.Web.Migrations
                         .HasFilter("[UserId] IS NOT NULL");
 
                     b.ToTable("MessageBoxes");
-                });
-
-            modelBuilder.Entity("VetManage.Web.Data.Entities.MessageMessageBox", b =>
-                {
-                    b.Property<int>("MessageId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MessageBoxId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsRead")
-                        .HasColumnType("bit");
-
-                    b.HasKey("MessageId", "MessageBoxId");
-
-                    b.HasIndex("MessageBoxId");
-
-                    b.ToTable("MessageMessageBox");
                 });
 
             modelBuilder.Entity("VetManage.Web.Data.Entities.Owner", b =>
@@ -499,6 +495,21 @@ namespace VetManage.Web.Migrations
                     b.ToTable("Vets");
                 });
 
+            modelBuilder.Entity("MessageMessageBox", b =>
+                {
+                    b.HasOne("VetManage.Web.Data.Entities.Message", null)
+                        .WithMany()
+                        .HasForeignKey("OutboxId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VetManage.Web.Data.Entities.MessageBox", null)
+                        .WithMany()
+                        .HasForeignKey("RecipientsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -589,25 +600,6 @@ namespace VetManage.Web.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("VetManage.Web.Data.Entities.MessageMessageBox", b =>
-                {
-                    b.HasOne("VetManage.Web.Data.Entities.MessageBox", "MessageBox")
-                        .WithMany("Outbox")
-                        .HasForeignKey("MessageBoxId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("VetManage.Web.Data.Entities.Message", "Message")
-                        .WithMany("Recipients")
-                        .HasForeignKey("MessageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Message");
-
-                    b.Navigation("MessageBox");
-                });
-
             modelBuilder.Entity("VetManage.Web.Data.Entities.Owner", b =>
                 {
                     b.HasOne("VetManage.Web.Data.Entities.User", "User")
@@ -637,16 +629,9 @@ namespace VetManage.Web.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("VetManage.Web.Data.Entities.Message", b =>
-                {
-                    b.Navigation("Recipients");
-                });
-
             modelBuilder.Entity("VetManage.Web.Data.Entities.MessageBox", b =>
                 {
                     b.Navigation("Inbox");
-
-                    b.Navigation("Outbox");
                 });
 
             modelBuilder.Entity("VetManage.Web.Data.Entities.Owner", b =>

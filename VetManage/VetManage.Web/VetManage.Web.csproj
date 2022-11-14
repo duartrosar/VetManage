@@ -6,6 +6,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\lib\ckeditor5\**" />
+    <Compile Remove="wwwroot\lib\froala-editor\**" />
+    <Content Remove="wwwroot\lib\ckeditor5\**" />
+    <Content Remove="wwwroot\lib\froala-editor\**" />
+    <EmbeddedResource Remove="wwwroot\lib\ckeditor5\**" />
+    <EmbeddedResource Remove="wwwroot\lib\froala-editor\**" />
+    <None Remove="wwwroot\lib\ckeditor5\**" />
+    <None Remove="wwwroot\lib\froala-editor\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Remove="compilerconfig.json" />
     <Content Remove="wwwroot\scss\bootstrap\_bootstrap.scss" />
     <Content Remove="wwwroot\scss\bootstrap\_overrides.scss" />
