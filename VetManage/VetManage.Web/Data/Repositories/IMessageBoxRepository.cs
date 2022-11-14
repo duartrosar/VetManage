@@ -18,5 +18,13 @@ namespace VetManage.Web.Data.Repositories
         Task<IQueryable<Message>> GetInboxByUserId(string userId);
 
         Task<IQueryable<Message>> GetOutboxByUserId(string userId);
+
+        Task<IQueryable<MessageMessageBox>> GetMessageMessageBoxByUserId(string userId);
+
+        Task<MessageMessageBox> GetMessageMessageBox(int messageId, int messageBoxId);
+
+        Task ReadMessage(MessageMessageBox messageMessageBox);
+
+        Task<Message> GetMessageById(int messageId);
     }
 }

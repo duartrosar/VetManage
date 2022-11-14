@@ -1,0 +1,39 @@
+﻿@model VetManage.Web.Models.Messages.MessageViewModel
+
+@{
+    ViewData["Title"] = "SingleMessage";
+}
+
+<div class="content-container p-3">
+    <div class="dark-5">
+        <div class="p-3 d-flex justify-content-between align-items-center border-bottom">
+            <a asp-action="Create" class="btn btn-outline-light">New Message</a>
+            <h2>Inbox</h2>
+        </div>
+        <div class="row">
+            <div class="col-2 pe-0">
+                <partial name="_SidebarMessages"/>
+            </div>
+            <div class="col-10 pt-3 ps-0">
+                <h1>@Model.Subject</h1>
+
+                <p>@Model.Body</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+
+            $("#messagesNav").addClass("active");
+            $("#messagesNav").addClass("bg-dark");
+
+            //$("#inboxNav").addClass("active");
+            //$("#inboxNav").addClass("bg-dark");
+        });
+    </script>
+}

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -49,13 +50,15 @@ namespace VetManage.Web.Data.Repositories
 
         public async Task SendMessage(Message message, List<MessageBox> recipients)
         {
+            message.Date = DateTime.Now;
+
             foreach(var recipient in recipients)
             {
                 await _context.MessageMessageBox.AddAsync(new MessageMessageBox
                 {
                     Message = message,
                     MessageBox = recipient,
-                    IsRead = false
+                    IsRead = false,
                 });
             }
 
@@ -73,7 +76,8 @@ namespace VetManage.Web.Data.Repositories
                 return _context.Messages
                     .Where(m => m.Recipients.Any(r => r.MessageBoxId == messageBox.Id))
                     .Include(m => m.Sender)
-                    .ThenInclude(mb => mb.User);
+                    .ThenInclude(mb => mb.User)
+                    .OrderByDescending(m => m.Date);
             }
 
             return null;
@@ -87,7 +91,53 @@ namespace VetManage.Web.Data.Repositories
             {
                 var messageBox = await _context.MessageBoxes.FirstOrDefaultAsync(mb => mb.UserId == userId);
 
-                return _context.Messages.Where(m => m.SenderId == messageBox.Id);
+                return _context.Messages
+                    .Where(m => m.SenderId == messageBox.Id)
+                    .OrderByDescending(m => m.Date);
+            }
+
+            return null;
+        }
+
+        public async Task<IQueryable<MessageMessageBox>> GetMessageMessageBoxByUserId(string userId)
+        {
+            var user = await _userHelper.GetUserByIdAsync(userId);
+
+            if (user != null)
+            {
+                var messageBox = await _context.MessageBoxes.FirstOrDefaultAsync(mb => mb.UserId == userId);
+
+                return _context.MessageMessageBox
+                    .Where(mmb => mmb.MessageBoxId == messageBox.Id)
+                    .OrderByDescending(mmb => mmb.Message.Date);
+            }
+
+            return null;
+        }
+
+        public async Task<MessageMessageBox> GetMessageMessageBox(int messageId, int messageBoxId)
+        {
+            return await _context.MessageMessageBox.
+                FirstOrDefaultAsync(m => m.MessageId == messageId && m.MessageBoxId == messageBoxId);
+        }
+
+        public async Task ReadMessage(MessageMessageBox messageMessageBox)
+        {
+            messageMessageBox.IsRead = true;
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<Message> GetMessageById(int messageId)
+        {
+            var message = await _context.Messages
+                .Include(m => m .Sender)
+                .ThenInclude(s => s.User)
+                .FirstOrDefaultAsync(m => m.Id == messageId);
+
+            if(message != null)
+            {
+                return message;
             }
 
             return null;

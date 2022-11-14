@@ -35,9 +35,11 @@ namespace VetManage.Web.Controllers
             {
                 var inbox = await _messageBoxRepository.GetInboxByUserId(userId);
 
-                var messages = inbox.ToList();
+                var messageMessageBoxes = await _messageBoxRepository.GetMessageMessageBoxByUserId(userId);
 
-                return View(messages);
+                var model = _converterHelper.AllToMessageViewModel(inbox, messageMessageBoxes);
+
+                return View(model);
             } else
             {
                 return NotFound();
@@ -114,6 +116,25 @@ namespace VetManage.Web.Controllers
                     throw;
                 }
             }
+            return View(model);
+        }
+
+
+        public async Task<IActionResult> SingleMessage(int messageId)
+        {
+            var message = await _messageBoxRepository.GetMessageById(messageId);
+
+            // Get the logged in user's MessageBox
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var messageBox = await _messageBoxRepository.GetMessageBoxByUserIdAsync(userId);
+
+            // Get the specific messageMessageBox
+            var messageMessageBox = await _messageBoxRepository.GetMessageMessageBox(message.Id, messageBox.Id);
+
+            await _messageBoxRepository.ReadMessage(messageMessageBox);
+
+            var model = _converterHelper.ToMessageViewModel(message, messageMessageBox);
+
             return View(model);
         }
     }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace VetManage.Web.Data.Entities
@@ -12,6 +13,8 @@ namespace VetManage.Web.Data.Entities
 
         [Required]
         public string Body { get ; set ; }
+
+        public DateTime Date { get ; set ; }
 
         public string SenderUsername { get; set; }
 

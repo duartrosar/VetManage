@@ -223,5 +223,35 @@ namespace VetManage.Web.Helpers
                 //Recipients = model.RecipientsList, // Todo
             };
         }
+
+        public MessageViewModel ToMessageViewModel(Message message, MessageMessageBox mmb)
+        {
+            return new MessageViewModel
+            {
+                Id = mmb.MessageId,
+                SenderName = message.Sender.User.FullName,
+                MessageBoxId = mmb.MessageBoxId,
+                Body = message.Body,
+                Subject = message.Subject,
+                DateString = message.Date.ToShortDateString(),
+                IsRead = mmb.IsRead,
+            };
+        }
+
+        public ICollection<MessageViewModel> AllToMessageViewModel(IQueryable<Message> messages, IQueryable<MessageMessageBox> messageMessageBoxes)
+        {
+            List<MessageViewModel> messageViewModels = new List<MessageViewModel>();
+            List<Message> messageList = messages.ToList();
+
+            int index = 0;
+
+            foreach (MessageMessageBox mmb in messageMessageBoxes)
+            {
+                messageViewModels.Add(ToMessageViewModel(messageList[index], mmb));
+                index++;
+            }
+
+            return messageViewModels;
+        }
     }
 }

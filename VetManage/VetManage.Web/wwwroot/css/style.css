@@ -312,7 +312,31 @@ label {
   color: #fff;
 }
 
+table.dataTable > tbody > tr.odd:hover > * {
+  /*        box-shadow: inset 0 0 0 9999px rgba(13, 110, 253, 0.9);*/
+  box-shadow: inset 0 0 0 9999px #e3008c;
+  color: white;
+}
+
+table.dataTable > tbody > tr.even:hover > * {
+  /*        box-shadow: inset 0 0 0 9999px rgba(13, 110, 253, 0.9);*/
+  box-shadow: inset 0 0 0 9999px #e3008c;
+  color: white;
+}
+
 table.dataTable > tbody > tr.selected > * {
+  /*        box-shadow: inset 0 0 0 9999px rgba(13, 110, 253, 0.9);*/
+  box-shadow: inset 0 0 0 9999px #e3008c;
+  color: white;
+}
+
+table.dataTable > tbody > tr.read > * {
+  /*        box-shadow: inset 0 0 0 9999px rgba(13, 110, 253, 0.9);*/
+  box-shadow: inset 0 0 0 9999px #334149;
+  color: white;
+}
+
+table.dataTable > tbody > tr.read:hover > * {
   /*        box-shadow: inset 0 0 0 9999px rgba(13, 110, 253, 0.9);*/
   box-shadow: inset 0 0 0 9999px #e3008c;
   color: white;
@@ -328,8 +352,9 @@ table.dataTable.table-hover > tbody > tr.selected:hover > * {
   box-shadow: inset 0 0 0 9999px #e3008c;
 }
 
-table tbody tr {
+.table.dataTable tbody tr {
   height: 70px;
+  background-color: red;
 }
 
 .e-multiselect.e-input-group.e-control-wrapper {

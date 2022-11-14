@@ -30,6 +30,9 @@ namespace VetManage.Web.Helpers
         AppointmentViewModel ToAppointmentViewModel(Appointment appointment);
         ICollection<AppointmentViewModel> AllToAppointmentViewModel(IQueryable appointments);
 
+
         Message ToMessage(MessageViewModel model);
+        MessageViewModel ToMessageViewModel(Message message, MessageMessageBox mmb);
+        ICollection<MessageViewModel> AllToMessageViewModel(IQueryable<Message> messages, IQueryable<MessageMessageBox> messageMessageBoxes);
     }
 }
