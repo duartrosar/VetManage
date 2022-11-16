@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HtmlAgilityPack;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using VetManage.Web.Data.Entities;
@@ -226,15 +227,38 @@ namespace VetManage.Web.Helpers
 
         public MessageViewModel ToMessageViewModel(Message message, MessageMessageBox mmb)
         {
+            HtmlDocument htmlDoc = new HtmlDocument();
+            htmlDoc.LoadHtml(message.Body);
+            string bodyRaw = htmlDoc.DocumentNode.InnerText;
+
             return new MessageViewModel
             {
                 Id = mmb.MessageId,
                 SenderName = message.Sender.User.FullName,
                 MessageBoxId = mmb.MessageBoxId,
                 Body = message.Body,
+                BodyRaw = bodyRaw,
                 Subject = message.Subject,
                 DateString = message.Date.ToShortDateString(),
                 IsRead = mmb.IsRead,
+            };
+        }
+
+        public MessageViewModel ToMessageViewModelOutbox(Message message)
+        {
+            HtmlDocument htmlDoc = new HtmlDocument();
+            htmlDoc.LoadHtml(message.Body);
+            string bodyRaw = htmlDoc.DocumentNode.InnerText;
+
+            return new MessageViewModel
+            {
+                Id = message.Id,
+                SenderName = message.Sender.User.FullName,
+                Body = message.Body,
+                BodyRaw = bodyRaw,
+                Subject = message.Subject,
+                DateString = message.Date.ToShortDateString(),
+                IsRead = true,
             };
         }
 
@@ -249,6 +273,19 @@ namespace VetManage.Web.Helpers
             {
                 messageViewModels.Add(ToMessageViewModel(messageList[index], mmb));
                 index++;
+            }
+
+            return messageViewModels;
+        }
+
+        public ICollection<MessageViewModel> AllToMessageViewModelOutbox(IQueryable<Message> messages)
+        {
+            List<MessageViewModel> messageViewModels = new List<MessageViewModel>();
+            List<Message> messageList = messages.ToList();
+
+            foreach (Message message in messageList)
+            {
+                messageViewModels.Add(ToMessageViewModelOutbox(message));
             }
 
             return messageViewModels;

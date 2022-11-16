@@ -54,7 +54,9 @@ namespace VetManage.Web.Controllers
             {
                 var outbox = await _messageBoxRepository.GetOutboxByUserId(userId);
 
-                return View(outbox);
+                var model = _converterHelper.AllToMessageViewModelOutbox(outbox);
+
+                return View(model);
             }
             else
             {
@@ -124,16 +126,58 @@ namespace VetManage.Web.Controllers
         {
             var message = await _messageBoxRepository.GetMessageById(messageId);
 
+            if(message == null)
+            {
+                return NotFound();
+            }
+
+
             // Get the logged in user's MessageBox
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
             var messageBox = await _messageBoxRepository.GetMessageBoxByUserIdAsync(userId);
 
             // Get the specific messageMessageBox
             var messageMessageBox = await _messageBoxRepository.GetMessageMessageBox(message.Id, messageBox.Id);
 
-            await _messageBoxRepository.ReadMessage(messageMessageBox);
+            var model = new MessageViewModel();
 
-            var model = _converterHelper.ToMessageViewModel(message, messageMessageBox);
+            IQueryable<Message> messages;
+            List<int> messagesIds;
+            // If the user is trying to open a message from their outbox
+            // messageMessageBox will be null
+            if (messageMessageBox != null)
+            {
+                // Check if message that user is trying to read is their's
+                messages = await _messageBoxRepository.GetInboxByUserId(userId);
+
+                messagesIds = messages.Select(messages => messages.Id).ToList();
+
+                if (!messagesIds.Contains(messageId))
+                {
+                    // TODO: User not allowed to see this message
+                    return NotFound();
+                }
+
+                await _messageBoxRepository.ReadMessage(messageMessageBox);
+
+                model = _converterHelper.ToMessageViewModel(message, messageMessageBox);
+            }
+            else
+            {
+                // Check if message that user is trying to read is their's
+                messages = await _messageBoxRepository.GetOutboxByUserId(userId);
+
+                messagesIds = messages.Select(messages => messages.Id).ToList();
+
+                if (!messagesIds.Contains(messageId))
+                {
+                    // TODO: User not allowed to see this message
+                    return NotFound();
+                }
+
+                model = _converterHelper.ToMessageViewModelOutbox(message);
+            }
 
             return View(model);
         }

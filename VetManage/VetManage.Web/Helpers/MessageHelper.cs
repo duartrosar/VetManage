@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using VetManage.Web.Data.Entities;
 using VetManage.Web.Data.Repositories;
 
@@ -16,6 +17,7 @@ namespace VetManage.Web.Helpers
             _userHelper = userHelper;
             _messageBoxRepository = messageBoxRepository;
         }
+
 
         public async Task InitializeMessageBox(string userId)
         {

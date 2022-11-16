@@ -1,0 +1,70 @@
+﻿@use "../abstracts/abstracts" as *;
+//@import '../../lib/bootstrap/scss/_functions.scss';
+
+.editor-container {
+    height: 550px;
+
+}
+
+/* To change font color for toolbar icon */
+.e-richtexteditor {
+    height: 500px !important;
+
+    .e-rte-content {
+        height: 500px;
+    }
+
+    .e-rte-toolbar {
+        .e-toolbar-item {
+            .e-icons,
+            .e-icons:active {
+                color: #999;
+            }
+        }
+    }
+}
+
+/* To change font color for toolbar button */
+.e-toolbar {
+    .e-toolbar-items {
+        .e-toolbar-item {
+            &.e-active {
+                .e-tbar-btn {
+                    &.e-btn {
+                        background-color: #666;
+                        color: #fafafa;
+
+                        .e-icons {
+                            color: #fafafa;
+                        }
+                    }
+                }
+            }
+
+            .e-tbar-btn {
+                &.e-btn {
+                    background-color: #fafafa;
+
+                    &:hover {
+                        .e-icons {
+                            color: #999;
+                        }
+                    }
+
+                    .e-icons:active {
+                        color: #999;
+                    }
+
+                    .e-icons {
+                        color: #666;
+                    }
+                }
+            }
+        }
+    }
+
+    .e-tbar-btn:active,
+    .e-tbar-btn:hover {
+        color: #999;
+    }
+}

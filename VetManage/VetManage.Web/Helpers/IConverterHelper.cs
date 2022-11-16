@@ -33,6 +33,10 @@ namespace VetManage.Web.Helpers
 
         Message ToMessage(MessageViewModel model);
         MessageViewModel ToMessageViewModel(Message message, MessageMessageBox mmb);
+
+        MessageViewModel ToMessageViewModelOutbox(Message message);
+
         ICollection<MessageViewModel> AllToMessageViewModel(IQueryable<Message> messages, IQueryable<MessageMessageBox> messageMessageBoxes);
+        ICollection<MessageViewModel> AllToMessageViewModelOutbox(IQueryable<Message> outbox);
     }
 }

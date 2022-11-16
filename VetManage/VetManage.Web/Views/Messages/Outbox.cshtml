@@ -1,4 +1,4 @@
-﻿@model IEnumerable<VetManage.Web.Data.Entities.Message>
+﻿@model IEnumerable<VetManage.Web.Models.Messages.MessageViewModel>
 
 @{
     ViewData["Title"] = "Outbox";
@@ -25,30 +25,21 @@
                             <tr>
                                 <th></th>
                                 <th></th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
                     @foreach (var item in Model) {
-                            <tr>
+                            <tr data-messageId="@item.Id">
                                 <td class="align-middle">
                                     @Html.DisplayFor(modelItem => item.Subject)
                                 </td>
                                 <td class="align-middle fw-lighter">
-                                    @Html.DisplayFor(modelItem => item.Body)
+                                    @Html.DisplayFor(modelItem => item.BodyRaw)
                                 </td>
-                                @*<td class="align-middle">
-                                    <div class="w-100 d-grid d-md-flex justify-content-md-end" id="@item.Id">
-                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn bg-dark btn-action me-1">
-                                            <i data-feather="book-open" stroke-width="1"></i>
-                                        </a>
-                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn bg-dark btn-action me-1">
-                                            <i data-feather="edit" stroke-width="1"></i>
-                                        </a>
-                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn bg-dark btn-action me-1" id="btnDeletePet">
-                                            <i data-feather="trash-2" stroke-width="1"></i>
-                                        </a>
-                                    </div>
-                                </td>*@
+                                <td class="align-middle fw-lighter">
+                                    @Html.DisplayFor(modelItem => item.DateString)
+                                </td>
                             </tr>
                     }
                         </tbody>
@@ -119,6 +110,12 @@
                     $(this).removeClass('selected');
                 }        //table.$('tr.selected').removeClass('selected');
             );
+
+            $('tr').click(function(){
+                let messageId = $(this).data("messageid");
+
+                window.location.href = "/Messages/SingleMessage/?" + `messageId=${messageId}`; 
+            });
         });
     </script>
 }

@@ -19,6 +19,8 @@ namespace VetManage.Web.Models.Messages
         [Required]
         public string Body { get; set; }
 
+        public string BodyRaw { get; set; }
+
         public string DateString { get; set; }
 
         [Required(ErrorMessage = "You must choose a recipient.")]

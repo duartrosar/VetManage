@@ -375,6 +375,47 @@ table.dataTable.table-hover > tbody > tr.selected:hover > * {
   height: 26px;
 }
 
+.editor-container {
+  height: 550px;
+}
+
+/* To change font color for toolbar icon */
+.e-richtexteditor {
+  height: 500px !important;
+}
+.e-richtexteditor .e-rte-content {
+  height: 500px;
+}
+.e-richtexteditor .e-rte-toolbar .e-toolbar-item .e-icons,
+.e-richtexteditor .e-rte-toolbar .e-toolbar-item .e-icons:active {
+  color: #999;
+}
+
+/* To change font color for toolbar button */
+.e-toolbar .e-toolbar-items .e-toolbar-item.e-active .e-tbar-btn.e-btn {
+  background-color: #666;
+  color: #fafafa;
+}
+.e-toolbar .e-toolbar-items .e-toolbar-item.e-active .e-tbar-btn.e-btn .e-icons {
+  color: #fafafa;
+}
+.e-toolbar .e-toolbar-items .e-toolbar-item .e-tbar-btn.e-btn {
+  background-color: #fafafa;
+}
+.e-toolbar .e-toolbar-items .e-toolbar-item .e-tbar-btn.e-btn:hover .e-icons {
+  color: #999;
+}
+.e-toolbar .e-toolbar-items .e-toolbar-item .e-tbar-btn.e-btn .e-icons:active {
+  color: #999;
+}
+.e-toolbar .e-toolbar-items .e-toolbar-item .e-tbar-btn.e-btn .e-icons {
+  color: #666;
+}
+.e-toolbar .e-tbar-btn:active,
+.e-toolbar .e-tbar-btn:hover {
+  color: #999;
+}
+
 .content {
   margin-left: 0;
   margin-top: 70px;

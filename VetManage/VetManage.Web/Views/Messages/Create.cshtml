@@ -2,6 +2,10 @@
 
 @{
     ViewData["Title"] = "Create";
+
+     ViewBag.items = new[] {"Bold", "Italic", "Underline", "StrikeThrough", "|",
+                "Formats", "Alignments", "OrderedList", "UnorderedList",
+                "Outdent", "Indent", "|", "Undo", "Redo" };
 }
 
 <div class="content-container p-3">
@@ -11,10 +15,10 @@
             <h2>Outbox</h2>
         </div>
         <div class="row">
-            <div class="col-2">
+            <div class="col-2 pe-0">
                 <partial name="_SidebarMessages"/>
             </div>
-            <div class="col-10">
+            <div class="col-10 pt-3 ps-0">
                 <div class="form-container p-3">
                     <form asp-action="Create" method="post" id="MessageForm">
                         <div asp-validation-summary="ModelOnly"></div>
@@ -38,7 +42,34 @@
                         </div>
                         <div class="row mb-2">
                             <div class="col-12">
-                                <textarea asp-for="Body" class="form-control text-dark" style="resize: none;" rows="20"></textarea>
+                                <div class="editor-container">
+                                    <ejs-richtexteditor id="iframe" ejs-for="Body">
+                                        <e-richtexteditor-iframesettings enable="true"></e-richtexteditor-iframesettings>
+                                        <e-content-template>
+                                            <p>
+                                                The Rich Text Editor control is WYSIWYG ('what you see is what you get') editor that provides the best user experience to create and update the content.
+                                                Users can format their content using standard toolbar commands.
+                                            </p>
+                                            <p><b> Key features:</b></p>
+
+                                            <ul>
+                                                <li><p> Provides &lt; IFRAME &gt; and &lt; DIV &gt; modes </p></li>
+                                                <li><p> Capable of handling markdown editing.</p></li>
+                                                <li><p> Contains a modular library to load the necessary functionality on demand.</p></li>
+                                                <li><p> Provides a fully customizable toolbar.</p></li>
+                                                <li><p> Provides HTML view to edit the source directly for developers.</p></li>
+                                                <li><p> Supports third - party library integration.</p></li>
+                                                <li><p> Allows preview of modified content before saving it.</p></li>
+                                                <li><p> Handles images, hyperlinks, video, hyperlinks, uploads, etc.</p></li>
+                                                <li><p> Contains undo / redo manager.</p></li>
+                                                <li><p> Creates bulleted and numbered lists.</p></li>
+                                            </ul>
+                                        </e-content-template>
+                                        <e-richtexteditor-toolbarsettings type="Expand" items="@ViewBag.items"></e-richtexteditor-toolbarsettings>
+                                    </ejs-richtexteditor>
+
+                                </div>
+                                @*<textarea asp-for="Body" class="form-control text-dark" style="resize: none;" rows="20"></textarea>*@
                                 <span asp-validation-for="Body" class="text-danger"></span>
                             </div>
                         </div>
