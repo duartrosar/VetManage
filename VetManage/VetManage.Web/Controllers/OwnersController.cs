@@ -60,7 +60,7 @@ namespace VetManage.Web.Controllers
             if (id == null)
             {
                 // vet not found
-                return NotFound();
+                return new NotFoundViewResult("OwnerNotFound");
             }
 
             var owner = await _ownerRepository.GetWithUserByIdAsync(id.Value);
@@ -68,7 +68,7 @@ namespace VetManage.Web.Controllers
             if (owner == null)
             {
                 // owner not found
-                return NotFound();
+                return new NotFoundViewResult("OwnerNotFound");
             }
 
             var model = new OwnerDetailsViewModel
@@ -93,7 +93,6 @@ namespace VetManage.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-
                 try
                 {
                     Guid imageId = Guid.Empty;
@@ -191,7 +190,7 @@ namespace VetManage.Web.Controllers
             if (id == null)
             {
                 // vet not found
-                return NotFound();
+                return new NotFoundViewResult("OwnerNotFound");
             }
 
             var owner = await _ownerRepository.GetWithUserByIdAsync(id.Value);
@@ -199,7 +198,7 @@ namespace VetManage.Web.Controllers
             if (owner == null)
             {
                 // owner not found
-                return NotFound();
+                return new NotFoundViewResult("OwnerNotFound");
             }
 
             var model = _converterHelper.ToOwnerViewModel(owner);
@@ -214,7 +213,6 @@ namespace VetManage.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-
                 try
                 {
                     Guid imageId = Guid.Empty;
@@ -226,6 +224,11 @@ namespace VetManage.Web.Controllers
 
                     // Get the user the user chose from the dropdown with the id
                     var user = await _userHelper.GetUserByIdAsync(model.UserId);
+
+                    if(user == null)
+                    {
+                        return new NotFoundViewResult("OwnerNotFound");
+                    }
 
                     user.PhoneNumber = model.MobileNumber;
                     user.FirstName = model.FirstName;
@@ -249,7 +252,7 @@ namespace VetManage.Web.Controllers
                 {
                     if (!await _ownerRepository.ExistsAsync(model.Id))
                     {
-                        return NotFound();
+                        return new NotFoundViewResult("OwnerNotFound");
                     }
                     else
                     {
@@ -266,33 +269,32 @@ namespace VetManage.Web.Controllers
             if (id == null)
             {
                 // vet not found
-                return NotFound();
+                return new NotFoundViewResult("OwnerNotFound");
             }
+
+            var owner = await _ownerRepository.GetWithUserByIdAsync(id.Value);
 
             try
             {
-                var owner = await _ownerRepository.GetWithUserByIdAsync(id.Value);
                 var user = await _userHelper.GetUserByIdAsync(owner.User.Id);
-                var messageBox = await _messageBoxRepository.GetMessageBoxByUserIdAsync(user.Id);
 
-                await _messageBoxRepository.DeleteAsync(messageBox);
                 await _ownerRepository.DeleteAsync(owner);
                 await _userHelper.DeleteUserAsync(user);
 
                 return RedirectToAction(nameof(Index));
 
             }
-            catch (Exception ex)
+            catch (DbUpdateException ex)
             {
-                // TODO: Vet could not be deleted
-                if (!await _ownerRepository.ExistsAsync(id.Value))
+                if (ex.InnerException != null && ex.InnerException.Message.Contains("DELETE"))
                 {
-                    return NotFound();
+                    ViewBag.ErrorTitle = $"You can't delete {owner.FullName}. Too much depends on it";
+                    ViewBag.ErrorMessage = $"You can't delete this owner because there are pets and messages associated with it.</br></br>" +
+                        $"Try to delete all pets associated with this user and try again.</br></br>" +
+                        $"Note: If there are messages associated with this user you may not delete it."; 
                 }
-                else
-                {
-                    throw;
-                }
+
+                return View("Error");
             }
         }
 
@@ -303,6 +305,11 @@ namespace VetManage.Web.Controllers
             var user = await _userHelper.GetUserByIdAsync(userId);
 
             return Json(user);
+        }
+
+        public IActionResult OwnerNotFound()
+        {
+            return View();
         }
     }
 }

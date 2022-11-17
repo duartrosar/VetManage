@@ -51,8 +51,8 @@ namespace VetManage.Web.Controllers
         {
             if (id == null)
             {
-                // vet not found
-                return NotFound();
+                // pet not found
+                return new NotFoundViewResult("PetNotFound");
             }
 
             var pet = await _petRepository.GetWithOwnerByIdAsync(id.Value);
@@ -60,7 +60,7 @@ namespace VetManage.Web.Controllers
             if (pet == null)
             {
                 // pet not found
-                return NotFound();
+                return new NotFoundViewResult("PetNotFound");
             }
 
             var model = _converterHelper.ToPetViewModel(pet);
@@ -118,7 +118,8 @@ namespace VetManage.Web.Controllers
             if (id == null)
             {
                 // vet not found
-                return NotFound();
+                return new NotFoundViewResult("PetNotFound");
+
             }
 
             var pet = await _petRepository.GetWithOwnerByIdAsync(id.Value);
@@ -126,7 +127,7 @@ namespace VetManage.Web.Controllers
             if (pet == null)
             {
                 // pet not found
-                return NotFound();
+                return new NotFoundViewResult("PetNotFound");
             }
 
             var owners = _ownerRepository.GetAllWithUsers();
@@ -168,7 +169,7 @@ namespace VetManage.Web.Controllers
                 {
                     if (!await _petRepository.ExistsAsync(model.Id))
                     {
-                        return NotFound();
+                        return new NotFoundViewResult("PetNotFound");
                     }
                     else
                     {
@@ -186,7 +187,8 @@ namespace VetManage.Web.Controllers
             if (id == null)
             {
                 // vet not found
-                return NotFound();
+                return new NotFoundViewResult("PetNotFound");
+
             }
 
 
@@ -201,7 +203,7 @@ namespace VetManage.Web.Controllers
             {
                 if (!await _petRepository.ExistsAsync(id.Value))
                 {
-                    return NotFound();
+                    return new NotFoundViewResult("PetNotFound");
                 }
                 else
                 {
@@ -209,6 +211,11 @@ namespace VetManage.Web.Controllers
                 }
                 throw;
             }
+        }
+
+        public IActionResult PetNotFound()
+        {
+            return View();
         }
     }
 }

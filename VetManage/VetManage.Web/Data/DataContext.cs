@@ -45,6 +45,20 @@ namespace VetManage.Web.Data
                 .HasForeignKey(mmb => mmb.MessageBoxId);
             });
 
+            modelBuilder.Entity<Owner>(builder =>
+            {
+                builder.HasMany(o => o.Pets)
+                .WithOne(p => p.Owner)
+                .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<User>(builder =>
+            {
+                builder.HasOne(u => u.MessageBox)
+                .WithOne(p => p.User)
+                .OnDelete(DeleteBehavior.Cascade);
+            });
+
             //modelBuilder.Entity<MessageBox>(builder =>
             //{
             //    builder.HasMany(mb => mb.Inbox).WithOne(m => m.Sender).OnDelete(DeleteBehavior.Restrict);

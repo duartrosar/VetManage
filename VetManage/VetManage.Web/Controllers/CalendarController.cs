@@ -110,14 +110,14 @@ namespace VetManage.Web.Controllers
         {
             if(id == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("AppointmentNotFound");
             }
 
             var appointment = await _appointmentRepository.GetWithMembersByIdAsync(id.Value);
 
             if(appointment == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("AppointmentNotFound");
             }
 
             var model = _converterHelper.ToAppointmentViewModel(appointment);
@@ -160,7 +160,7 @@ namespace VetManage.Web.Controllers
                 {
                     if (!await _appointmentRepository.ExistsAsync(model.Id))
                     {
-                        return NotFound();
+                        return new NotFoundViewResult("AppointmentNotFound");
                     }
                     else
                     {
@@ -187,7 +187,7 @@ namespace VetManage.Web.Controllers
         {
             if(id == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("AppointmentNotFound");
             }
 
             try
@@ -201,12 +201,17 @@ namespace VetManage.Web.Controllers
             {
                 if(!await _appointmentRepository.ExistsAsync(id.Value))
                 {
-                    return NotFound();
+                    return new NotFoundViewResult("AppointmentNotFound");
                 } else
                 {
                     throw;
                 }
             }
+        }
+
+        public IActionResult AppointmentNotFound()
+        {
+            return View();
         }
     }
 }

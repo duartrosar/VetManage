@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VetManage.Web.Data;
 
 namespace VetManage.Web.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20221117194029_RestrictDeleteOnOwners")]
+    partial class RestrictDeleteOnOwners
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -586,8 +588,7 @@ namespace VetManage.Web.Migrations
                 {
                     b.HasOne("VetManage.Web.Data.Entities.User", "User")
                         .WithOne("MessageBox")
-                        .HasForeignKey("VetManage.Web.Data.Entities.MessageBox", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("VetManage.Web.Data.Entities.MessageBox", "UserId");
 
                     b.Navigation("User");
                 });

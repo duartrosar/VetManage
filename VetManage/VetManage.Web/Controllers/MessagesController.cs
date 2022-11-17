@@ -42,7 +42,7 @@ namespace VetManage.Web.Controllers
                 return View(model);
             } else
             {
-                return NotFound();
+                return new NotFoundViewResult("MessageNotFound");
             }
         }
 
@@ -60,7 +60,7 @@ namespace VetManage.Web.Controllers
             }
             else
             {
-                return NotFound();
+                return new NotFoundViewResult("MessageNotFound");
             }
         }
 
@@ -82,7 +82,7 @@ namespace VetManage.Web.Controllers
             }
             else
             {
-                return NotFound();
+                return new NotFoundViewResult("MessageNotFound");
             }
         }
 
@@ -128,9 +128,8 @@ namespace VetManage.Web.Controllers
 
             if(message == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("MessageNotFound");
             }
-
 
             // Get the logged in user's MessageBox
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -156,7 +155,7 @@ namespace VetManage.Web.Controllers
                 if (!messagesIds.Contains(messageId))
                 {
                     // TODO: User not allowed to see this message
-                    return NotFound();
+                    return new NotFoundViewResult("MessageNotFound");
                 }
 
                 await _messageBoxRepository.ReadMessage(messageMessageBox);
@@ -173,13 +172,18 @@ namespace VetManage.Web.Controllers
                 if (!messagesIds.Contains(messageId))
                 {
                     // TODO: User not allowed to see this message
-                    return NotFound();
+                    return new NotFoundViewResult("MessageNotFound");
                 }
 
                 model = _converterHelper.ToMessageViewModelOutbox(message);
             }
 
             return View(model);
+        }
+
+        public IActionResult MessageNotFound()
+        {
+            return View();
         }
     }
 }

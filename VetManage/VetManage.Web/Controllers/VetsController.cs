@@ -55,7 +55,8 @@ namespace VetManage.Web.Controllers
             if (id == null)
             {
                 // vet not found
-                return NotFound();
+                return new NotFoundViewResult("VetNotFound");
+
             }
 
             var vet = await _vetRepository.GetWithUserByIdAsync(id.Value);
@@ -63,7 +64,8 @@ namespace VetManage.Web.Controllers
             if (vet == null)
             {
                 // vet not found
-                return NotFound();
+                return new NotFoundViewResult("VetNotFound");
+
             }
 
             var model = new VetDetailsViewModel
@@ -192,7 +194,7 @@ namespace VetManage.Web.Controllers
             if(id == null)
             {
                 // vet not found
-                return NotFound();
+                return new NotFoundViewResult("VetNotFound");
             }
 
             var vet = await _vetRepository.GetWithUserByIdAsync(id.Value);
@@ -200,7 +202,7 @@ namespace VetManage.Web.Controllers
             if(vet == null)
             {
                 // vet not found
-                return NotFound();
+                return new NotFoundViewResult("VetNotFound");
             }
 
             var model = _converterHelper.ToVetViewModel(vet);
@@ -227,6 +229,11 @@ namespace VetManage.Web.Controllers
                     // Get the user the user chose from the dropdown with the id
                     var user = await _userHelper.GetUserByIdAsync(model.UserId);
 
+                    if(user == null)
+                    {
+                        return new NotFoundViewResult("VetNotFound");
+                    }
+
                     user.PhoneNumber = model.MobileNumber;
                     user.FirstName = model.FirstName;
                     user.LastName = model.LastName;
@@ -252,7 +259,7 @@ namespace VetManage.Web.Controllers
                 {
                     if (!await _vetRepository.ExistsAsync(model.Id))
                     {
-                        return NotFound();
+                        return new NotFoundViewResult("VetNotFound");
                     }
                     else
                     {
@@ -268,28 +275,37 @@ namespace VetManage.Web.Controllers
             if (id == null)
             {
                 // vet not found
-                return NotFound();
+                return new NotFoundViewResult("VetNotFound");
             }
 
+
+            var vet = await _vetRepository.GetWithUserByIdAsync(id.Value);
 
             try
             {
-                var vet = await _vetRepository.GetWithUserByIdAsync(id.Value);
                 var user = await _userHelper.GetUserByIdAsync(vet.User.Id);
-                var messageBox = await _messageBoxRepository.GetMessageBoxByUserIdAsync(user.Id);
 
-                await _messageBoxRepository.DeleteAsync(messageBox);
                 await _vetRepository.DeleteAsync(vet);
                 await _userHelper.DeleteUserAsync(user);
+
                 return RedirectToAction(nameof(Index));
 
             }
-            catch (Exception ex)
+            catch (DbUpdateException ex)
             {
+                if (ex.InnerException != null && ex.InnerException.Message.Contains("DELETE"))
+                {
+                    ViewBag.ErrorTitle = $"You can't delete {vet.FullName}. Too much depends on it";
+                    ViewBag.ErrorMessage = $"You can't delete this owner because there are pets and messages associated with it.</br></br>" +
+                        $"Try to delete all pets associated with this user and try again.</br></br>" +
+                        $"Note: If there are messages associated with this user you may not delete it.";
+                }
+
+                return View("Error");
                 // TODO: Vet could not be deleted
                 if (!await _vetRepository.ExistsAsync(id.Value))
                 {
-                    return NotFound();
+                    return new NotFoundViewResult("VetNotFound");
                 }
                 else
                 {
@@ -305,6 +321,11 @@ namespace VetManage.Web.Controllers
             var user = await _userHelper.GetUserByIdAsync(userId);
 
             return Json(user);
+        }
+
+        public IActionResult VetNotFound()
+        {
+            return View();
         }
     }
 }
