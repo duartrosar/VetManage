@@ -2,9 +2,14 @@
 
 
 .dark-5 {
-    background-color: tint-color($dark, 5%);
+    //background-color: tint-color($dark, 5%);
+    background-color: rgba(13, 30, 39, 0.8) !important;
 }
 
 .dark-10 {
     background-color: tint-color($dark, 10%);
+}
+
+.dark-5-opacity-50 {
+    background-color: rgba(13, 30, 39, 0.8) ;
 }

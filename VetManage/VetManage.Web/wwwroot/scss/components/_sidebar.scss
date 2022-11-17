@@ -1,25 +1,29 @@
 ﻿@use "../abstracts/abstracts" as *;
 
-.sidebar {
-    //background-color: ;
-    width: 100%;
-    height: 100vh;
+.sidebar-container {
     position: fixed;
     left: 0;
     top: 0;
-    //max-width: 200px;
-    padding-top: 70px;
-    z-index: 100;
-    box-shadow: 0 0.25rem 0.75rem rgb(0 0 0 / 50%);
-    //overflow-y: scroll;
-    background-color: tint-color($dark, 5%);
+    height: 100vh;
+    width: 200px;
 
-    &.closed {
-        width: 80px;
-    }
+    .sidebar {
+        width: 100%;
+        //height: 100%;
+        position: fixed;
+        left: 0;
+        top: 90px;
+        z-index: 100;
+        box-shadow: 0 0.25rem 0.75rem rgb(0 0 0 / 50%);
+        //overflow-y: scroll;
 
-    &.open {
-        width: 250px;
+        &.closed {
+            width: 80px;
+        }
+
+        &.open {
+            width: 250px;
+        }
     }
 }
     

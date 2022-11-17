@@ -42,21 +42,11 @@ namespace VetManage.Web.Data.Entities
         [Range(1, int.MaxValue, ErrorMessage = "You must select an owner")]
         public int OwnerId { get; set; }
 
-        [Required]
         [Display(Name = "Image")]
-        public string ImageUrl { get; set; }
+        public Guid ImageId { get; set; }
 
-        public string ImageFullPath
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(ImageUrl))
-                {
-                    return $"https://localhost:44318/images/noimage.png";
-                }
-
-                return $"https://localhost:44318{ImageUrl.Substring(1)}";
-            }
-        }
+        public string ImageFullPath => ImageId == Guid.Empty
+             ? $"https://vetmanage.azurewebsites.net/images/noimage.png"
+             : $"https://vetmanagestorage.blob.core.windows.net/pets/{ImageId}";
     }
 }

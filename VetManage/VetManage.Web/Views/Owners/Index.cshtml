@@ -7,7 +7,7 @@
 <div class="content-container p-3">
     <div class="dark-5">
         <div class="p-3 d-flex justify-content-between align-items-center border-bottom">
-            <a asp-action="Create" class="btn btn-outline-light">New Vet</a>
+            <a asp-action="Create" class="btn btn-outline-light">New Owner</a>
             <h2>Owners</h2>
         </div>
         <div class="p-3 table-responsive">
@@ -15,7 +15,7 @@
                 <thead>
                     <tr>
                         <th>
-                            @Html.DisplayNameFor(model => model.ImageUrl)
+                            @Html.DisplayNameFor(model => model.ImageFullPath)
                         </th>
                         <th>
                             @Html.DisplayNameFor(model => model.FirstName)
@@ -100,13 +100,6 @@
 
     <script type="text/javascript">
         $(document).ready(function() {
-            let id = 0;
-            let sidebar = $(".sidebar");
-            let content = $(".content");
-            let menuState = localStorage.getItem("menuState");
-            
-            setSideBar(menuState, sidebar, content);
-
             $("#ownersNav").addClass("active");
             $("#ownersNav").addClass("bg-dark");
 

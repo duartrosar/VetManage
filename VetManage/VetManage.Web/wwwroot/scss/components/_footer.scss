@@ -1,0 +1,36 @@
+﻿@use "../abstracts/abstracts" as *;
+
+.footer {
+    height: 600px;
+    .brand-container {
+        .brand-name-container {
+            .brand-name {
+                font-size: 1.75rem;
+            }
+        }
+
+        .brand-image-container {
+            .brand-image {
+                height: 40px;
+            }
+        }
+    }
+
+    .brand-slogan-container {
+        .brand-slogan {
+            font-size: 0.8rem;
+        }
+    }
+
+    .contact-container {
+        .contact-item {
+            font-size: 0.8rem
+        }
+    }
+
+    a:hover {
+        color: $secondary !important;
+        font-weight: 400 !important;
+    }
+}
+

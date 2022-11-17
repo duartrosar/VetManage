@@ -15,18 +15,16 @@
                 <div asp-validation-summary="ModelOnly"></div>
                 <input type="hidden" asp-for="Id" />
                 <input type="hidden" asp-for="UserId" />
-                <input asp-for="ImageUrl" id="imageUrl" class="form-control" style="visibility: hidden;"/>
                 <div class="row">
                     <div class="col">
                         <div class="h-100">
-                            @*<label asp-for="ImageFile" class="control-label"></label>*@
-                            <div class="image-preview border-opacity-50 d-flex justify-content-center align-items-center" style="background-image: url(@Url.Content(@Model.ImageUrl))">
+                            <div class="image-preview border-opacity-50 d-flex justify-content-center align-items-center" style="background-image: url(@Url.Content(@Model.ImageFullPath))">
                                 <label class="btn btn-outline-light border-0 d-flex flex-column pt-1">
                                     <i data-feather="upload" stroke-width="1"></i>
                                     <input asp-for="ImageFile" class="img" id="imageFile" type="file" style="width: 0px;height: 0px;overflow: hidden;"/>
                                 </label>
                             </div>
-                            <span asp-validation-for="ImageUrl" class="text-danger" id="imgUrlValidation"></span>
+                            <span asp-validation-for="ImageIdString" class="text-danger" id="imgUrlValidation"></span>
                         </div>
                     </div>
                     <div class="col">
@@ -70,6 +68,7 @@
                         <button type="submit" class="btn btn-success">Confirm</button>
                     </div>
                 </div>
+                <input asp-for="ImageIdString" style="visibility: hidden; height: 0px;"/>
             </form>
         </div>
     </div>
@@ -96,12 +95,12 @@
                             $('.image-preview').css("background-image", "url("+this.result+")");
 
                             // set the image url property
-                            $('#imageUrl').val(`${files[0].name}`);
+                            $('#ImageIdString').val(`${files[0].name}`);
 
                             // remove validation span
-                            $('#imgUrlValidation').removeClass("field-validation-error");
-                            $('#imgUrlValidation').addClass("field-validation-valid");
-                            $('#imageUrl-error').remove();
+                            $('#ImageIdStringValidation').removeClass("field-validation-error");
+                            $('#ImageIdStringValidation').addClass("field-validation-valid");
+                            $('#ImageIdString-error').remove();
                         }
                     }
       

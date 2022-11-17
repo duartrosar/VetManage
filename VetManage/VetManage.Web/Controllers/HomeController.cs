@@ -24,10 +24,14 @@ namespace VetManage.Web.Controllers
             return View();
         }
 
-        [Route("Home/IndexPartial")]
-        public IActionResult IndexPartial()
+        public IActionResult Contact()
         {
-            return PartialView("_IndexPartial");
+            return View();
+        }
+
+        public IActionResult About()
+        {
+            return View();
         }
 
         public IActionResult Privacy()

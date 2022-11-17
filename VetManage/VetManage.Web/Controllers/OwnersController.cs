@@ -19,20 +19,26 @@ namespace VetManage.Web.Controllers
     public class OwnersController : Controller
     {
         private readonly IOwnerRepository _ownerRepository;
+        private readonly IMessageBoxRepository _messageBoxRepository;
         private readonly IConverterHelper _converterHelper;
+        private readonly IBlobHelper _blobHelper;
         private readonly IUserHelper _userHelper;
         private readonly IMailHelper _mailHelper;
         private readonly IMessageHelper _messageHelper;
 
         public OwnersController(
             IOwnerRepository ownerRepository,
+            IMessageBoxRepository messageBoxRepository,
             IConverterHelper converterHelper,
+            IBlobHelper blobHelper,
             IUserHelper userHelper,
             IMailHelper mailHelper,
             IMessageHelper messageHelper)
         {
             _ownerRepository = ownerRepository;
+            _messageBoxRepository = messageBoxRepository;
             _converterHelper = converterHelper;
+            _blobHelper = blobHelper;
             _userHelper = userHelper;
             _mailHelper = mailHelper;
             _messageHelper = messageHelper;
@@ -87,28 +93,16 @@ namespace VetManage.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var path = $"~/images/noimage.png";
-
-                if (model.OwnerViewModel.ImageFile != null && model.OwnerViewModel.ImageFile.Length > 0)
-                {
-                    var guid = Guid.NewGuid().ToString();
-                    var file = $"{guid}.jpg";
-
-                    path = Path.Combine(
-                        Directory.GetCurrentDirectory(),
-                        "wwwroot\\images\\owners",
-                        file);
-
-                    using (var stream = new FileStream(path, FileMode.Create))
-                    {
-                        await model.OwnerViewModel.ImageFile.CopyToAsync(stream);
-                    }
-
-                    path = $"~/images/owners/{file}";
-                }
 
                 try
                 {
+                    Guid imageId = Guid.Empty;
+
+                    if (model.OwnerViewModel.ImageFile != null && model.OwnerViewModel.ImageFile.Length > 0)
+                    {
+                        imageId = await _blobHelper.UploadBlobAsync(model.OwnerViewModel.ImageFile, "owners");
+                    }
+
                     var user = await _userHelper.GetUserByEmailAsync(model.Username);
 
                     if (user == null)
@@ -144,7 +138,7 @@ namespace VetManage.Web.Controllers
                         model.OwnerViewModel.User = await _userHelper.GetUserByEmailAsync(model.Username);
 
                         // Create Owner
-                        var owner = _converterHelper.ToOwner(model.OwnerViewModel, true, path);
+                        var owner = _converterHelper.ToOwner(model.OwnerViewModel, true, imageId);
 
                         await _ownerRepository.CreateAsync(owner);
 
@@ -220,28 +214,16 @@ namespace VetManage.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var path = model.ImageUrl;
-
-                if (model.ImageFile != null && model.ImageFile.Length > 0)
-                {
-                    var guid = Guid.NewGuid().ToString();
-                    var file = $"{guid}.jpg";
-
-                    path = Path.Combine(
-                        Directory.GetCurrentDirectory(),
-                        "wwwroot\\images\\owners",
-                        file);
-
-                    using (var stream = new FileStream(path, FileMode.Create))
-                    {
-                        await model.ImageFile.CopyToAsync(stream);
-                    }
-
-                    path = $"~/images/owners/{file}";
-                }
 
                 try
                 {
+                    Guid imageId = Guid.Empty;
+
+                    if (model.ImageFile != null && model.ImageFile.Length > 0)
+                    {
+                        imageId = await _blobHelper.UploadBlobAsync(model.ImageFile, "owners");
+                    }
+
                     // Get the user the user chose from the dropdown with the id
                     var user = await _userHelper.GetUserByIdAsync(model.UserId);
 
@@ -257,7 +239,7 @@ namespace VetManage.Web.Controllers
                     {
                         model.User = user;
 
-                        var owner = _converterHelper.ToOwner(model, false, path);
+                        var owner = _converterHelper.ToOwner(model, false, imageId);
 
                         await _ownerRepository.UpdateAsync(owner);
                     }
@@ -287,13 +269,16 @@ namespace VetManage.Web.Controllers
                 return NotFound();
             }
 
-            var owner = await _ownerRepository.GetWithUserByIdAsync(id.Value);
-            var user = await _userHelper.GetUserByIdAsync(owner.User.Id);
-
             try
             {
+                var owner = await _ownerRepository.GetWithUserByIdAsync(id.Value);
+                var user = await _userHelper.GetUserByIdAsync(owner.User.Id);
+                var messageBox = await _messageBoxRepository.GetMessageBoxByUserIdAsync(user.Id);
+
+                await _messageBoxRepository.DeleteAsync(messageBox);
                 await _ownerRepository.DeleteAsync(owner);
                 await _userHelper.DeleteUserAsync(user);
+
                 return RedirectToAction(nameof(Index));
 
             }

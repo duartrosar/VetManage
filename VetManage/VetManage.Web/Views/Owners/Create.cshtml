@@ -13,7 +13,6 @@
         <div class="p-3">
             <form asp-action="Create" class="flex-fill" method="post" style="max-width: 1200px;" id="registerVetsForm" enctype="multipart/form-data">
                 <div asp-validation-summary="ModelOnly"></div>
-                <input asp-for="OwnerViewModel.ImageUrl" id="imageUrl" class="form-control" style="visibility: hidden;"/>
                 <div class="row">
                     <div class="col">
                         <div class="h-100">
@@ -23,7 +22,7 @@
                                     <input asp-for="OwnerViewModel.ImageFile" class="img" id="imageFile" type="file" style="width: 0px;height: 0px;overflow: hidden;"/>
                                 </label>
                             </div>
-                            <span asp-validation-for="OwnerViewModel.ImageUrl" class="text-danger" id="imgUrlValidation"></span>
+                            <span asp-validation-for="OwnerViewModel.ImageIdString" class="text-danger" id="imgUrlValidation"></span>
                         </div>
                     </div>
                     <div class="col">
@@ -72,6 +71,7 @@
                         <button type="submit" class="btn btn-success">Create</button>
                     </div>
                 </div>
+                <input asp-for="OwnerViewModel.ImageIdString" style="visibility: hidden;"/>
             </form>
         </div>
     </div>
@@ -98,12 +98,12 @@
                             $('.image-preview').css("background-image", "url("+this.result+")");
 
                             // set the image url property
-                            $('#imageUrl').val(`${files[0].name}`);
+                            $('#ImageIdString').val(`${files[0].name}`);
 
                             // remove validation span
-                            $('#imgUrlValidation').removeClass("field-validation-error");
-                            $('#imgUrlValidation').addClass("field-validation-valid");
-                            $('#imageUrl-error').remove();
+                            $('#ImageIdStringValidation').removeClass("field-validation-error");
+                            $('#ImageIdStringValidation').addClass("field-validation-valid");
+                            $('#ImageIdString-error').remove();
                         }
                     }
       

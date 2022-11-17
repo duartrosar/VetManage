@@ -72,6 +72,7 @@ namespace VetManage.Web
             services.AddScoped<IConverterHelper, ConverterHelper>();
             services.AddScoped<IMailHelper, MailHelper>();
             services.AddScoped<IMessageHelper, MessageHelper>();
+            services.AddScoped<IBlobHelper, BlobHelper>();
 
             // Repositories
             services.AddScoped<IOwnerRepository, OwnerRepository>();

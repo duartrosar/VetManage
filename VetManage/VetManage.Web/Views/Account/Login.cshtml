@@ -3,13 +3,9 @@
 @{
     ViewData["Title"] = "Login";
 }
-
-
-<h2>Login</h2>
-
-<div class="row">
-    <div class="col-md-4 offset-md-4">
-        <form method="post">
+<div class="content-container d-flex justify-content-center align-items-center pt-5">
+    <div class="form-container mt-5 pt-5">
+        <form method="post" style="width: 350px">
             <div asp-validation-summary="ModelOnly"></div>
             <div class="mb-3">
                 <label asp-for="Username">Username</label>
@@ -22,20 +18,31 @@
                 <span asp-validation-for="Password" class="text-warning"></span>
             </div>
             <div class="mb-3">
-                <div class="form-check">
-                    <input asp-for="RememberMe" type="checkbox" class="form-check-input"/>
-                    <label asp-for="RememberMe" class="form-check-label">RememberMe</label>
+                <div class="d-flex justify-content-between">
+                    <div class="form-check">
+                        <input asp-for="RememberMe" type="checkbox" class="form-check-input"/>
+                        <label asp-for="RememberMe" class="form-check-label">RememberMe</label>
+                    </div>
+                    <button type="submit" class="btn btn-success text-light">Login</button>
                 </div>
-                <span asp-validation-for="Username" class="text-warning"></span>
             </div>
-            <div class="mb-3">
-                <input type="submit" value="Login" class="btn btn-success"/>
-                <a asp-action="Register" class="btn btn-primary">Register New User</a>
-            </div>
+            @*<div class="mb-3">
+                <button type="submit" class="btn btn-success">Login</button>
+            </div>*@
         </form>
-    </div>
+    </div>       
 </div>
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            
+            $("#loginNav").addClass("active");
+        });
+    </script>
 }
+
+                    

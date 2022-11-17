@@ -23,17 +23,20 @@ namespace VetManage.Web.Controllers
         private readonly IPetRepository _petRepository;
         private readonly IOwnerRepository _ownerRepository;
         private readonly IConverterHelper _converterHelper;
+        private readonly IBlobHelper _blobHelper;
 
         public PetsController(
             DataContext context,
             IPetRepository petRepository,
             IOwnerRepository ownerRepository,
-            IConverterHelper converterHelper)
+            IConverterHelper converterHelper,
+            IBlobHelper blobHelper)
         {
             _context = context;
             _petRepository = petRepository;
             _ownerRepository = ownerRepository;
             _converterHelper = converterHelper;
+            _blobHelper = blobHelper;
         }
 
         // GET: Pets
@@ -80,38 +83,32 @@ namespace VetManage.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var path = string.Empty;
-
-                if(model.ImageFile != null && model.ImageFile.Length > 0)
+                try
                 {
-                    var guid = Guid.NewGuid().ToString();
-                    var file = $"{guid}.jpg";
+                    Guid imageId = Guid.Empty;
 
-                    path = Path.Combine(
-                        Directory.GetCurrentDirectory(),
-                        "wwwroot\\images\\pets",
-                        file);
-
-                    using(var stream = new FileStream(path, FileMode.Create))
+                    if (model.ImageFile != null && model.ImageFile.Length > 0)
                     {
-                        await model.ImageFile.CopyToAsync(stream);
+                        imageId = await _blobHelper.UploadBlobAsync(model.ImageFile, "pets");
                     }
 
-                    path = $"~/images/pets/{file}";
+                    var owner = await _ownerRepository.GetByIdAsync(model.OwnerId);
+
+                    if (owner != null)
+                    {
+                        var pet = _converterHelper.ToPet(model, true, imageId);
+
+                        await _petRepository.CreateAsync(pet);
+                        return RedirectToAction(nameof(Index));
+                    }
                 }
-
-                var owner = await _ownerRepository.GetByIdAsync(model.OwnerId);
-
-                if(owner != null)
+                catch (Exception)
                 {
-                    var pet = _converterHelper.ToPet(model, true, path);
+                    // TODO: Pet could not be created
 
-                    await _petRepository.CreateAsync(pet);
-                    return RedirectToAction(nameof(Index));
+                    throw;
                 }
-                // TODO: Pet could not be created
             }
-
             return View(model);
         }
 
@@ -148,34 +145,21 @@ namespace VetManage.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var path = model.ImageUrl;
-
-                if (model.ImageFile != null && model.ImageFile.Length > 0)
-                {
-                    var guid = Guid.NewGuid().ToString();
-                    var file = $"{guid}.jpg";
-
-                    path = Path.Combine(
-                        Directory.GetCurrentDirectory(),
-                        "wwwroot\\images\\pets",
-                        file);
-
-                    using (var stream = new FileStream(path, FileMode.Create))
-                    {
-                        await model.ImageFile.CopyToAsync(stream);
-                    }
-
-                    path = $"~/images/pets/{file}";
-                }
-
                 try
                 {
+                    Guid imageId = Guid.Empty;
+
+                    if (model.ImageFile != null && model.ImageFile.Length > 0)
+                    {
+                        imageId = await _blobHelper.UploadBlobAsync(model.ImageFile, "pets");
+                    }
+
                     var owner = await _ownerRepository.GetByIdAsync(model.OwnerId);
 
                     if(owner != null)
                     {
                         // TODO: replace by image path
-                        var pet = _converterHelper.ToPet(model, false, path);
+                        var pet = _converterHelper.ToPet(model, false, imageId);
                         await _petRepository.UpdateAsync(pet);
                     }
                     // TODO: Pet could not be updated
@@ -205,10 +189,11 @@ namespace VetManage.Web.Controllers
                 return NotFound();
             }
 
-            var pet = await _petRepository.GetByIdAsync(id.Value);
 
             try
             {
+                var pet = await _petRepository.GetByIdAsync(id.Value);
+
                 await _petRepository.DeleteAsync(pet);
                 return RedirectToAction(nameof(Index));
             }

@@ -17,23 +17,29 @@ namespace VetManage.Web.Controllers
     public class VetsController : Controller
     {
         private readonly IVetRepository _vetRepository;
+        private readonly IMessageBoxRepository _messageBoxRepository;
         private readonly IConverterHelper _converterHelper;
         private readonly IUserHelper _userHelper;
         private readonly IMailHelper _mailHelper;
         private readonly IMessageHelper _messageHelper;
+        private readonly IBlobHelper _blobHelper;
 
         public VetsController(
             IVetRepository vetRepository,
+            IMessageBoxRepository messageBoxRepository,
             IConverterHelper converterHelper,
             IUserHelper userHelper,
             IMailHelper mailHelper,
-            IMessageHelper messageHelper)
+            IMessageHelper messageHelper,
+            IBlobHelper blobHelper)
         {
             _vetRepository = vetRepository;
+            _messageBoxRepository = messageBoxRepository;
             _converterHelper = converterHelper;
             _userHelper = userHelper;
             _mailHelper = mailHelper;
             _messageHelper = messageHelper;
+            _blobHelper = blobHelper;
         }
         public IActionResult Index()
         {
@@ -82,28 +88,15 @@ namespace VetManage.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var path = $"~/images/noimage.png";
-
-                if (model.VetViewModel.ImageFile != null && model.VetViewModel.ImageFile.Length > 0)
-                {
-                    var guid = Guid.NewGuid().ToString();
-                    var file = $"{guid}.jpg";
-
-                    path = Path.Combine(
-                        Directory.GetCurrentDirectory(),
-                        "wwwroot\\images\\vets",
-                        file);
-
-                    using (var stream = new FileStream(path, FileMode.Create))
-                    {
-                        await model.VetViewModel.ImageFile.CopyToAsync(stream);
-                    }
-
-                    path = $"~/images/vets/{file}";
-                }
-
                 try
                 {
+                    Guid imageId = Guid.Empty;
+
+                    if (model.VetViewModel.ImageFile != null && model.VetViewModel.ImageFile.Length > 0)
+                    {
+                        imageId = await _blobHelper.UploadBlobAsync(model.VetViewModel.ImageFile, "vets");
+                    }
+
                     var user = await _userHelper.GetUserByEmailAsync(model.Username);
 
                     if (user == null)
@@ -144,7 +137,7 @@ namespace VetManage.Web.Controllers
                         model.VetViewModel.User = await _userHelper.GetUserByEmailAsync(model.Username);
 
                         // Create Vet
-                        var vet = _converterHelper.ToVet(model.VetViewModel, true, path);
+                        var vet = _converterHelper.ToVet(model.VetViewModel, true, imageId);
 
                         await _vetRepository.CreateAsync(vet);
 
@@ -222,28 +215,15 @@ namespace VetManage.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var path = model.ImageUrl;
-
-                if (model.ImageFile != null && model.ImageFile.Length > 0)
-                {
-                    var guid = Guid.NewGuid().ToString();
-                    var file = $"{guid}.jpg";
-
-                    path = Path.Combine(
-                        Directory.GetCurrentDirectory(),
-                        "wwwroot\\images\\vets",
-                        file);
-
-                    using (var stream = new FileStream(path, FileMode.Create))
-                    {
-                        await model.ImageFile.CopyToAsync(stream);
-                    }
-
-                    path = $"~/images/vets/{file}";
-                }
-
                 try
                 {
+                    Guid imageId = model.ImageId;
+
+                    if (model.ImageFile != null && model.ImageFile.Length > 0)
+                    {
+                        imageId = await _blobHelper.UploadBlobAsync(model.ImageFile, "vets");
+                    }
+
                     // Get the user the user chose from the dropdown with the id
                     var user = await _userHelper.GetUserByIdAsync(model.UserId);
 
@@ -259,7 +239,7 @@ namespace VetManage.Web.Controllers
                     {
                         model.User = user;
 
-                        var vet = _converterHelper.ToVet(model, false, path);
+                        var vet = _converterHelper.ToVet(model, false, imageId);
 
                         await _vetRepository.UpdateAsync(vet);
 
@@ -291,11 +271,14 @@ namespace VetManage.Web.Controllers
                 return NotFound();
             }
 
-            var vet = await _vetRepository.GetWithUserByIdAsync(id.Value);
-            var user = await _userHelper.GetUserByIdAsync(vet.User.Id);
 
             try
             {
+                var vet = await _vetRepository.GetWithUserByIdAsync(id.Value);
+                var user = await _userHelper.GetUserByIdAsync(vet.User.Id);
+                var messageBox = await _messageBoxRepository.GetMessageBoxByUserIdAsync(user.Id);
+
+                await _messageBoxRepository.DeleteAsync(messageBox);
                 await _vetRepository.DeleteAsync(vet);
                 await _userHelper.DeleteUserAsync(user);
                 return RedirectToAction(nameof(Index));

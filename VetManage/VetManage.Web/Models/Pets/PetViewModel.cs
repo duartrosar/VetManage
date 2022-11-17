@@ -10,5 +10,8 @@ namespace VetManage.Web.Models.Pets
     {
         [Display(Name = "Image")]
         public IFormFile ImageFile { get; set; }
+
+        [Required]
+        public string ImageIdString { get; set; }
     }
 }

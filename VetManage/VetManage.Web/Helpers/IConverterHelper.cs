@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using VetManage.Web.Data.Entities;
 using VetManage.Web.Models.Calendar;
@@ -11,17 +12,17 @@ namespace VetManage.Web.Helpers
 {
     public interface IConverterHelper
     {
-        Owner ToOwner(OwnerViewModel model, bool isNew, string path);
+        Owner ToOwner(OwnerViewModel model, bool isNew, Guid imageId);
         OwnerViewModel ToOwnerViewModel(Owner owner);
         ICollection<OwnerViewModel> AllToOwnerViewModel(IQueryable owners);
 
 
-        Pet ToPet(PetViewModel model, bool isNew, string path);
+        Pet ToPet(PetViewModel model, bool isNew, Guid imageId);
         PetViewModel ToPetViewModel(Pet pet);
         ICollection<PetViewModel> AllToPetViewModel(IQueryable pets);
 
 
-        Vet ToVet(VetViewModel model, bool isNew, string path);
+        Vet ToVet(VetViewModel model, bool isNew, Guid imageId);
         VetViewModel ToVetViewModel(Vet vet);
         ICollection<VetViewModel> AllToVetViewModel(IQueryable vets);
 

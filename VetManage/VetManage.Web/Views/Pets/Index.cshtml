@@ -20,7 +20,7 @@
                 <thead>
                     <tr>
                         <th>
-                            @Html.DisplayNameFor(model => model.ImageUrl)
+                            @Html.DisplayNameFor(model => model.ImageFullPath)
                         </th>
                         <th>
                             @Html.DisplayNameFor(model => model.Name)
@@ -111,14 +111,7 @@
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script type="text/javascript">
         $(document).ready(function() {
-            let sidebar = $(".sidebar");
-            let content = $(".content");
-            let menuState = localStorage.getItem("menuState");
             
-            setSideBar(menuState, sidebar, content);
-
-            let inputs = document.querySelectorAll(".form-control");
-
             $("#petsNav").addClass("active");
             $("#petsNav").addClass("bg-dark");
 

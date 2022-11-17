@@ -25,13 +25,13 @@
                     <td class="align-middle">
                         <div class="frame" id="vetImage" style="background-image: url(@Url.Content(Model.ImageFullPath)"></div>
                     </td>
-                    <td class="align-middle" id="vetName">
-                        @Html.DisplayFor(modelItem => Model.FirstName)
+                    <td class="align-middle" id="vetFirstName">
+                        @Html.DisplayFor(modelItem => modelItem.FirstName)
                     </td>
-                    <td class="align-middle" id="vetType">
-                        @Html.DisplayFor(modelItem => Model.LastName)
+                    <td class="align-middle" id="vetLastName">
+                        @Html.DisplayFor(modelItem => modelItem.LastName)
                     </td>
-                    <td class="align-middle" id="vetBreed">
+                    <td class="align-middle" id="vetSpeciality">
                         Vet Master
                     </td>
                 </tr>

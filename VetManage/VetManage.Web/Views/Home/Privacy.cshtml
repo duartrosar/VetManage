@@ -9,3 +9,13 @@
         <p>Use this page to detail your site's privacy policy.</p>
     </div>
 </div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            
+            $("#privacyNav").addClass("active");
+        });
+    </script>
+}

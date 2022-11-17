@@ -22,6 +22,7 @@
     <Content Remove="wwwroot\scss\bootstrap\_overrides.scss" />
     <Content Remove="wwwroot\scss\layouts\_content.scss" />
     <Content Remove="wwwroot\scss\layouts\_form.scss" />
+    <Content Remove="wwwroot\scss\layouts\_home.scss" />
   </ItemGroup>
 
   <ItemGroup>
@@ -175,6 +176,7 @@
     <None Include="wwwroot\scss\bootstrap\_overrides.scss" />
     <None Include="wwwroot\scss\bootstrap\_bootstrap.scss" />
     <None Include="wwwroot\scss\components\_components.scss" />
+    <None Include="wwwroot\scss\layouts\_home.scss" />
     <None Include="wwwroot\scss\layouts\_form.scss" />
     <None Include="wwwroot\scss\layouts\_content.scss" />
     <None Include="wwwroot\scss\layouts\_layout.scss" />
@@ -195,9 +197,11 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Syncfusion.EJ2.AspNet.Core" Version="20.2.0.50" />
+    <PackageReference Include="WindowsAzure.Storage" Version="9.3.3" />
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="wwwroot\images\logos\" />
     <Folder Include="wwwroot\images\owners\" />
     <Folder Include="wwwroot\images\pets\" />
     <Folder Include="wwwroot\images\vets\" />

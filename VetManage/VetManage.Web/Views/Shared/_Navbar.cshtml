@@ -8,34 +8,55 @@
                 </a>
             </div>
         </div>*@
-        <a class="navbar-brand text-white ms-4" asp-area="" asp-controller="Home" asp-action="Index">VetManage.Web</a>
-        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-            <ul class="navbar-nav flex-grow-1">
+        <a class="navbar-brand text-white ms-4" asp-area="" asp-controller="Home" asp-action="Index">
+            <div class="d-flex brand-container justify-content-center align-items-center">
+                <div class="brand-image-container">
+                    <img class="brand-image" src="~/images/logos/paw-logo.png" alt="" />
+                </div>
+                <div class="brand-name-container ps-3">
+                    <span class="brand-name">VetManage</span>
+                </div>
+            </div>
+        </a>
+        <div class="navbar-collapse collapse d-flex justify-content-end">
+            <ul class="navbar-nav navbar-right">
                 @if (!User.Identity.IsAuthenticated)
                 {
-                    <li class="nav-item">
-                        <a class="px-4 text-light" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                    <li class="nav-item" id="homeNav">
+                        <a class="px-4 text-light fw-lighter" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                     </li>
+                    <li class="nav-item" id="aboutNav">
+                        <a class="px-4 text-light fw-lighter" asp-area="" asp-controller="Home" asp-action="About">About</a>
+                    </li>
+                    <li class="nav-item" id="contactNav">
+                        <a class="px-4 text-light fw-lighter" asp-area="" asp-controller="Home" asp-action="Contact">Contact</a>
+                    </li>
+                    <li class="nav-item" id="privacyNav">
+                        <a class="px-4 text-light fw-lighter" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                    </li>
+                    <li class="nav-item" id="loginNav">
+                        <a class="px-4 text-light fw-lighter" asp-area="" asp-controller="Account" asp-action="Login">
+                            Login
+                            @*<i class="fa fa-sign-in"></i>*@
+                        </a>
+                    </li>
+                } else
+                {
                     <li class="nav-item">
-                        <a class="px-4 text-light" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        <a class="px-4 text-light fw-lighter" asp-area="" asp-controller="Account" asp-action="Logout">
+                            Logout
+                            @*<i class="fa fa-sign-out"></i>*@
+                        </a>
                     </li>
                 }
             </ul>
-            
+            @*
             <ul class="nav navbar-nav navbar-right">
                 @if (User.Identity.IsAuthenticated)
                 {
-                    <li class="nav-item">
-                        <a class="px-4 text-light" asp-area="" asp-controller="Account" asp-action="Logout"><i class="fa fa-sign-out"></i></a>
-                    </li>
+                    
                 }
-                else
-                {
-                    <li class="nav-item">
-                        <a class="px-4 text-light" asp-area="" asp-controller="Account" asp-action="Login"><i class="fa fa-sign-in"></i></a>
-                    </li>
-                }
-            </ul>
+            </ul>*@
         </div>
     </div>
 </nav>

@@ -45,6 +45,8 @@
 
     // When user clicks the vet selection button
     $("#chooseVetBtn").click(function () {
+        console.log("hello");
+
         // vet stuff
         // hide choose button and selected vet table
         // show vets table
@@ -66,9 +68,10 @@
         let selectedRow = $("#petTableBody").find(".selected");
         let petId = selectedRow.data("petId");
         let pet = selectedRow.data("pet");
-
+        console.log("hello");
         // if the user has actually selected a pet
         if (pet !== undefined) {
+            console.log(pet);
             // set the pets values
             $("#petImage").css("background-image", `url(${pet.ImageFullPath})`);
             $("#petName").html(pet.Name);
@@ -99,6 +102,8 @@
         let vet = selectedRow.data("vet");
         // if the user has actually selected a vet
         if (vet !== undefined) {
+
+            console.log(vet);
             // set the vets values
             $("#vetImage").css("background-image", `url(${vet.ImageFullPath})`);
             $("#vetFirstName").html(vet.FirstName);

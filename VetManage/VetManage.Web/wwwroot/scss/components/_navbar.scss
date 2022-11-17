@@ -1,6 +1,40 @@
 ﻿@use "../abstracts/abstracts" as *;
 
 .navbar {
-    height: 70px;
+    height: 90px;
+
+    .brand-container {
+        .brand-name-container {
+            .brand-name {
+                font-size: 1.75rem;
+            }
+        }
+
+        .brand-image-container {
+            .brand-image {
+                height: 40px;
+            }
+        }
+    }
+
+    .nav-item {
+        transition: all 0.05s ease-in;
+
+        &.active {
+            font-weight: 700;
+
+            a {
+                color: $secondary !important;
+            }
+        }
+
+        &:hover {
+            font-weight: 700;
+
+            a {
+                color: $secondary !important;
+            }
+        }
+    }
 }
 

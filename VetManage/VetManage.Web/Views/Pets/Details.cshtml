@@ -36,57 +36,48 @@
                 <div class="row">
                     <div class="col">
                         <div class="h-100">
-                            <div class="image-preview border-opacity-50 d-flex justify-content-center align-items-center" style="background-image: url(@Url.Content(@Model.ImageUrl))">
+                            <div class="image-preview border-opacity-50 d-flex justify-content-center align-items-center" style="background-image: url(@Url.Content(@Model.ImageFullPath))">
                                 <label class="btn btn-outline-light border-0 d-flex flex-column pt-1">
                                     <i data-feather="upload" stroke-width="1"></i>
                                     <input asp-for="ImageFile" class="img" id="imageFile" type="file" style="width: 0px;height: 0px;overflow: hidden;" readonly/>
                                 </label>
-                            </div>
-                            <span asp-validation-for="ImageUrl" class="text-danger" id="imgUrlValidation"></span>
+                            </div>id="imgUrlValidation"></span>
                         </div>
                     </div>
                     <div class="col">
                         <div class="mb-4">
                             <label asp-for="Name">Name</label>
                             <input asp-for="Name" class="form-control" readonly/>
-                            <span asp-validation-for="Name" class="text-danger"></span>
                         </div>
                         <div class="mb-4">
                             <label asp-for="Type">Species</label>
                             <input asp-for="Type" class="form-control" readonly/>
-                            <span asp-validation-for="Type" class="text-danger"></span>
                         </div>
                         <div class="mb-4">
                             <label asp-for="Breed">Breed</label>
                             <input asp-for="Breed" class="form-control"  readonly/>
-                            <span asp-validation-for="Breed" class="text-danger"></span>
                         </div>
                         <div class="mb-4">
                             <label asp-for="Gender">Gender</label>
                             <input asp-for="Gender" class="form-control" readonly/>
-                            <span asp-validation-for="Gender" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col">
                         <div class="mb-4">
                             <label asp-for="DateOfBirth">DateOfBirth</label>
                             <input id="dateOfBirth" asp-for="DateOfBirth" class="form-control" readonly/>
-                            <span asp-validation-for="DateOfBirth" class="text-danger"></span>
                         </div>
                         <div class="mb-4">
                             <label asp-for="Weight">Weight</label>
                             <input asp-for="Weight" class="form-control"  readonly/>
-                            <span asp-validation-for="Weight" class="text-danger"></span>
                         </div>
                         <div class="mb-4">
                             <label asp-for="Height">Height</label>
                             <input asp-for="Height" class="form-control"  readonly/>
-                            <span asp-validation-for="Height" class="text-danger"></span>
                         </div>
                         <div class="mb-4">
                             <label asp-for="Length">Length</label>
                             <input asp-for="Length" class="form-control"  readonly/>
-                            <span asp-validation-for="Length" class="text-danger"></span>
                         </div>
                     </div>
                 </div>
@@ -95,7 +86,6 @@
                         <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
                     </div>
                 </div>
-                <input asp-for="ImageUrl" id="imageUrl" class="form-control" style="visibility: hidden; height: 0px;"/>
             </div>
         </div>
     </div>

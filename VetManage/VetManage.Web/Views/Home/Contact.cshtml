@@ -1,0 +1,19 @@
+﻿
+@{
+    ViewData["Title"] = "Contact";
+}
+
+<h1>Contact</h1>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            
+            $("#contactNav").addClass("active");
+        });
+    </script>
+}
+
+
