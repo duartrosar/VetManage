@@ -551,6 +551,10 @@ table.dataTable.table-hover > tbody > tr.selected:hover > * {
   background-repeat: no-repeat;
   background-size: cover;
 }
+.frame.frame-nav {
+  width: 50px !important;
+  height: 50px !important;
+}
 
 :root {
   --ck-color-text: black;
@@ -4218,16 +4222,16 @@ textarea.form-control-lg {
 }
 
 .dropdown-menu-dark {
-  --bs-dropdown-color: #dee2e6;
-  --bs-dropdown-bg: #343a40;
+  --bs-dropdown-color: #aaa;
+  --bs-dropdown-bg: #00121c;
   --bs-dropdown-border-color: var(--bs-border-color-translucent);
   --bs-dropdown-box-shadow: ;
-  --bs-dropdown-link-color: #dee2e6;
+  --bs-dropdown-link-color: #aaa;
   --bs-dropdown-link-hover-color: #fff;
   --bs-dropdown-divider-bg: var(--bs-border-color-translucent);
   --bs-dropdown-link-hover-bg: rgba(255, 255, 255, 0.15);
-  --bs-dropdown-link-active-color: #fff;
-  --bs-dropdown-link-active-bg: #008CE3;
+  --bs-dropdown-link-active-color: #aaa;
+  --bs-dropdown-link-active-bg: #0d1e27;
   --bs-dropdown-link-disabled-color: #adb5bd;
   --bs-dropdown-header-color: #adb5bd;
 }

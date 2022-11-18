@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace VetManage.Web.Data.Entities
@@ -40,26 +41,11 @@ namespace VetManage.Web.Data.Entities
         [Display(Name = "Name")]
         public string FullName => $"{FirstName} {LastName}";
 
-        // Save the path to the user's profile image, this will be the same as its entity
         [Display(Name = "Image")]
-        public string ImageUrl { get; set; }
-
+        public string ImageFullPath { get; set; }
 
         // Keep record if user has changed its password before the first login
         public bool PasswordChanged { get; set; }
-
-        public string ImageFullPath
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(ImageUrl))
-                {
-                    return $"https://localhost:44318/images/noimage.png"; ;
-                }
-
-                return $"https://localhost:44318{ImageUrl.Substring(1)}";
-            }
-        }
 
         public MessageBox MessageBox { get; set; }
     }

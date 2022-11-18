@@ -6,29 +6,32 @@
 
 <h2>@ViewData["Title"]</h2>
 
-<div>
-    <p>To activate your account please change your password.</p>
-</div>
-
-<form class="flex-fill" method="post" style="max-width: 500px;">
-    <div asp-validation-summary="ModelOnly"></div>
-    <input type="hidden" asp-for="UserId" class="form-control"/>
-    <input type="hidden" asp-for="ConfirmationToken" class="form-control"/>
-    <input type="hidden" asp-for="PasswordToken" class="form-control"/>
-    <div class="mb-3">
-        <label asp-for="Password">First Name</label>
-        <input id="firstName" asp-for="Password" class="form-control"/>
-        <span asp-validation-for="Password" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="ConfirmPassword">Last Name</label>
-        <input id="lastName" asp-for="ConfirmPassword" class="form-control"/>
-        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-            <button asp-action="ConfirmEmail" type="submit" class="btn btn-success">Create</button>
+<div class="content-container d-flex justify-content-center align-items-center pt-5">
+    <div class="form-container mt-5 pt-5">
+        <div>
+            <p>To activate your account please change your password.</p>
         </div>
+        <form class="flex-fill" method="post" style="max-width: 500px;">
+            <div asp-validation-summary="ModelOnly"></div>
+            <input type="hidden" asp-for="UserId" class="form-control"/>
+            <input type="hidden" asp-for="ConfirmationToken" class="form-control"/>
+            <input type="hidden" asp-for="PasswordToken" class="form-control"/>
+            <div class="mb-3">
+                <label asp-for="Password">Password</label>
+                <input id="firstName" asp-for="Password" class="form-control"/>
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="ConfirmPassword">Password</label>
+                <input id="lastName" asp-for="ConfirmPassword" class="form-control"/>
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <button asp-action="ConfirmEmail" type="submit" class="btn btn-success">Activate Account</button>
+                </div>
+            </div>
+        </form>
     </div>
-</form>
+</div>
 

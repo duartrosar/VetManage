@@ -103,17 +103,14 @@ namespace VetManage.Web.Controllers
 
                     if (user == null)
                     {
-                        // Create new user
-                        user = new User
-                        {
-                            FirstName = model.VetViewModel.FirstName,
-                            LastName = model.VetViewModel.LastName,
-                            Email = model.Username,
-                            UserName = model.Username,
-                            Address = model.VetViewModel.Address,
-                            PhoneNumber = model.VetViewModel.MobileNumber,
-                            PasswordChanged = false,
-                        };
+                        // Convert Vet
+                        var vet = _converterHelper.ToVet(model.VetViewModel, true, imageId);
+
+                        user = _converterHelper.ToUser(vet, new User());
+
+                        user.Email = model.Username;
+                        user.UserName = model.Username;
+                        user.PasswordChanged = false;
 
                         // Generate random password
                         var password = Guid.NewGuid().ToString();
@@ -136,34 +133,15 @@ namespace VetManage.Web.Controllers
                         }
 
                         // get the newly created user and set it as the vet's user
-                        model.VetViewModel.User = await _userHelper.GetUserByEmailAsync(model.Username);
+                       vet.User = await _userHelper.GetUserByEmailAsync(model.Username);
 
-                        // Create Vet
-                        var vet = _converterHelper.ToVet(model.VetViewModel, true, imageId);
-
+                        // Save Vet
                         await _vetRepository.CreateAsync(vet);
 
                         // Create user's MessageBox
                         await _messageHelper.InitializeMessageBox(user.Id);
 
-                        // Send confirmation and change password email
-                        string confirmationToken = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
-                        string passwordToken = await _userHelper.GeneratePasswordResetTokenAsync(user);
-                        string tokenLink = Url.Action(
-                            "ConfirmEmail", 
-                            "Account", new
-                        {
-                            userId = user.Id,
-                            confirmationToken = confirmationToken,
-                            passwordToken = passwordToken
-                            
-                        }, protocol: HttpContext.Request.Scheme);
-
-                        Response response = _mailHelper.SendEmail(
-                            model.Username,
-                            "Email Confirmation",
-                            $"<h1>Email Confirmation</h1>" +
-                            $"To activate your account please click the link and set up a new password:</br></br><a href = \"{tokenLink}\">Confirm Account</a>");
+                        Response response = await ConfirmEmailAsync(user, model);
 
                         if (response.IsSuccess)
                         {
@@ -207,6 +185,11 @@ namespace VetManage.Web.Controllers
 
             var model = _converterHelper.ToVetViewModel(vet);
 
+            if(await _userHelper.IsUserInRoleAsync(vet.User, "Admin"))
+            {
+                model.IsAdmin = true;
+            }
+
             return View(model);
         }
 
@@ -233,20 +216,25 @@ namespace VetManage.Web.Controllers
                     {
                         return new NotFoundViewResult("VetNotFound");
                     }
+                    var vet = _converterHelper.ToVet(model, false, imageId);
 
-                    user.PhoneNumber = model.MobileNumber;
-                    user.FirstName = model.FirstName;
-                    user.LastName = model.LastName;
-                    user.Address = model.Address;
+                    user = _converterHelper.ToUser(vet, user);
 
                     // Update the user 
                     var response = await _userHelper.UpdateUserAsync(user);
 
                     if (response.Succeeded)
                     {
-                        model.User = user;
+                        if (model.IsAdmin)
+                        {
+                            await _userHelper.AddUserToRoleAsync(user, "Admin");
+                        }
+                        else
+                        {
+                            await _userHelper.RemoveUserFromRoleAsync(user, "Admin");
+                        }
 
-                        var vet = _converterHelper.ToVet(model, false, imageId);
+                        model.User = user;
 
                         await _vetRepository.UpdateAsync(vet);
 
@@ -326,6 +314,29 @@ namespace VetManage.Web.Controllers
         public IActionResult VetNotFound()
         {
             return View();
+        }
+
+        public async Task<Response> ConfirmEmailAsync(User user, RegisterVetViewModel model)
+        {
+            string confirmationToken = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
+            string passwordToken = await _userHelper.GeneratePasswordResetTokenAsync(user);
+            string tokenLink = Url.Action(
+                "ConfirmEmail",
+                "Account", new
+                {
+                    userId = user.Id,
+                    confirmationToken = confirmationToken,
+                    passwordToken = passwordToken
+
+                }, protocol: HttpContext.Request.Scheme);
+
+            Response response = _mailHelper.SendEmail(
+                model.Username,
+                "Email Confirmation",
+                $"<h1>Email Confirmation</h1>" +
+                $"To activate your account please click the link and set up a new password:</br></br><a href = \"{tokenLink}\">Confirm Account</a>");
+
+            return response;
         }
     }
 }

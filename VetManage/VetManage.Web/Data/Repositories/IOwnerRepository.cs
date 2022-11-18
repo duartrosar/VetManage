@@ -17,5 +17,7 @@ namespace VetManage.Web.Data.Repositories
         IQueryable GetAllWithPetsAndUsers();
 
         IEnumerable<SelectListItem> GetComboUsersNoEntity();
+
+        Task<Owner> GetByUserIdAsync(User user);
     }
 }

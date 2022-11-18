@@ -392,7 +392,7 @@ namespace VetManage.Web.Migrations
                     b.Property<bool>("HasEntity")
                         .HasColumnType("bit");
 
-                    b.Property<string>("ImageUrl")
+                    b.Property<string>("ImageFullPath")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")

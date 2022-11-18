@@ -15,5 +15,7 @@ namespace VetManage.Web.Data.Repositories
         IEnumerable<SelectListItem> GetComboUsersNoEntity();
 
         IEnumerable<SelectListItem> GetComboUsers();
+
+        Task<Vet> GetByUserIdAsync(User user);
     }
 }

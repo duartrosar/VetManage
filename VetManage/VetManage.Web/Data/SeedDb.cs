@@ -14,15 +14,21 @@ namespace VetManage.Web.Data
         private readonly DataContext _context;
         private readonly IUserHelper _userHelper;
         private readonly IMessageHelper _messageHelper;
+        private readonly IVetRepository _vetRepository;
+        private readonly IConverterHelper _converterHelper;
 
         public SeedDb(
             DataContext context, 
             IUserHelper userHelper,
-            IMessageHelper messageHelper)
+            IMessageHelper messageHelper,
+            IVetRepository vetRepository,
+            IConverterHelper converterHelper)
         {
             _context = context;
             _userHelper = userHelper;
             _messageHelper = messageHelper;
+            _vetRepository = vetRepository;
+            _converterHelper = converterHelper;
         }
 
         public async Task SeedAsync()
@@ -42,16 +48,23 @@ namespace VetManage.Web.Data
 
             if (user == null)
             {
-                user = new User
+                Vet vet = new Vet
                 {
                     FirstName = "Duarte",
                     LastName = "Ribeiro",
-                    Email = "duartrosar@gmail.com",
-                    UserName = "duartrosar@gmail.com",
-                    PhoneNumber = "214658973",
+                    MobileNumber = "214658973",
                     Address = "Rua do Cocho",
-                    PasswordChanged = true,
+                    ImageId = new Guid(),
+                    Gender = "Male",
+                    DateOfBirth = new DateTime(1996,7,31)
                 };
+
+                user = _converterHelper.ToUser(vet, new User());
+
+                user.PasswordChanged = true;
+                user.Email = "duartrosar@gmail.com";
+                user.UserName = "duartrosar@gmail.com";
+                user.ImageFullPath = "https://vetmanage.azurewebsites.net/images/nouser.png";
 
                 var result = await _userHelper.AddUserAsync(user, "123456");
 
@@ -62,9 +75,15 @@ namespace VetManage.Web.Data
 
                 await _userHelper.AddUserToRoleAsync(user, Roles.Admin.ToString());
 
+                await _userHelper.AddUserToRoleAsync(user, Roles.Employee.ToString());
+
                 var token = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
 
                 await _userHelper.ConfirmEmailAsync(user, token);
+
+                vet.User = user;
+
+                await _vetRepository.CreateAsync(vet);
 
                 await _context.SaveChangesAsync();
 

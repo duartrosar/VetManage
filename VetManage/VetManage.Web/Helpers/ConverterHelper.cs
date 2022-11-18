@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using VetManage.Web.Data.Entities;
+using VetManage.Web.Models.Account;
 using VetManage.Web.Models.Calendar;
 using VetManage.Web.Models.Messages;
 using VetManage.Web.Models.Owners;
@@ -49,6 +50,18 @@ namespace VetManage.Web.Helpers
             };
         }
 
+        public Owner EditProfileViewModelToOwner(EditProfileViewModel model, Owner owner, Guid imageId)
+        {
+            owner.FirstName = model.FirstName;
+            owner.LastName = model.LastName;
+            owner.DateOfBirth = model.DateOfBirth;
+            owner.Gender = model.Gender;
+            owner.Address = model.Address;
+            owner.MobileNumber = model.MobileNumber;
+            owner.ImageId = imageId;
+
+            return owner;
+        }
 
         public ICollection<OwnerViewModel> AllToOwnerViewModel(IQueryable owners)
         {
@@ -148,6 +161,18 @@ namespace VetManage.Web.Helpers
                 UserId = vet.User.Id,
                 ImageId = vet.ImageId
             };
+        }
+        public Vet EditProfileViewModelToVet(EditProfileViewModel model, Vet vet, Guid imageId)
+        {
+            vet.FirstName = model.FirstName;
+            vet.LastName = model.LastName;
+            vet.DateOfBirth = model.DateOfBirth;
+            vet.Gender = model.Gender;
+            vet.Address = model.Address;
+            vet.MobileNumber = model.MobileNumber;
+            vet.ImageId = imageId;
+
+            return vet;
         }
 
         public ICollection<VetViewModel> AllToVetViewModel(IQueryable vets)
@@ -289,6 +314,17 @@ namespace VetManage.Web.Helpers
             }
 
             return messageViewModels;
+        }
+
+        public User ToUser(IIsUser entity, User user)
+        {
+            user.FirstName = entity.FirstName;
+            user.LastName = entity.LastName;
+            user.Address = entity.Address;
+            user.PhoneNumber = entity.MobileNumber;
+            user.ImageFullPath = entity.ImageFullPath;
+
+            return user;
         }
     }
 }

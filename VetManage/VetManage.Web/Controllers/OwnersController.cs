@@ -106,17 +106,14 @@ namespace VetManage.Web.Controllers
 
                     if (user == null)
                     {
-                        // Create new user
-                        user = new User
-                        {
-                            FirstName = model.OwnerViewModel.FirstName,
-                            LastName = model.OwnerViewModel.LastName,
-                            Email = model.Username,
-                            UserName = model.Username,
-                            Address = model.OwnerViewModel.Address,
-                            PhoneNumber = model.OwnerViewModel.MobileNumber,
-                            PasswordChanged = false,
-                        };
+                        // Convert Owner
+                        var owner = _converterHelper.ToOwner(model.OwnerViewModel, true, imageId);
+
+                        user = _converterHelper.ToUser(owner, new User());
+
+                        user.Email = model.Username;
+                        user.UserName = model.Username;
+                        user.PasswordChanged = false;
 
                         // Generate random password
                         var password = Guid.NewGuid().ToString();
@@ -131,43 +128,25 @@ namespace VetManage.Web.Controllers
                         }
 
                         // Add role or roles to user
-                        await _userHelper.AddUserToRoleAsync(user, "Employee");
+                        await _userHelper.AddUserToRoleAsync(user, "Client");
 
-                        // get the newly created user and set it as the vet's user
-                        model.OwnerViewModel.User = await _userHelper.GetUserByEmailAsync(model.Username);
+                        // get the newly created user and set it as the owners's user
+                        owner.User = await _userHelper.GetUserByEmailAsync(model.Username);
 
-                        // Create Owner
-                        var owner = _converterHelper.ToOwner(model.OwnerViewModel, true, imageId);
-
+                        // Save Owner
                         await _ownerRepository.CreateAsync(owner);
 
                         // Create user's MessageBox
                         await _messageHelper.InitializeMessageBox(user.Id);
 
-                        // Send confirmation and change password email
-                        string confirmationToken = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
-                        string passwordToken = await _userHelper.GeneratePasswordResetTokenAsync(user);
-                        string tokenLink = Url.Action(
-                            "ConfirmEmail",
-                            "Account", new
-                            {
-                                userId = user.Id,
-                                confirmationToken = confirmationToken,
-                                passwordToken = passwordToken
-
-                            }, protocol: HttpContext.Request.Scheme);
-
-                        Response response = _mailHelper.SendEmail(
-                            model.Username,
-                            "Email Confirmation",
-                            $"<h1>Email Confirmation</h1>" +
-                            $"To activate your account please click the link and set up a new password:</br></br><a href = \"{tokenLink}\">Confirm Account</a>");
+                        Response response = await ConfirmEmailAsync(user, model);
 
                         if (response.IsSuccess)
                         {
                             ViewBag.Message = "Confirmation email has been sent";
                             return RedirectToAction(nameof(Index));
                         }
+                        ModelState.AddModelError(string.Empty, "Failed to Login");
 
                         return RedirectToAction(nameof(Index));
                         // TODO: Owner could not be created
@@ -230,19 +209,16 @@ namespace VetManage.Web.Controllers
                         return new NotFoundViewResult("OwnerNotFound");
                     }
 
-                    user.PhoneNumber = model.MobileNumber;
-                    user.FirstName = model.FirstName;
-                    user.LastName = model.LastName;
-                    user.Address = model.Address;
+                    var owner = _converterHelper.ToOwner(model, false, imageId);
 
-                    // Update the user so that it has an entity related to it
+                    user = _converterHelper.ToUser(owner, user);
+
+                    // Update the user 
                     var response = await _userHelper.UpdateUserAsync(user);
 
                     if (response.Succeeded)
                     {
                         model.User = user;
-
-                        var owner = _converterHelper.ToOwner(model, false, imageId);
 
                         await _ownerRepository.UpdateAsync(owner);
                     }
@@ -310,6 +286,29 @@ namespace VetManage.Web.Controllers
         public IActionResult OwnerNotFound()
         {
             return View();
+        }
+
+        public async Task<Response> ConfirmEmailAsync(User user, RegisterOwnerViewModel model)
+        {
+            string confirmationToken = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
+            string passwordToken = await _userHelper.GeneratePasswordResetTokenAsync(user);
+            string tokenLink = Url.Action(
+                "ConfirmEmail",
+                "Account", new
+                {
+                    userId = user.Id,
+                    confirmationToken = confirmationToken,
+                    passwordToken = passwordToken
+
+                }, protocol: HttpContext.Request.Scheme);
+
+            Response response = _mailHelper.SendEmail(
+                model.Username,
+                "Email Confirmation",
+                $"<h1>Email Confirmation</h1>" +
+                $"To activate your account please click the link and set up a new password:</br></br><a href = \"{tokenLink}\">Confirm Account</a>");
+
+            return response;
         }
     }
 }

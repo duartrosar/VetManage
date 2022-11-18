@@ -16,5 +16,7 @@ namespace VetManage.Web.Models.Vets
         public IFormFile ImageFile { get; set; }
 
         public string ImageIdString { get; set; }
+
+        public bool IsAdmin { get; set; }
     }
 }

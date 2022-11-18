@@ -61,5 +61,11 @@ namespace VetManage.Web.Data.Repositories
 
             return list;
         }
+
+        public async Task<Owner> GetByUserIdAsync(User user)
+        {
+            return await _context.Owners
+                .FirstOrDefaultAsync(v => v.User == user);
+        }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using VetManage.Web.Data.Entities;
+using VetManage.Web.Models.Account;
 using VetManage.Web.Models.Calendar;
 using VetManage.Web.Models.Messages;
 using VetManage.Web.Models.Owners;
@@ -14,6 +15,7 @@ namespace VetManage.Web.Helpers
     {
         Owner ToOwner(OwnerViewModel model, bool isNew, Guid imageId);
         OwnerViewModel ToOwnerViewModel(Owner owner);
+        Owner EditProfileViewModelToOwner(EditProfileViewModel model, Owner owner, Guid imageId);
         ICollection<OwnerViewModel> AllToOwnerViewModel(IQueryable owners);
 
 
@@ -24,6 +26,7 @@ namespace VetManage.Web.Helpers
 
         Vet ToVet(VetViewModel model, bool isNew, Guid imageId);
         VetViewModel ToVetViewModel(Vet vet);
+        Vet EditProfileViewModelToVet(EditProfileViewModel model, Vet vet, Guid imageId);
         ICollection<VetViewModel> AllToVetViewModel(IQueryable vets);
 
 
@@ -34,10 +37,10 @@ namespace VetManage.Web.Helpers
 
         Message ToMessage(MessageViewModel model);
         MessageViewModel ToMessageViewModel(Message message, MessageMessageBox mmb);
-
         MessageViewModel ToMessageViewModelOutbox(Message message);
-
         ICollection<MessageViewModel> AllToMessageViewModel(IQueryable<Message> messages, IQueryable<MessageMessageBox> messageMessageBoxes);
         ICollection<MessageViewModel> AllToMessageViewModelOutbox(IQueryable<Message> outbox);
+
+        User ToUser(IIsUser entity, User user);
     }
 }

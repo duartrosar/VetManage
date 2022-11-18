@@ -38,6 +38,20 @@ $table-color: white;
 $table-bg: tint-color($dark, 10%);
 $table-accent-bg: tint-color($dark, 5%);
 
+// dropdown
+$dropdown-dark-color: #aaa;
+$dropdown-dark-bg: $dark;
+//$dropdown-dark-border-color: $dropdown-border-color;
+//$dropdown-dark-divider-bg: $dropdown-divider-bg;
+//$dropdown-dark-box-shadow: null;
+//$dropdown-dark-link-color: $dropdown-dark-color;
+$dropdown-dark-link-color: #aaa;
+$dropdown-dark-link-hover-color: $white;
+$dropdown-dark-link-hover-bg: rgba($white, .15);
+$dropdown-dark-link-active-color: #aaa;
+$dropdown-dark-link-active-bg: tint-color($dark, 5%);
+$dropdown-dark-link-disabled-color: $gray-500;
+$dropdown-dark-header-color: $gray-500;
 
 :root {
     --ck-color-text: black;

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace VetManage.Web.Data.Entities
 {
-    public class Vet : IEntity
+    public class Vet : IEntity, IIsUser
     {
         public int Id { get; set; }
 
@@ -41,7 +41,7 @@ namespace VetManage.Web.Data.Entities
         public Guid ImageId { get; set; }
 
         public string ImageFullPath => ImageId == Guid.Empty
-            ? $"https://vetmanage.azurewebsites.net/images/noimage.png"
+            ? $"https://vetmanage.azurewebsites.net/images/nouser.png"
             : $"https://vetmanagestorage.blob.core.windows.net/vets/{ImageId}";
     }
 }

@@ -46,6 +46,10 @@ namespace VetManage.Web.Helpers
 
         Task<string> GeneratePasswordResetTokenAsync(User user);
 
+        Task<string> GenerateChangeEmailTokenAsync(User user, string email);
+
         Task<IdentityResult> ResetPasswordAsync(User user, string token, string password);
+
+        Task<IdentityResult> ChangeEmailAsync(User user, string newEmail, string token);
     }
 }

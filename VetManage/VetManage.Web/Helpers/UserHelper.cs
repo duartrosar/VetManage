@@ -156,9 +156,20 @@ namespace VetManage.Web.Helpers
             return await _userManager.GeneratePasswordResetTokenAsync(user);
         }
 
+        public async Task<string> GenerateChangeEmailTokenAsync(User user, string email)
+        {
+            return await _userManager.GenerateChangeEmailTokenAsync(user, email);
+        }
+
         public async Task<IdentityResult> ResetPasswordAsync(User user, string token, string password)
         {
             return await _userManager.ResetPasswordAsync(user, token, password);
         }
+
+        public async Task<IdentityResult> ChangeEmailAsync(User user, string newEmail, string token)
+        {
+            return await _userManager.ChangeEmailAsync(user, newEmail, token);
+        }
+
     }
 }

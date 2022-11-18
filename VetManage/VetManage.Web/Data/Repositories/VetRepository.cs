@@ -57,5 +57,11 @@ namespace VetManage.Web.Data.Repositories
                 .Include(v => v.User)
                 .FirstOrDefaultAsync(v => v.Id == id);
         }
+
+        public async Task<Vet> GetByUserIdAsync(User user)
+        {
+            return await _context.Vets
+                .FirstOrDefaultAsync(v => v.User == user);
+        }
     }
 }

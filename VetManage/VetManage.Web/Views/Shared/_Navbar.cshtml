@@ -41,12 +41,30 @@
                         </a>
                     </li>
                 } else
-                {
-                    <li class="nav-item">
-                        <a class="px-4 text-light fw-lighter" asp-area="" asp-controller="Account" asp-action="Logout">
-                            Logout
-                            @*<i class="fa fa-sign-out"></i>*@
-                        </a>
+                {  
+                    <li class="">
+                        <div class="dropdown me-4">
+                            <button class="dropdown-toggle d-flex justify-content-center align-items-center" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                            <div id="loggedUserImage" class="frame frame-nav me-2" style="background-image: url(@Url.Content("~/images/nouser.png"))"></div>
+                            <div class="d-flex flex-column ms-2">
+                                <span class="text-light fs-6 fw-lighter text-start" id="loggedUserName">Duarte Ribeiro</span>
+                                @*<span class="text-light fs-3 fw-lighter text-start" id="loggedUserRole">Employee</span>*@
+                            </div>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="dropdownMenuButton">
+                                <li>
+                                    <a class="dropdown-item text-light fw-lighter" asp-area="" asp-controller="Account" asp-action="EditProfile">Edit Profile</a>
+                                    </li>
+                                <li>
+                                    <a class="dropdown-item text-light fw-lighter" asp-area="" asp-controller="Account" asp-action="RecoverPassword">Recover Password</a>
+                                    </li>
+                                <li>
+                                    <a class="dropdown-item text-light fw-lighter" asp-area="" asp-controller="Account" asp-action="Logout">
+                                Logout
+                                    </a>
+                                    </li>
+                            </ul>
+	                    </div>
                     </li>
                 }
             </ul>
@@ -61,3 +79,17 @@
     </div>
 </nav>
 
+@*<div class="dropdown">
+                            <button class="dropdown-toggle d-flex justify-content-center align-items-center me-4" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <div class="frame frame-nav" style="background-image: url(@Url.Content("~/images/owners/26099159-8fd9-48c2-abbd-4463501809be.jpg"))"></div>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <li><a class="dropdown-item" href="#">Action</a></li>
+                                <li><a class="dropdown-item" href="#">Another action</a></li>
+                                <li>
+                                    <a class="dropdown-item px-4 text-light fw-lighter" asp-area="" asp-controller="Account" asp-action="Logout">
+                                Logout
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>*@

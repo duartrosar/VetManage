@@ -110,7 +110,7 @@ namespace VetManage.Web.Controllers
 
                     await _messageBoxRepository.SendMessage(message, recipients);
 
-                    return RedirectToAction(nameof(Inbox));
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
                 {

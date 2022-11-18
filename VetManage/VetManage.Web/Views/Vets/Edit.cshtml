@@ -15,6 +15,7 @@
                 <div asp-validation-summary="ModelOnly"></div>
                 <input type="hidden" asp-for="Id" />
                 <input type="hidden" asp-for="UserId" />
+                <input type="hidden" asp-for="ImageId" />
                 <div class="row">
                     <div class="col">
                         <div class="h-100">
@@ -59,6 +60,10 @@
                             <label asp-for="MobileNumber">Mobile Number</label>
                             <input id="mobileNumber" asp-for="MobileNumber" class="form-control" />
                             <span asp-validation-for="MobileNumber" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3 form-check d-flex align-items-center" style="min-height: 62px">
+                            <input class="form-check-input me-1" asp-for="IsAdmin" id="flexCheck"/>
+                            <label class="form-check-label" for="flexCheck">Is Admin?</label>
                         </div>
                     </div>
                 </div>

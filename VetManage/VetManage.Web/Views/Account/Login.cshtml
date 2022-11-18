@@ -23,7 +23,7 @@
                         <input asp-for="RememberMe" type="checkbox" class="form-check-input"/>
                         <label asp-for="RememberMe" class="form-check-label">RememberMe</label>
                     </div>
-                    <button type="submit" class="btn btn-success text-light">Login</button>
+                    <button asp-action="Login" asp-controller="Account" type="submit" class="btn btn-success text-light">Login</button>
                 </div>
             </div>
             @*<div class="mb-3">
