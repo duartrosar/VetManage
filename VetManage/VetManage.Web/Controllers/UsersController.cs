@@ -2,199 +2,350 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Vereyon.Web;
 using VetManage.Web.Data.Entities;
 using VetManage.Web.Helpers;
 using VetManage.Web.Models.Account;
+using VetManage.Web.Models.Users;
 
 namespace VetManage.Web.Controllers
 {
-    [Authorize] // TO DO: (Role = "Admin")
+    /// <summary>
+    /// From the users perspective, this is the "Employees" controller since they can 
+    /// only CRUD the users that are a part of the Employee Role from this controller
+    /// </summary>
+    [Authorize(Roles = "Admin")] // TO DO: (Role = "Admin")
     public class UsersController : Controller
     {
         private readonly IUserHelper _userHelper;
+        private readonly IMessageHelper _messageHelper;
+        private readonly IConverterHelper _converterHelper;
+        private readonly IBlobHelper _blobHelper;
+        private readonly IFlashMessage _flashMessage;
+        private readonly IMailHelper _mailHelper;
 
         public UsersController(
-            IUserHelper userHelper)
+            IUserHelper userHelper,
+            IMessageHelper messageHelper,
+            IConverterHelper converterHelper,
+            IBlobHelper blobHelper,
+            IFlashMessage flashMessage,
+            IMailHelper mailHelper)
         {
             _userHelper = userHelper;
+            _messageHelper = messageHelper;
+            _converterHelper = converterHelper;
+            _blobHelper = blobHelper;
+            _flashMessage = flashMessage;
+            _mailHelper = mailHelper;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var users = _userHelper.GetAll()
+            // We only want to manage the "Employee" users so that's what we get
+            var employeeUsers = await _userHelper.GetUsersInRoleAsync("Employee");
+
+            return View(employeeUsers
                 .OrderBy(u => u.FirstName)
-                .ThenBy(u => u.LastName);
+                .ThenBy(u => u.LastName));
+        }
 
-            var roles = _userHelper.GetComboRoles();
-            
-            RegisterNewUserViewModel registerViewModel = new RegisterNewUserViewModel()
+        public async Task<IActionResult> Details(string? id)
+        {
+            if (id == null)
             {
-                //Roles = roles,
-            };
+                // vet not found
+                return new NotFoundViewResult("UserNotFound");
+            }
 
-            EditUserViewModel editViewModel = new EditUserViewModel()
-            {
-                Roles = roles,
-            };
+            var user = await _userHelper.GetUserByIdAsync(id);
 
-            AccountViewModel model = new AccountViewModel
+            if (user == null)
             {
-                Users = users.ToList(),
-                RegisterNewUser = registerViewModel,
-                EditUser = editViewModel,
+                // vet not found
+                return new NotFoundViewResult("UserNotFound");
+            }
+
+            var model = _converterHelper.ToUserViewModel(user);
+
+            model.Id = id;
+
+            if (await _userHelper.IsUserInRoleAsync(user, "Admin"))
+            {
+                model.IsAdmin = true;
+            }
+
+            return View(model);
+        }
+
+        public IActionResult Create()
+        {
+            var model = new UserViewModel
+            {
+                DateOfBirth = DateTime.Now,
             };
 
             return View(model);
         }
 
-        [Route("Users/IndexPartial")]
-
-        public IActionResult IndexPartial()
-        {
-            var users = _userHelper.GetAll()
-                .OrderBy(u => u.FirstName)
-                .ThenBy(u => u.LastName);
-
-            var roles = _userHelper.GetComboRoles();
-
-            RegisterNewUserViewModel registerViewModel = new RegisterNewUserViewModel()
-            {
-                //Roles = roles,
-            };
-
-            EditUserViewModel editViewModel = new EditUserViewModel()
-            {
-                Roles = roles,
-            };
-
-            AccountViewModel model = new AccountViewModel
-            {
-                Users = users.ToList(),
-                RegisterNewUser = registerViewModel,
-                EditUser = editViewModel,
-            };
-
-            return PartialView("_IndexPartial", model);
-        }
-
+        // POST: Owners/Create
         [HttpPost]
-        public async Task<IActionResult> Register(RegisterNewUserViewModel model)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(UserViewModel model)
         {
             if (ModelState.IsValid)
             {
-                // Check if user exists and get it if it does
-                var user = await _userHelper.GetUserByEmailAsync(model.Username);
-
-                if (user == null)
+                try
                 {
-                    // Add new user with the data from the model
-                    user = new User
-                    {
-                        FirstName = model.FirstName,
-                        LastName = model.LastName,
-                        Email = model.Username,
-                        UserName = model.Username,
-                        Address = model.Address,
-                        PhoneNumber = model.PhoneNumber,
-                        //RoleId = model.RoleId,
-                        //RoleName = model.RoleName,
-                        HasEntity = false,
-                    };
+                    var user = await _userHelper.GetUserByEmailAsync(model.Username);
 
-                    var result = await _userHelper.AddUserAsync(user, model.Password);
-
-                    if (result != IdentityResult.Success)
+                    if(user == null)
                     {
-                        ModelState.AddModelError(string.Empty, "The User could not be created.");
+                        Guid imageId = model.ImageId;
+
+                        if (model.ImageFile != null && model.ImageFile.Length > 0)
+                        {
+                            imageId = await _blobHelper.UploadBlobAsync(model.ImageFile, "users");
+                        }
+
+                        user = _converterHelper.ToUser(new User(), model, true, "users");
+
+                        user.Email = model.Username;
+                        user.PasswordChanged = false;
+
+                        // Generate random password
+                        var password = Guid.NewGuid().ToString();
+
+                        var result = await _userHelper.AddUserAsync(user, password);
+
+                        if (result != IdentityResult.Success)
+                        {
+                            throw new Exception("The user could not be created, please try again.");
+                        }
+
+                        // Add role or roles to user
+                        await _userHelper.AddUserToRoleAsync(user, "Employee");
+
+                        if (model.IsAdmin)
+                        {
+                            await _userHelper.AddUserToRoleAsync(user, "Admin");
+                        }
+
+                        // Create user's MessageBox
+                        await _messageHelper.InitializeMessageBox(user.Id);
+
+                        Response response = await ConfirmEmailAsync(user);
+
+                        if (response.IsSuccess)
+                        {
+                            _flashMessage.Confirmation("Employee has been created and confirmation email has been sent to user.");
+                        }
+
+                        model.ImageId = imageId;
 
                         return View(model);
                     }
 
-                    //await _userHelper.AddUserToRoleAsync(user, model.RoleName);
+                    _flashMessage.Danger("That email is already being used by another user, please try again");
 
-                    // Login the newly created user
-                    LoginViewModel loginViewModel = new LoginViewModel
-                    {
-                        Username = user.UserName,
-                        Password = model.Password,
-                        RememberMe = false,
-                    };
-
-                    // Try to login
-                    var result2 = await _userHelper.LoginAsync(loginViewModel);
-
-                    if (result2.Succeeded)
-                    {
-                        return RedirectToAction(nameof(Index));
-                    }
+                    return View(model);
                 }
+                catch (Exception ex)
+                {
+                    _flashMessage.Danger(ex.Message);
+                }
+            }
+            return View(model);
+        }
+
+        // GET: Vets/Edit/5
+        public async Task<IActionResult> Edit(string? id)
+        {
+            if (id == null)
+            {
+                // vet not found
+                return new NotFoundViewResult("UserNotFound");
+            }
+
+            var user = await _userHelper.GetUserByIdAsync(id);
+
+            if (user == null)
+            {
+                // vet not found
+                return new NotFoundViewResult("UserNotFound");
+            }
+
+            var model = _converterHelper.ToUserViewModel(user);
+
+            if (await _userHelper.IsUserInRoleAsync(user, "Admin"))
+            {
+                model.IsAdmin = true;
             }
 
             return View(model);
         }
 
-
         [HttpPost]
-        public async Task<IActionResult> Edit(EditUserViewModel model)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(UserViewModel model)
         {
             if (ModelState.IsValid)
             {
-                // Check if user exists
-                var user = await _userHelper.GetUserByIdAsync(model.Id);
-
-                if (user != null)
+                try
                 {
-                    // update user's data
-                    user.FirstName = model.FirstName;
-                    user.LastName = model.LastName;
-                    user.Address = model.Address;
-                    user.PhoneNumber = model.PhoneNumber;
-                    user.RoleId = model.RoleId;
-                    user.RoleName = model.RoleName;
+                    // Get the user being edited so we can check if the email has changed
+                    var user = await _userHelper.GetUserByIdAsync(model.Id);
 
-                    // Update user in database
-                    var response = await _userHelper.UpdateUserAsync(user);
+                    if(user != null)
+                    {
+                        // Try to get an user with the new email introduced to check if that email is already being used
+                        var user2 = await _userHelper.GetUserByIdAsync(model.Username);
 
-                    if (response.Succeeded)
-                    {
-                        ViewBag.UserMessage = "User Updated!";
-                    }
-                    else
-                    {
-                        ModelState.AddModelError(string.Empty, response.Errors.FirstOrDefault().Description);
+                        if(user2 != null && user.Email != model.Username)
+                        {
+                            _flashMessage.Danger("The email you introduced is already being used.");
+
+                            return View(model);
+                        }
+
+                        Guid imageId = model.ImageId;
+
+                        if (model.ImageFile != null && model.ImageFile.Length > 0)
+                        {
+                            imageId = await _blobHelper.UploadBlobAsync(model.ImageFile, model.BlobContainer);
+                        }
+
+                        model.ImageId = imageId;
+
+                        user = _converterHelper.ToUser(user, model, false, model.BlobContainer);
+
+                        var response = await _userHelper.UpdateUserAsync(user);
+
+                        if (response.Succeeded)
+                        {
+                            _flashMessage.Confirmation("User updated!");
+
+                            if (model.IsAdmin)
+                            {
+                                await _userHelper.AddUserToRoleAsync(user, "Admin");
+                            } else
+                            {
+                                await _userHelper.RemoveUserFromRoleAsync(user, "Admin");
+                            }
+
+                            if (user.Email != model.Username)
+                            {
+                                Response response2 = await SendConfirmNewEmailAsync(user, model);
+                                if (response2.IsSuccess)
+                                {
+                                    _flashMessage.Confirmation("The instructions to confirm the new email have been sent.");
+                                }
+                            }
+
+                            return View(model);
+                        }
                     }
 
-                    if(model.RoleName != user.RoleName)
-                    {
-                        await _userHelper.RemoveUserFromRoleAsync(user, user.RoleName);
-                        await _userHelper.AddUserToRoleAsync(user, model.RoleName);
-                    }
+                    _flashMessage.Danger("The user could not be updated, please try again.");
+
+                    return View(model);
+                }
+                catch (Exception ex)
+                {
+                    _flashMessage.Danger(ex.Message);
                 }
             }
-
-            return RedirectToAction(nameof(Index));
+            return View(model);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Delete(EditUserViewModel model)
+        public async Task<IActionResult> Delete(string? id)
         {
-            var user = await _userHelper.GetUserByIdAsync(model.Id);
+            if(id == null)
+            {
+                return new NotFoundViewResult("UserNotFound");
+            }
+
+            var user = await _userHelper.GetUserByIdAsync(id);
+
+            if(user == null)
+            {
+                return new NotFoundViewResult("UserNotFound");
+            }
 
             try
             {
                 await _userHelper.DeleteUserAsync(user);
+
+                _flashMessage.Confirmation("User deleted successfully");
+
                 return RedirectToAction(nameof(Index));
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
                 if (ex.InnerException != null && ex.InnerException.Message.Contains("DELETE"))
                 {
-                    ViewBag.ErrorTitle = $"{user.FullName} could not be deleted.";
+                    ViewBag.ErrorTitle = $"You can't delete {user.FullName}. Too much depends on them.";
+                    ViewBag.ErrorMessage = $"You can't delete this user because there are messages or appointments associated with it.</br></br>" +
+                        $"Delete all appointments associated with this user and try again.</br></br>" +
+                        $"Note: If there are messages associated with this user you may not be able to delete it.";
                 }
-                return RedirectToAction(nameof(Index));
+
+                return View("Error");
             }
+        }
+
+        public IActionResult UserNotFound()
+        {
+            return View();
+        }
+
+        public async Task<Response> SendConfirmNewEmailAsync(User user, UserViewModel model)
+        {
+            var myToken = await _userHelper.GenerateChangeEmailTokenAsync(user, model.Username);
+
+            var link = this.Url.Action(
+                "ConfirmNewEmail",
+                "Account",
+                new
+                {
+                    userId = user.Id,
+                    newEmail = model.Username,
+                    token = myToken
+                }, protocol: HttpContext.Request.Scheme);
+
+            Response response = _mailHelper.SendEmail(model.Username, 
+            "Confirm New Email", 
+            $"<h1>Changed email</h1>" +
+            $"To confirm your new email click in this link:</br></br>" +
+            $"<a href = \"{link}\">Confirm new email</a>");
+
+            return response;
+        }
+
+        private async Task<Response> ConfirmEmailAsync(User user)
+        {
+            string confirmationToken = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
+            string passwordToken = await _userHelper.GeneratePasswordResetTokenAsync(user);
+            string tokenLink = Url.Action(
+                "ConfirmEmail",
+                "Account", new
+                {
+                    userId = user.Id,
+                    confirmationToken = confirmationToken,
+                    passwordToken = passwordToken
+
+                }, protocol: HttpContext.Request.Scheme);
+
+            Response response = _mailHelper.SendEmail(
+                user.UserName,
+                "Activate Account",
+                $"<h1>Email Confirmation</h1>" +
+                $"To activate your account please click the link and set up a new password:</br></br><a href = \"{tokenLink}\">Confirm Account</a>");
+
+            return response;
         }
     }
 }

@@ -3,9 +3,6 @@
 @{
     ViewData["Title"] = "Confirm Account";
 }
-
-<h2>@ViewData["Title"]</h2>
-
 <div class="content-container d-flex justify-content-center align-items-center pt-5">
     <div class="form-container mt-5 pt-5">
         <div>
@@ -22,13 +19,13 @@
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
             <div class="mb-3">
-                <label asp-for="ConfirmPassword">Password</label>
+                <label asp-for="ConfirmPassword">Confirm Password</label>
                 <input id="lastName" asp-for="ConfirmPassword" class="form-control"/>
                 <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
             </div>
             <div class="mb-3">
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                    <button asp-action="ConfirmEmail" type="submit" class="btn btn-success">Activate Account</button>
+                    <button asp-action="ConfirmEmail" type="submit" class="btn btn-primary">Activate Account</button>
                 </div>
             </div>
         </form>

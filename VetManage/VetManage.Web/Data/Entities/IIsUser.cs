@@ -12,6 +12,10 @@ namespace VetManage.Web.Data.Entities
 
         string MobileNumber { get; set; }
 
-        string ImageFullPath { get; }
+        Guid ImageId { get; set; }
+
+        string Gender { get; set; }
+
+        DateTime DateOfBirth { get; set; }
     }
 }

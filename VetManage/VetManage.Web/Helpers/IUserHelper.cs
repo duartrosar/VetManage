@@ -36,6 +36,8 @@ namespace VetManage.Web.Helpers
 
         Task<bool> IsUserInRoleAsync(User user, string roleName);
 
+        Task<IList<User>> GetUsersInRoleAsync(string roleName);
+
         IEnumerable<SelectListItem> GetComboRoles();
 
         Task<SignInResult> ValidatePasswordAsync(User user, string password);

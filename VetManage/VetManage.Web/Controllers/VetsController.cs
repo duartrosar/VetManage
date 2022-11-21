@@ -6,6 +6,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Vereyon.Web;
 using VetManage.Web.Data.Entities;
 using VetManage.Web.Data.Repositories;
 using VetManage.Web.Helpers;
@@ -23,6 +24,7 @@ namespace VetManage.Web.Controllers
         private readonly IMailHelper _mailHelper;
         private readonly IMessageHelper _messageHelper;
         private readonly IBlobHelper _blobHelper;
+        private readonly IFlashMessage _flashMessage;
 
         public VetsController(
             IVetRepository vetRepository,
@@ -31,7 +33,8 @@ namespace VetManage.Web.Controllers
             IUserHelper userHelper,
             IMailHelper mailHelper,
             IMessageHelper messageHelper,
-            IBlobHelper blobHelper)
+            IBlobHelper blobHelper,
+            IFlashMessage flashMessage)
         {
             _vetRepository = vetRepository;
             _messageBoxRepository = messageBoxRepository;
@@ -40,6 +43,7 @@ namespace VetManage.Web.Controllers
             _mailHelper = mailHelper;
             _messageHelper = messageHelper;
             _blobHelper = blobHelper;
+            _flashMessage = flashMessage;
         }
         public IActionResult Index()
         {
@@ -80,7 +84,15 @@ namespace VetManage.Web.Controllers
         // GET: Vets/Create
         public IActionResult Create()
         {
-            return View();
+            var model = new RegisterVetViewModel
+            {
+                VetViewModel = new VetViewModel
+                {
+                    DateOfBirth = DateTime.Now,
+                },
+            };
+
+            return View(model);
         }
 
         // POST: Vets/Create
@@ -92,7 +104,7 @@ namespace VetManage.Web.Controllers
             {
                 try
                 {
-                    Guid imageId = Guid.Empty;
+                    Guid imageId = model.VetViewModel.ImageId;
 
                     if (model.VetViewModel.ImageFile != null && model.VetViewModel.ImageFile.Length > 0)
                     {
@@ -106,7 +118,7 @@ namespace VetManage.Web.Controllers
                         // Convert Vet
                         var vet = _converterHelper.ToVet(model.VetViewModel, true, imageId);
 
-                        user = _converterHelper.ToUser(vet, new User());
+                        user = _converterHelper.ToUser(vet, new User(), "vets");
 
                         user.Email = model.Username;
                         user.UserName = model.Username;
@@ -119,9 +131,7 @@ namespace VetManage.Web.Controllers
 
                         if (result != IdentityResult.Success)
                         {
-                            ModelState.AddModelError(string.Empty, "The User could not be created.");
-
-                            return View(model);
+                            throw new Exception("The user could not be created, please try again.");
                         }
 
                         // Add role or roles to user
@@ -133,7 +143,7 @@ namespace VetManage.Web.Controllers
                         }
 
                         // get the newly created user and set it as the vet's user
-                       vet.User = await _userHelper.GetUserByEmailAsync(model.Username);
+                        vet.User = await _userHelper.GetUserByEmailAsync(model.Username);
 
                         // Save Vet
                         await _vetRepository.CreateAsync(vet);
@@ -145,25 +155,24 @@ namespace VetManage.Web.Controllers
 
                         if (response.IsSuccess)
                         {
-                            ViewBag.Message = "Confirmation email has been sent";
-                            return RedirectToAction(nameof(Index));
+                            _flashMessage.Confirmation("Vet has been created and confirmation email has been sent to user.");
                         }
 
-                        return RedirectToAction(nameof(Index));
-                        // TODO: Vet could not be created
+                        model.VetViewModel.ImageId = imageId;
+
+                        return View(model);
                     }
-                    else
-                    {
-                        // TODO: User already exists
-                    }
+
+                    _flashMessage.Danger("That email is already being used by another user.");
+
+                    return View(model);
                 }
                 catch (Exception ex)
                 {
-
+                    _flashMessage.Danger(ex.Message);
                 }
-                // Check if user exists
             }
-            return RedirectToAction(nameof(Index));
+            return View(model);
         }
 
         // GET: Vets/Edit/5
@@ -209,22 +218,26 @@ namespace VetManage.Web.Controllers
                         imageId = await _blobHelper.UploadBlobAsync(model.ImageFile, "vets");
                     }
 
-                    // Get the user the user chose from the dropdown with the id
+                    // Get the user related with the vet
                     var user = await _userHelper.GetUserByIdAsync(model.UserId);
 
                     if(user == null)
                     {
                         return new NotFoundViewResult("VetNotFound");
                     }
+
                     var vet = _converterHelper.ToVet(model, false, imageId);
 
-                    user = _converterHelper.ToUser(vet, user);
+                    user = _converterHelper.ToUser(vet, user, "vets");
+
+                    model.ImageId = imageId;
 
                     // Update the user 
                     var response = await _userHelper.UpdateUserAsync(user);
 
                     if (response.Succeeded)
                     {
+                        // Change user's role
                         if (model.IsAdmin)
                         {
                             await _userHelper.AddUserToRoleAsync(user, "Admin");
@@ -236,14 +249,19 @@ namespace VetManage.Web.Controllers
 
                         model.User = user;
 
+                        vet.UserId = user.Id;
+
                         await _vetRepository.UpdateAsync(vet);
 
-                        return RedirectToAction(nameof(Index));
+                        _flashMessage.Confirmation("Vet has been updated.");
+
+                        return View(model);
                     }
-                    // TODO: Vet could not be updated
-                    ModelState.AddModelError(string.Empty, "An error ocurred whilst tryng to update the vet, please try again.");
+                    _flashMessage.Danger("An error ocurred whilst tryng to update the vet, please try again.");
+
+                    return View(model);
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception ex)
                 {
                     if (!await _vetRepository.ExistsAsync(model.Id))
                     {
@@ -251,7 +269,7 @@ namespace VetManage.Web.Controllers
                     }
                     else
                     {
-                        throw;
+                        _flashMessage.Danger(ex.Message);
                     }
                 }
             }
@@ -266,39 +284,42 @@ namespace VetManage.Web.Controllers
                 return new NotFoundViewResult("VetNotFound");
             }
 
-
             var vet = await _vetRepository.GetWithUserByIdAsync(id.Value);
+
+            if (vet == null || vet.User == null)
+            {
+                // vet not found
+                return new NotFoundViewResult("OwnerNotFound");
+            }
 
             try
             {
+
                 var user = await _userHelper.GetUserByIdAsync(vet.User.Id);
 
-                await _vetRepository.DeleteAsync(vet);
                 await _userHelper.DeleteUserAsync(user);
 
+                _flashMessage.Confirmation("Vet deleted successfully");
+
                 return RedirectToAction(nameof(Index));
-
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
-                if (ex.InnerException != null && ex.InnerException.Message.Contains("DELETE"))
-                {
-                    ViewBag.ErrorTitle = $"You can't delete {vet.FullName}. Too much depends on it";
-                    ViewBag.ErrorMessage = $"You can't delete this owner because there are pets and messages associated with it.</br></br>" +
-                        $"Try to delete all pets associated with this user and try again.</br></br>" +
-                        $"Note: If there are messages associated with this user you may not delete it.";
-                }
-
-                return View("Error");
                 // TODO: Vet could not be deleted
                 if (!await _vetRepository.ExistsAsync(id.Value))
                 {
                     return new NotFoundViewResult("VetNotFound");
                 }
-                else
+
+                if (ex.InnerException != null && ex.InnerException.Message.Contains("DELETE"))
                 {
-                    throw;
+                    ViewBag.ErrorTitle = $"You can't delete {vet.FullName}. Too much depends on it";
+                    ViewBag.ErrorMessage = $"You can't delete this vet because there are messages and appointments associated with it.</br></br>" +
+                        $"Delete all appointments associated with this user and try again.</br></br>" +
+                        $"Note: If there are messages associated with this user you may not delete it.";
                 }
+
+                return View("Error");
             }
         }
 
@@ -332,7 +353,7 @@ namespace VetManage.Web.Controllers
 
             Response response = _mailHelper.SendEmail(
                 model.Username,
-                "Email Confirmation",
+                "Activate Account",
                 $"<h1>Email Confirmation</h1>" +
                 $"To activate your account please click the link and set up a new password:</br></br><a href = \"{tokenLink}\">Confirm Account</a>");
 

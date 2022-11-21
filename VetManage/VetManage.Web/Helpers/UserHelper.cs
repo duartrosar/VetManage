@@ -102,6 +102,11 @@ namespace VetManage.Web.Helpers
             return await _userManager.IsInRoleAsync(user, roleName);
         }
 
+        public async Task<IList<User>> GetUsersInRoleAsync(string roleName)
+        {
+            return await _userManager.GetUsersInRoleAsync(roleName);
+        }
+
         public IQueryable<IdentityRole> GetRoles()
         {
             return _roleManager.Roles;

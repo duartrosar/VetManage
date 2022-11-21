@@ -7,6 +7,7 @@ using VetManage.Web.Models.Calendar;
 using VetManage.Web.Models.Messages;
 using VetManage.Web.Models.Owners;
 using VetManage.Web.Models.Pets;
+using VetManage.Web.Models.Users;
 using VetManage.Web.Models.Vets;
 
 namespace VetManage.Web.Helpers
@@ -41,6 +42,9 @@ namespace VetManage.Web.Helpers
         ICollection<MessageViewModel> AllToMessageViewModel(IQueryable<Message> messages, IQueryable<MessageMessageBox> messageMessageBoxes);
         ICollection<MessageViewModel> AllToMessageViewModelOutbox(IQueryable<Message> outbox);
 
-        User ToUser(IIsUser entity, User user);
+        User ToUser(IIsUser entity, User user, string blobContainerName);
+        User EditProfileViewModelToUser(EditProfileViewModel model, User user, string blobContainerName);
+        User ToUser(User user, UserViewModel model, bool isNew, string blobContainerName);
+        UserViewModel ToUserViewModel(User user);
     }
 }

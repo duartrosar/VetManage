@@ -7,33 +7,33 @@ namespace VetManage.Web.Data.Entities
     {
         public int Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage= "You must enter a Name")]
         [MaxLength(50)]
         public string Name { get; set; }
 
-        [Required]
+        [Required(ErrorMessage="You must enter a Species")]
         [MaxLength(50)]
         [Display(Name = "Species")]
         public string Type { get; set; }
 
-        [Required]
+        [Required(ErrorMessage="You must enter a Breed")]
         [MaxLength(50)]
         public string Breed { get; set; }
 
-        [Required]
+        [Required(ErrorMessage="You must enter a Weight")]
         public double Weight { get; set; }
 
-        [Required]
+        [Required(ErrorMessage="You must enter a Height")]
         public double Height { get; set; }
 
-        [Required]
+        [Required(ErrorMessage="You must enter a Length")]
         public double Length { get; set; }
 
-        [Required]
-        [Display(Name = "DOB")]
+        [Required(ErrorMessage="You must enter a Date Of Birth")]
+        [Display(Name = "Date Of Birth")]
         public DateTime DateOfBirth { get; set; }
 
-        [Required]
+        [Required(ErrorMessage="You must enter a Gender")]
         [Display(Name = "Sex")]
         public string Gender { get; set; }
 

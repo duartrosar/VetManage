@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Vereyon.Web;
 using VetManage.Web.Data;
 using VetManage.Web.Data.Entities;
 using VetManage.Web.Data.Repositories;
@@ -66,6 +67,8 @@ namespace VetManage.Web
 
             // Register seeder
             services.AddTransient<SeedDb>();
+
+            services.AddFlashMessage();
 
             // Helper services
             services.AddScoped<IUserHelper, UserHelper>();

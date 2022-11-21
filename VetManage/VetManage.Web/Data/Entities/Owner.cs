@@ -9,33 +9,34 @@ namespace VetManage.Web.Data.Entities
     {
         public int Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage="You must enter a First Name")]
         [MaxLength(50)]
         [Display(Name = "First Name")]
         public string FirstName { get; set; }
 
-        [Required]
+        [Required(ErrorMessage="You must enter a Last Name")]
         [MaxLength(50)]
         [Display(Name = "Surname")]
         public string LastName { get; set; }
 
-        [Required]
+        [Required(ErrorMessage="You must enter a Gender")]
         public string Gender { get; set; }
 
-        [Required]
-        [Display(Name = "DOB")]
+        [Required(ErrorMessage="You must enter a Date Of Birth")]
+        [Display(Name = "Date Of Birth")]
         public DateTime DateOfBirth { get; set; }
 
-        [Required]
+        [Required(ErrorMessage="You must enter a Mobile Number")]
         [MaxLength(20)]
         [Display(Name = "Mobile Number")]
         public string MobileNumber { get; set; }
 
-        [Required]
+        [Required(ErrorMessage="You must enter an Address")]
         [MaxLength(250)]
         public string Address { get; set; }
 
-         
+        public string UserId { get; set; } 
+
         public User User { get; set; }
 
         public ICollection<Pet> Pets { get; set; }

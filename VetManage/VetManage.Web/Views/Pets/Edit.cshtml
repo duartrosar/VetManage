@@ -11,13 +11,17 @@
             <a asp-action="Index" class="btn btn-outline-light">Back</a>
             <h2>Edit Owner</h2>
         </div>
-        <div class="p-3 mt-4">
+        <div class="px-3 pt-3">
+            <flash dismissable="true"/>
+        </div>
+        <div class="px-3 pt-3">
             <button class="btn btn-outline-light" id="chooseOwnerBtn">Choose Owner</button>
         </div>
-        <div class="p-3">
+        <div class="px-3">
             <form asp-action="Edit" class="flex-fill" method="post" style="max-width: 1200px;" id="registerVetsForm" enctype="multipart/form-data">
                 <div asp-validation-summary="ModelOnly"></div>
                 <input asp-for="Id" type="hidden"/>
+                <input asp-for="ImageId" type="hidden"/>
                 <div class="row">
                     <div class="col">
                         <div class="mb-4">
@@ -99,7 +103,7 @@
                 <div class="mb-4">
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                         <a asp-action="Index" class="btn btn-danger">Cancel</a>
-                        <button type="submit" class="btn btn-success">Confirm</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
                     </div>
                 </div>
                 <input asp-for="ImageIdString" class="form-control" style="visibility: hidden; height: 0px;"/>

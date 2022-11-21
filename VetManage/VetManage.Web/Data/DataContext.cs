@@ -59,10 +59,30 @@ namespace VetManage.Web.Data
                 .OnDelete(DeleteBehavior.Cascade);
             });
 
-            //modelBuilder.Entity<MessageBox>(builder =>
-            //{
-            //    builder.HasMany(mb => mb.Inbox).WithOne(m => m.Sender).OnDelete(DeleteBehavior.Restrict);
-            //});
+            modelBuilder.Entity<Vet>(builder =>
+            {
+                builder.HasOne(v => v.User)
+                .WithOne()
+                .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<Owner>(builder =>
+            {
+                builder.HasOne(o => o.User)
+                .WithOne()
+                .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<Appointment>(builder =>
+            {
+                builder.HasOne(a => a.Pet)
+                .WithMany()
+                .OnDelete(DeleteBehavior.Restrict);
+
+                builder.HasOne(a => a.Vet)
+                .WithMany()
+                .OnDelete(DeleteBehavior.Restrict);
+            });
         }
     }
 }

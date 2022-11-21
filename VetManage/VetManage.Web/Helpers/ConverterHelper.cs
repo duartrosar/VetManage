@@ -8,6 +8,7 @@ using VetManage.Web.Models.Calendar;
 using VetManage.Web.Models.Messages;
 using VetManage.Web.Models.Owners;
 using VetManage.Web.Models.Pets;
+using VetManage.Web.Models.Users;
 using VetManage.Web.Models.Vets;
 
 namespace VetManage.Web.Helpers
@@ -316,15 +317,66 @@ namespace VetManage.Web.Helpers
             return messageViewModels;
         }
 
-        public User ToUser(IIsUser entity, User user)
+
+
+        public User ToUser(IIsUser entity, User user, string blobContainerName)
         {
             user.FirstName = entity.FirstName;
             user.LastName = entity.LastName;
             user.Address = entity.Address;
             user.PhoneNumber = entity.MobileNumber;
-            user.ImageFullPath = entity.ImageFullPath;
+            user.ImageId = entity.ImageId;
+            user.Gender = entity.Gender;
+            user.DateOfBirth = entity.DateOfBirth;
+            user.BlobContainer = blobContainerName;
 
             return user;
+        }
+
+        public User EditProfileViewModelToUser(EditProfileViewModel model, User user, string blobContainerName)
+        {
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+            user.Address = model.Address;
+            user.PhoneNumber = model.MobileNumber;
+            user.ImageId = model.ImageId;
+            user.Gender = model.Gender;
+            user.DateOfBirth = model.DateOfBirth;
+            user.BlobContainer = blobContainerName;
+
+            return user;
+        }
+
+        public User ToUser(User user, UserViewModel model, bool isNew, string blobContainerName)
+        {
+            user.Id = isNew ? Guid.Empty.ToString() : model.Id;
+            user.UserName = model.Username;
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+            user.Address = model.Address;
+            user.PhoneNumber = model.MobileNumber;
+            user.ImageId = model.ImageId;
+            user.Gender = model.Gender;
+            user.DateOfBirth = model.DateOfBirth;
+            user.BlobContainer = blobContainerName;
+
+            return user;
+        }
+
+        public UserViewModel ToUserViewModel(User user)
+        {
+            return new UserViewModel
+            {
+                Username = user.UserName,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Address = user.Address,
+                MobileNumber = user.PhoneNumber,
+                ImageId = user.ImageId,
+                Gender = user.Gender,
+                DateOfBirth = user.DateOfBirth,
+                BlobContainer = user.BlobContainer,
+            };
         }
     }
 }

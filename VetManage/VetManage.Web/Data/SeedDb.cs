@@ -59,12 +59,12 @@ namespace VetManage.Web.Data
                     DateOfBirth = new DateTime(1996,7,31)
                 };
 
-                user = _converterHelper.ToUser(vet, new User());
+                user = _converterHelper.ToUser(vet, new User(), "users");
 
                 user.PasswordChanged = true;
                 user.Email = "duartrosar@gmail.com";
                 user.UserName = "duartrosar@gmail.com";
-                user.ImageFullPath = "https://vetmanage.azurewebsites.net/images/nouser.png";
+                user.ImageId = Guid.Empty;
 
                 var result = await _userHelper.AddUserAsync(user, "123456");
 

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Vereyon.Web;
 using VetManage.Web.Data;
 using VetManage.Web.Data.Entities;
 using VetManage.Web.Data.Repositories;
@@ -24,19 +25,22 @@ namespace VetManage.Web.Controllers
         private readonly IOwnerRepository _ownerRepository;
         private readonly IConverterHelper _converterHelper;
         private readonly IBlobHelper _blobHelper;
+        private readonly IFlashMessage _flashMessage;
 
         public PetsController(
             DataContext context,
             IPetRepository petRepository,
             IOwnerRepository ownerRepository,
             IConverterHelper converterHelper,
-            IBlobHelper blobHelper)
+            IBlobHelper blobHelper,
+            IFlashMessage flashMessage)
         {
             _context = context;
             _petRepository = petRepository;
             _ownerRepository = ownerRepository;
             _converterHelper = converterHelper;
             _blobHelper = blobHelper;
+            _flashMessage = flashMessage;
         }
 
         // GET: Pets
@@ -70,17 +74,26 @@ namespace VetManage.Web.Controllers
 
         public IActionResult Create()
         {
+            var model = new PetViewModel()
+            {
+                DateOfBirth = DateTime.Now,
+            };
+
             var owners = _ownerRepository.GetAllWithUsers();
 
             ViewData["Owners"] = _converterHelper.AllToOwnerViewModel(owners);
 
-            return View();
+            return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(PetViewModel model)
         {
+            var owners = _ownerRepository.GetAllWithUsers();
+
+            ViewData["Owners"] = _converterHelper.AllToOwnerViewModel(owners);
+
             if (ModelState.IsValid)
             {
                 try
@@ -99,14 +112,18 @@ namespace VetManage.Web.Controllers
                         var pet = _converterHelper.ToPet(model, true, imageId);
 
                         await _petRepository.CreateAsync(pet);
-                        return RedirectToAction(nameof(Index));
-                    }
-                }
-                catch (Exception)
-                {
-                    // TODO: Pet could not be created
 
-                    throw;
+                        model.ImageId = imageId;
+
+                        _flashMessage.Confirmation("Pet was created successfully");
+
+                        return View(model);
+                    }
+                    _flashMessage.Danger("Owner could not be found, please try again.");
+                }
+                catch (Exception ex)
+                {
+                    _flashMessage.Warning(ex.Message);
                 }
             }
             return View(model);
@@ -136,6 +153,8 @@ namespace VetManage.Web.Controllers
 
             var model = _converterHelper.ToPetViewModel(pet);
 
+            model.ImageIdString = pet.ImageId.ToString();
+
             return View(model);
         }
 
@@ -144,11 +163,15 @@ namespace VetManage.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, PetViewModel model)
         {
+            var owners = _ownerRepository.GetAllWithUsers();
+
+            ViewData["Owners"] = _converterHelper.AllToOwnerViewModel(owners);
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    Guid imageId = Guid.Empty;
+                    Guid imageId = model.ImageId;
 
                     if (model.ImageFile != null && model.ImageFile.Length > 0)
                     {
@@ -159,13 +182,19 @@ namespace VetManage.Web.Controllers
 
                     if(owner != null)
                     {
-                        // TODO: replace by image path
                         var pet = _converterHelper.ToPet(model, false, imageId);
+
                         await _petRepository.UpdateAsync(pet);
+
+                        model.ImageId = imageId;
+
+                        _flashMessage.Confirmation("Pet was updated successfully");
+
+                        return View(model);
                     }
-                    // TODO: Pet could not be updated
+                    _flashMessage.Danger("Owner could not be found, please try again.");
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception ex)
                 {
                     if (!await _petRepository.ExistsAsync(model.Id))
                     {
@@ -173,10 +202,9 @@ namespace VetManage.Web.Controllers
                     }
                     else
                     {
-                        throw;
+                        _flashMessage.Danger(ex.Message);
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
             return View(model);
         }
@@ -191,25 +219,36 @@ namespace VetManage.Web.Controllers
 
             }
 
+            var pet = await _petRepository.GetByIdAsync(id.Value);
+
+            if (pet == null)
+            {
+                return new NotFoundViewResult("PetNotFound");
+            }
 
             try
             {
-                var pet = await _petRepository.GetByIdAsync(id.Value);
-
                 await _petRepository.DeleteAsync(pet);
+
+                _flashMessage.Confirmation("Pet was deleted successfully");
+
                 return RedirectToAction(nameof(Index));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 if (!await _petRepository.ExistsAsync(id.Value))
                 {
                     return new NotFoundViewResult("PetNotFound");
                 }
-                else
+
+                if (ex.InnerException != null && ex.InnerException.Message.Contains("DELETE"))
                 {
-                    throw;
+                    ViewBag.ErrorTitle = $"You can't delete {pet.Name}. Too much depends on it";
+                    ViewBag.ErrorMessage = $"You can't delete this vet because there are appointments associated with it.</br></br>" +
+                        $"Delete all appointments associated with this pet and try again.</br></br>";
                 }
-                throw;
+
+                return View("Error");
             }
         }
 

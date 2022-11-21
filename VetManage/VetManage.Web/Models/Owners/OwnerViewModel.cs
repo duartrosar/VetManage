@@ -8,9 +8,6 @@ namespace VetManage.Web.Models.Owners
 {
     public class OwnerViewModel : Owner
     {
-        [Display(Name = "User")]
-        //[Required(ErrorMessage = "You must choose a User")]
-        public string UserId { get; set; }
 
         [Display(Name = "Image")]
         public IFormFile ImageFile { get; set; }

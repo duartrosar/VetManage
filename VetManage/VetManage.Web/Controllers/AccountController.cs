@@ -10,6 +10,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Vereyon.Web;
 using VetManage.Web.Data.Entities;
 using VetManage.Web.Data.Repositories;
 using VetManage.Web.Helpers;
@@ -26,6 +27,7 @@ namespace VetManage.Web.Controllers
         private readonly IVetRepository _vetRepository;
         private readonly IConverterHelper _converterHelper;
         private readonly IBlobHelper _blobHelper;
+        private readonly IFlashMessage _flashMessage;
 
         public AccountController(
             IUserHelper userHelper,
@@ -34,7 +36,8 @@ namespace VetManage.Web.Controllers
             IOwnerRepository ownerRepository,
             IVetRepository vetRepository,
             IConverterHelper converterHelper,
-            IBlobHelper blobHelper)
+            IBlobHelper blobHelper,
+            IFlashMessage flashMessage)
         {
             _userHelper = userHelper;
             _configuration = configuration;
@@ -43,22 +46,9 @@ namespace VetManage.Web.Controllers
             _vetRepository = vetRepository;
             _converterHelper = converterHelper;
             _blobHelper = blobHelper;
+            _flashMessage = flashMessage;
         }
 
-        //[Authorize]
-        //public IActionResult Index()
-        //{
-        //    var users = _userHelper.GetAll()
-        //        .OrderBy(u => u.FirstName)
-        //        .ThenBy(u => u.LastName);
-
-        //    AccountViewModel model = new AccountViewModel
-        //    {
-        //        Users = users.ToList(),
-        //    };
-
-        //    return View(model);
-        //}
 
         public IActionResult Login()
         {
@@ -76,33 +66,28 @@ namespace VetManage.Web.Controllers
             {
                 var user = await _userHelper.GetUserByEmailAsync(model.Username);
 
-                if(user == null)
+                if(user != null)
                 {
-                    return View(model);
-                }
-                if (user.PasswordChanged)
-                {
-                    // Try to login
-                    var result = await _userHelper.LoginAsync(model);
-
-                    if (result.Succeeded)
+                    if (user.PasswordChanged)
                     {
-                        // If the user was trying to access an area
-                        // That is only allowed to signed in users
-                        if (Request.Query.Keys.Contains("ReturnUrl"))
+                        // Try to login
+                        var result = await _userHelper.LoginAsync(model);
+
+                        if (result.Succeeded)
                         {
-                            // Redirect to the area the user was trying to access
-                            return Redirect(Request.Query["ReturnUrl"].First());
+                            // If the user was trying to access an area
+                            // That is only allowed to signed in users
+                            if (Request.Query.Keys.Contains("ReturnUrl"))
+                            {
+                                // Redirect to the area the user was trying to access
+                                return Redirect(Request.Query["ReturnUrl"].First());
+                            }
+                            return RedirectToAction("Index", "Home");
                         }
-                        return RedirectToAction("Index", "Home");
                     }
-                } else
-                {
-                    // TODO: you haven't changed your password yet
                 }
             }
-            ModelState.AddModelError(string.Empty, "Failed to login");
-
+            _flashMessage.Danger("The Username or Password are incorrect, please try again!");
             return View(model);
         }
 
@@ -113,6 +98,7 @@ namespace VetManage.Web.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        [Authorize]
         public async Task<IActionResult> EditProfile()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -129,23 +115,11 @@ namespace VetManage.Web.Controllers
                     MobileNumber = user.PhoneNumber,
                     ImageFullPath = user.ImageFullPath,
                     Address = user.Address,
+                    DateOfBirth = user.DateOfBirth,
+                    Gender = user.Gender,
+                    ImageId = user.ImageId,
                 };
 
-                if (await _userHelper.IsUserInRoleAsync(user, "Employee"))
-                {
-                    var entity = await _vetRepository.GetByUserIdAsync(user);
-
-                    model.DateOfBirth = entity.DateOfBirth;
-                    model.Gender = entity.Gender;
-                    model.ImageId = entity.ImageId;
-                } else if(await _userHelper.IsUserInRoleAsync(user, "Client"))
-                {
-                    var entity = await _ownerRepository.GetByUserIdAsync(user);
-
-                    model.DateOfBirth = entity.DateOfBirth;
-                    model.Gender = entity.Gender;
-                    model.ImageId = entity.ImageId;
-                }
                 return View(model);
             }
             return View();
@@ -158,107 +132,152 @@ namespace VetManage.Web.Controllers
             {
                 try
                 {
+                    // Get the logged in user
                     var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                     var user = await _userHelper.GetUserByIdAsync(userId);
 
-                    var user2 = await _userHelper.GetUserByEmailAsync(model.Username);
-
-                    if (user2 != null && user.UserName != model.Username)
-                    {
-                        ViewBag.Message = "The email you introduced is already being used.";
-                        return View(model);
-                    }
 
                     if (user != null)
                     {
-                        if (await _userHelper.IsUserInRoleAsync(user, "Employee"))
+                        // Check if the email introduced is already being used
+                        var user2 = await _userHelper.GetUserByEmailAsync(model.Username);
+                        
+                        if (user2 != null && user.Email != model.Username)
+                    {
+                        _flashMessage.Danger("The email you introduced is already being used.");
+                        return View(model);
+                    }
+
+                        Guid imageId = model.ImageId;
+
+                        // Upload image if it's new
+                        if (model.ImageFile != null && model.ImageFile.Length > 0)
                         {
-                            var vet = await _vetRepository.GetByUserIdAsync(user);
-
-                            // Upload image if it's new
-                            Guid imageId = model.ImageId;
-
-                            if (model.ImageFile != null && model.ImageFile.Length > 0)
-                            {
-                                imageId = await _blobHelper.UploadBlobAsync(model.ImageFile, "vets");
-                                model.ImageId = imageId;
-                            }
-
-                            vet = _converterHelper.EditProfileViewModelToVet(model, vet, imageId);
-                            model.ImageFullPath = vet.ImageFullPath;
-                            user = _converterHelper.ToUser(vet, user);
-
-                            await _vetRepository.UpdateAsync(vet);
-
-                            // Update the user 
-                            var response = await _userHelper.UpdateUserAsync(user);
-
-                            if (response.Succeeded)
-                            {
-                                await _vetRepository.UpdateAsync(vet);
-
-                                if (user.UserName != model.Username)
-                                {
-                                    Response response2 = await SendConfirmNewEmailAsync(user, model);
-
-                                    if (response2.IsSuccess)
-                                    {
-                                        ViewBag.Message = "The instructions to confirm your new email have been sent.";
-                                    }
-                                }
-                                return View(model);
-                            }
+                            imageId = await _blobHelper.UploadBlobAsync(model.ImageFile, user.BlobContainer);
                         }
-                        else if (await _userHelper.IsUserInRoleAsync(user, "Client"))
+
+                        model.ImageId = imageId;
+
+                        // update the user's data
+                        user = _converterHelper.EditProfileViewModelToUser(model, user, "users");
+
+                        // Update the user 
+                        var response = await _userHelper.UpdateUserAsync(user);
+
+                        if (response.Succeeded)
                         {
-                            var owner = await _ownerRepository.GetByUserIdAsync(user);
+                            _flashMessage.Confirmation("Profile updated!");
 
-                            // Upload image if it's new
-                            Guid imageId = model.ImageId;
-
-                            if (model.ImageFile != null && model.ImageFile.Length > 0)
+                            if (user.UserName != model.Username)
                             {
-                                imageId = await _blobHelper.UploadBlobAsync(model.ImageFile, "owners");
-                                model.ImageId = imageId;
-                            }
+                                Response response2 = await SendConfirmNewEmailAsync(user, model);
 
-                            owner = _converterHelper.EditProfileViewModelToOwner(model, owner, imageId);
-
-                            model.ImageFullPath = owner.ImageFullPath;
-
-                            user = _converterHelper.ToUser(owner, user);
-
-                            // Update the user 
-                            var response = await _userHelper.UpdateUserAsync(user);
-
-                            if (response.Succeeded)
-                            {
-                                await _ownerRepository.UpdateAsync(owner);
-
-                                if (user.UserName != model.Username)
+                                if (response2.IsSuccess)
                                 {
-                                    Response response2 = await SendConfirmNewEmailAsync(user, model);
-
-                                    if (response2.IsSuccess)
-                                    {
-                                        ViewBag.Message = "The instructions to confirm your new email have been sent.";
-                                    }
+                                    _flashMessage.Confirmation("The instructions to confirm your new email have been sent.");
                                 }
-                                return View(model);
                             }
+                            model.ImageFullPath = user.ImageFullPath;
+
+                            return View(model);
                         }
+
+                        //if (await _userHelper.IsUserInRoleAsync(user, "Employee"))
+                        //{
+                        //    var vet = await _vetRepository.GetByUserIdAsync(user);
+
+                        //    if(vet != null)
+                        //    {
+                        //        Guid imageId = model.ImageId;
+
+                        //        // Upload image if it's new
+                        //        if (model.ImageFile != null && model.ImageFile.Length > 0)
+                        //        {
+                        //            imageId = await _blobHelper.UploadBlobAsync(model.ImageFile, "vets");
+                        //            model.ImageId = imageId;
+                        //        }
+
+                        //        vet = _converterHelper.EditProfileViewModelToVet(model, vet, imageId);
+                        //        model.ImageFullPath = vet.ImageFullPath;
+                        //        user = _converterHelper.ToUser(vet, user);
+
+                        //        await _vetRepository.UpdateAsync(vet);
+
+                        //        // Update the user 
+                        //        var response = await _userHelper.UpdateUserAsync(user);
+
+                        //        if (response.Succeeded)
+                        //        {
+                        //            await _vetRepository.UpdateAsync(vet);
+
+                        //            _flashMessage.Confirmation("Profile updated!");
+
+                        //            if (user.UserName != model.Username)
+                        //            {
+                        //                Response response2 = await SendConfirmNewEmailAsync(user, model);
+
+                        //                if (response2.IsSuccess)
+                        //                {
+                        //                    _flashMessage.Confirmation("Profile updated! The instructions to confirm your new email have been sent.");
+                        //                }
+                        //            }
+                        //            return View(model);
+                        //        }
+                        //    }
+                        //}
+                        //else if (await _userHelper.IsUserInRoleAsync(user, "Client"))
+                        //{
+                        //    var owner = await _ownerRepository.GetByUserIdAsync(user);
+
+                        //    if(owner != null)
+                        //    {
+                        //        Guid imageId = model.ImageId;
+
+                        //        // Upload image if it's new
+                        //        if (model.ImageFile != null && model.ImageFile.Length > 0)
+                        //        {
+                        //            imageId = await _blobHelper.UploadBlobAsync(model.ImageFile, "owners");
+                        //            model.ImageId = imageId;
+                        //        }
+
+                        //        owner = _converterHelper.EditProfileViewModelToOwner(model, owner, imageId);
+                        //        model.ImageFullPath = owner.ImageFullPath;
+                        //        user = _converterHelper.ToUser(owner, user);
+
+                        //        // Update the user 
+                        //        var response = await _userHelper.UpdateUserAsync(user);
+
+                        //        if (response.Succeeded)
+                        //        {
+                        //            await _ownerRepository.UpdateAsync(owner);
+
+                        //            _flashMessage.Confirmation("Profile updated!");
+
+                        //            if (user.UserName != model.Username)
+                        //            {
+                        //                Response response2 = await SendConfirmNewEmailAsync(user, model);
+
+                        //                if (response2.IsSuccess)
+                        //                {
+                        //                    _flashMessage.Confirmation("Profile updated! The instructions to confirm your new email have been sent.");
+                        //                }
+                        //            }
+                        //            return View(model);
+                        //        }
+                        //    }
+                        //}
+
+                        _flashMessage.Danger("Your profile could not be updated, please try again.");
 
                         return View(model);
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-
-                    throw;
+                    _flashMessage.Danger(ex.Message);
                 }
             }
-           
-            return View();
+            return View(model);
         }
 
         [Route("Account/ConfirmNewEmail")]
@@ -281,21 +300,24 @@ namespace VetManage.Web.Controllers
                     user.UserName = newEmail;
 
                     await _userHelper.UpdateUserAsync(user);
-                    // TODO: Succeded
+
+                    ViewData["Message"] = "Your new email was confirmed.";
+
                     return View();
                 }
             }
-            // TODO: User Not Found
+            ViewData["Message"] = "There was a problem confirming your new email, please try again.";
+
             return View();
         }
 
-        public async Task<IActionResult> ConfirmEmail(string userId, string confirmationToken, string passwordToken)
+        public IActionResult ConfirmEmail(string userId, string confirmationToken, string passwordToken)
         {
             if(string.IsNullOrEmpty(userId) || 
                 string.IsNullOrEmpty(confirmationToken) || 
                 string.IsNullOrEmpty(passwordToken))
             {
-                return NotFound();
+                return RedirectToAction(nameof(NotAuthorized));
             }
 
             var model = new ConfirmAccountViewModel()
@@ -317,14 +339,16 @@ namespace VetManage.Web.Controllers
 
                 if (user == null)
                 {
-                    return NotFound();
+                    return new NotFoundViewResult("UserNotFound");
                 }
 
                 var result = await _userHelper.ConfirmEmailAsync(user, model.ConfirmationToken);
 
                 if (!result.Succeeded)
                 {
-                    return NotFound();
+                    _flashMessage.Danger("There was a problem confirming your account, please try again.");
+
+                    return View(model);
                 }
 
                 var result2 = await _userHelper.ResetPasswordAsync(user, model.PasswordToken, model.Password);
@@ -341,18 +365,20 @@ namespace VetManage.Web.Controllers
 
                         if (response.Succeeded)
                         {
-                            ViewBag.Message = "Password changed and account confirmed. You may now login.";
+                            _flashMessage.Confirmation("Password changed and account confirmed. You may now login.");
+
                             return RedirectToAction(nameof(Login));
                         }
                     }
                     catch (Exception ex)
                     {
-                        throw;
+                        _flashMessage.Danger(ex.Message);
                     }
-
                 }
             }
-            return View();
+            _flashMessage.Danger("There was a problem confirming your account, please try again.");
+
+            return View(model);
         }
 
         [Route("Account/RecoverPassword")]
@@ -371,7 +397,7 @@ namespace VetManage.Web.Controllers
 
                 if (user == null)
                 {
-                    ModelState.AddModelError(string.Empty, "The email doesn't correspont to a registered user.");
+                    _flashMessage.Danger("That email doesn't correspont to a registered user.");
                     return View(model);
                 }
 
@@ -379,11 +405,10 @@ namespace VetManage.Web.Controllers
 
                 if (response.IsSuccess)
                 {
-                    ViewBag.Message = "The instructions to recover your password has been sent to email.";
+                    _flashMessage.Info("The instructions to recover your password have been sent to your email.");
                 }
 
-                return View();
-
+                return View(model);
             }
 
             return View(model);
@@ -404,19 +429,23 @@ namespace VetManage.Web.Controllers
                 var result = await _userHelper.ResetPasswordAsync(user, model.Token, model.Password);
                 if (result.Succeeded)
                 {
-                    this.ViewBag.Message = "Password reset successfull";
-                    return RedirectToAction(nameof(Login));
+                    _flashMessage.Confirmation("Password reset successfully!");
+                    return View(model);
                 }
 
-                ViewBag.Message = "Error while resetting the password.";
+                _flashMessage.Danger("Error while resetting the password.");
 
                 return View(model);
             }
 
-            ViewBag.Message = "User not found.";
+            _flashMessage.Danger("The user could not be found.");
             return View(model);
         }
 
+        public IActionResult UserNotFound()
+        {
+            return View();
+        }
 
         [HttpPost]
         public async Task<IActionResult> CreateToken([FromBody] LoginViewModel model)
@@ -462,13 +491,12 @@ namespace VetManage.Web.Controllers
 
         public IActionResult NotAuthorized()
         {
-
             return View();
         }
 
         [HttpPost]
         [Route("Account/GetUserAsync")]
-        public async Task<JsonResult> GetCitiesAsync(int countryId)
+        public async Task<JsonResult> GetUserAsync(int countryId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -476,15 +504,9 @@ namespace VetManage.Web.Controllers
 
             if (user != null)
             {
-                //user.R
                 return Json(user);
             }
             return Json("NotAuthorized");
-        }
-
-        public IActionResult UserNotFound()
-        {
-            return View();
         }
 
         public async Task<Response> SendConfirmNewEmailAsync(User user, EditProfileViewModel model)
@@ -501,7 +523,9 @@ namespace VetManage.Web.Controllers
                     token = myToken
                 }, protocol: HttpContext.Request.Scheme);
 
-            Response response = _mailHelper.SendEmail(model.Username, "Shop Password Reset", $"<h1>Changed email</h1>" +
+            Response response = _mailHelper.SendEmail(model.Username, 
+                "Confirm New Email", 
+                $"<h1>Changed email</h1>" +
             $"To confirm your new email click in this link:</br></br>" +
             $"<a href = \"{link}\">Confirm new email</a>");
 
@@ -518,7 +542,9 @@ namespace VetManage.Web.Controllers
                 "Account",
                 new { token = myToken }, protocol: HttpContext.Request.Scheme);
 
-            Response response = _mailHelper.SendEmail(model.Email, "Shop Password Reset", $"<h1>Password Reset</h1>" +
+            Response response = _mailHelper.SendEmail(model.Email, 
+                "Reset Password", 
+                $"<h1>Password Reset</h1>" +
             $"To reset the password click in this link:</br></br>" +
             $"<a href = \"{link}\">Reset Password</a>");
 

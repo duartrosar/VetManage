@@ -1,11 +1,18 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.ComponentModel.DataAnnotations;
+using VetManage.Web.Data.Entities;
 
-namespace VetManage.Web.Data.Entities
+namespace VetManage.Web.Models.Users
 {
-    public class Vet : IEntity, IIsUser
+    public class UserViewModel
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
+
+        [Required(ErrorMessage = "You must enter an Email")]
+        [MaxLength(50)]
+        [DataType(DataType.EmailAddress)]
+        public string Username { get; set; }
 
         [Required(ErrorMessage = "You must enter a First Name")]
         [MaxLength(50)]
@@ -33,17 +40,20 @@ namespace VetManage.Web.Data.Entities
         [MaxLength(250)]
         public string Address { get; set; }
 
-        public string UserId { get; set; }
+        [Required]
+        public bool IsAdmin { get; set; }
 
-        public User User { get; set; }
+        public string BlobContainer { get; set; }
 
-        public string FullName => $"{FirstName} {LastName}";
 
         [Display(Name = "Image")]
         public Guid ImageId { get; set; }
 
         public string ImageFullPath => ImageId == Guid.Empty
             ? $"https://vetmanage.azurewebsites.net/images/nouser.png"
-            : $"https://vetmanagestorage.blob.core.windows.net/vets/{ImageId}";
+            : $"https://vetmanagestorage.blob.core.windows.net/{BlobContainer}/{ImageId}";
+
+        [Display(Name = "Image")]
+        public IFormFile ImageFile { get; set; }
     }
 }

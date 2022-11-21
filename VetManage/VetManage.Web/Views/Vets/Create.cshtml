@@ -10,13 +10,16 @@
             <a asp-action="Index" class="btn btn-outline-light">Back</a>
             <h2>New Vet</h2>
         </div>
-        <div class="p-3">
+        <div class="px-3 pt-3">
+            <flash dismissable="true"/>
+        </div>
+        <div class="px-3">
             <form asp-action="Create" class="flex-fill" method="post" style="max-width: 1200px;" id="registerVetsForm" enctype="multipart/form-data">
                 <div asp-validation-summary="ModelOnly"></div>
                 <div class="row">
                     <div class="col">
                         <div class="h-100">
-                            <div class="image-preview border-opacity-50 d-flex justify-content-center align-items-center" style="background-image: url('@Url.Content("~/images/noimage.png")')">
+                            <div class="image-preview border-opacity-50 d-flex justify-content-center align-items-center" style="background-image: url(@Url.Content(@Model.VetViewModel.ImageFullPath))">
                                 <label class="btn btn-outline-light border-0 d-flex flex-column pt-1">
                                     <i data-feather="upload" stroke-width="1"></i>
                                     <input asp-for="VetViewModel.ImageFile" class="img" id="imageFile" type="file" style="width: 0px;height: 0px;overflow: hidden;"/>

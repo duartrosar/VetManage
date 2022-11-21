@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VetManage.Web.Data.Entities
 {
@@ -35,18 +36,31 @@ namespace VetManage.Web.Data.Entities
         /// </summary>
         public bool HasEntity { get; set; }
 
+        [Required]
+        public string Gender { get; set; }
+
+        [Required]
+        [Display(Name = "DOB")]
+        public DateTime DateOfBirth { get; set; }
+
         // TO DO: Make sure user has access to certain common properties of the various Entities
         //public IEntity UserEntity { get; set; }
 
         [Display(Name = "Name")]
         public string FullName => $"{FirstName} {LastName}";
 
-        [Display(Name = "Image")]
-        public string ImageFullPath { get; set; }
-
         // Keep record if user has changed its password before the first login
         public bool PasswordChanged { get; set; }
 
         public MessageBox MessageBox { get; set; }
+
+        public string BlobContainer { get; set; }
+
+        [Display(Name = "Image")]
+        public Guid ImageId { get; set; }
+
+        public string ImageFullPath => ImageId == Guid.Empty
+             ? $"https://vetmanage.azurewebsites.net/images/noimage.png"
+             : $"https://vetmanagestorage.blob.core.windows.net/{BlobContainer}/{ImageId}";
     }
 }
