@@ -289,7 +289,7 @@ namespace VetManage.Web.Controllers
             if (vet == null || vet.User == null)
             {
                 // vet not found
-                return new NotFoundViewResult("OwnerNotFound");
+                return new NotFoundViewResult("VetNotFound");
             }
 
             try

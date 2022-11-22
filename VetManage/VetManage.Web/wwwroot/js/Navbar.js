@@ -4,7 +4,6 @@
 		type: 'POST',
 		dataType: 'json',
 		success: function (user) {
-			console.log(user);
 			$('#loggedUserImage').css("background-image", `url(${user.imageFullPath})`); 
 			$('#loggedUserName').text(`${user.fullName}`);
 		},

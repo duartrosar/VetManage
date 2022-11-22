@@ -20,22 +20,22 @@
             </div>
             <div class="col-10 pt-3 ps-0">
                 <div class="form-container p-3">
-                    <form asp-action="Create" method="post" id="MessageForm">
+                    <form asp-action="Create" method="post" id="messagesForm">
                         <div asp-validation-summary="ModelOnly"></div>
                         <div class="row mb-2">
                             <label class="col-1 col-form-label">To: </label>
                             <div class="col-11">
-                                <ejs-multiselect id="Recipients" ejs-for="Recipients" name="Recipients" placeholder="Recipients" cssClass="form-control" selectedAll="onSelectedAll" select="onSelect" removed="onRemoved" enableSelectionOrder="false" dataSource="@ViewData["Recipients"]" mode="CheckBox" allowFiltering="true" showSelectAll="true" filterBarPlaceholder="Recipients">
+                                <ejs-multiselect id="Recipients" ejs-for="Recipients" name="Recipients" placeholder="Recipients" cssClass="form-control" enableSelectionOrder="false" dataSource="@ViewData["Recipients"]" mode="CheckBox" allowFiltering="true" showSelectAll="true" filterBarPlaceholder="Recipients" select="onSelect">
                                     <e-multiselect-fields text="Username" value="Id"></e-multiselect-fields>
                                 </ejs-multiselect>
-                                <span asp-validation-for="Recipients" class="text-danger"></span>
+                                <span asp-validation-for="Recipients" id="recipientsVal" class="text-danger"></span>
                                 @*<input asp-for="Recipients" type="text" value="" class="form-control" />*@
                             </div>
                         </div>
                         <div class="row mb-2">
                             <label class="col-1 col-form-label">Subject: </label>
                             <div class="col-11">
-                                <input asp-for="Subject" type="text" value="" class="form-control" />
+                                <input asp-for="Subject" class="form-control" />
                                 <span asp-validation-for="Subject" class="text-danger"></span>
 
                             </div>
@@ -43,40 +43,22 @@
                         <div class="row mb-2">
                             <div class="col-12">
                                 <div class="editor-container">
-                                    <ejs-richtexteditor id="iframe" ejs-for="Body">
+                                    <ejs-richtexteditor id="Body" name="Body" ejs-for="Body" beforeDialogOpen="onDialogOpen" actionBegin="onActionBegin" created="created" change="onChange">
+                                        <e-richtexteditor-pastecleanupsettings plainText="true"></e-richtexteditor-pastecleanupsettings>
                                         <e-richtexteditor-iframesettings enable="true"></e-richtexteditor-iframesettings>
                                         <e-content-template>
-                                            <p>
-                                                The Rich Text Editor control is WYSIWYG ('what you see is what you get') editor that provides the best user experience to create and update the content.
-                                                Users can format their content using standard toolbar commands.
-                                            </p>
-                                            <p><b> Key features:</b></p>
-
-                                            <ul>
-                                                <li><p> Provides &lt; IFRAME &gt; and &lt; DIV &gt; modes </p></li>
-                                                <li><p> Capable of handling markdown editing.</p></li>
-                                                <li><p> Contains a modular library to load the necessary functionality on demand.</p></li>
-                                                <li><p> Provides a fully customizable toolbar.</p></li>
-                                                <li><p> Provides HTML view to edit the source directly for developers.</p></li>
-                                                <li><p> Supports third - party library integration.</p></li>
-                                                <li><p> Allows preview of modified content before saving it.</p></li>
-                                                <li><p> Handles images, hyperlinks, video, hyperlinks, uploads, etc.</p></li>
-                                                <li><p> Contains undo / redo manager.</p></li>
-                                                <li><p> Creates bulleted and numbered lists.</p></li>
-                                            </ul>
                                         </e-content-template>
                                         <e-richtexteditor-toolbarsettings type="Expand" items="@ViewBag.items"></e-richtexteditor-toolbarsettings>
                                     </ejs-richtexteditor>
 
                                 </div>
-                                @*<textarea asp-for="Body" class="form-control text-dark" style="resize: none;" rows="20"></textarea>*@
-                                <span asp-validation-for="Body" class="text-danger"></span>
+                                <span asp-validation-for="Body" id="bodyVal" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="row mb-2">
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                 <a asp-action="Inbox" class="btn btn-danger">Cancel</a>
-                                <button type="submit" class="btn btn-success">Send</button>
+                                <button type="submit" id="submitBtn" class="btn btn-success">Send</button>
                             </div>
                         </div>
                     </form>
@@ -89,48 +71,69 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-
     <script type="text/javascript">
+        // TODO: Possibly delete all of this
         let subject = $("#Subject");
         let body = $("#Body");
         let message = {};
 
-        //$('#MessageForm').submit(function(args) {
-        //     //Check if user has inputed a subject and a body
-        //    if (subject.val() !== "" || body.val() !== "") {
-        //        message.Subject = subject.val() + "from ajax";
-        //        message.Body = body.val();
-        //        console.log(recipients);
-        //        message.Recipients = [
-        //            {Id: 1, MessageBoxId: 1},
-        //            {Id: 2, MessageBoxId: 2}
-        //        ];
-
-        //        $.ajax({
-        //            type: "POST",
-        //            url: "/Messages/Create",
-        //            data: message,
-        //            contentType: "application/json; charset=utf-8",
-        //            dataType: "json",
-        //            success: function (response) {
-        //                alert("Hello: " + response.Name + ".\nCurrent Date and Time: " + response.DateTime);
-        //            },
-        //            failure: function (response) {
-        //                alert(response.responseText);
-        //            },
-        //            error: function (response) {
-        //                alert(response.responseText);
-        //            }
-        //        });
-
-        //        console.log(args);
-        //    }
-        //});
     </script>
 }
 
-
 <script type="text/javascript">
+    let defaultRTE, formObject, options;
+    let aspRichTextVal = document.getElementById('bodyVal');
+    let recipientsVal = document.getElementById('recipientsVal');
+
+    function created() {
+        options = {
+            rules: {
+                'Body': {
+                    required: true
+                }
+            }
+        };
+        formObject = new ej.inputs.FormValidator('#messagesForm', options);
+    };
+
+    window.onload = function () {
+        document.getElementById('submitBtn').onclick = function () {
+            getValue();
+        };
+    }
+
+    function getValue() {
+        let isValid = formObject.validate();
+    
+        if (!isValid) {
+            aspRichTextVal.innerHTML = `<span>You must enter a Body.</span>`
+        }
+    }
+
+    function onChange() {
+        console.log("hello");
+        aspRichTextVal.innerHTML = "";
+    }
+
+    function onDialogOpen(args) {
+        args.cancel = true;
+    }
+
+    function onActionBegin(args) {
+        if (args.type === 'drop'
+            || args.type === 'dragstart'
+            || args.requestType === 'Image') {
+            args.cancel = true;
+        }
+    }
+
+    function onSelect(args){
+        recipientsVal.innerHTML = "";
+    }
+</script>
+
+@*<script type="text/javascript">
+    // TODO: Possibly delete all of this
     let recipients = [];
 
     function onSelectedAll(args){
@@ -160,4 +163,4 @@
     function onSelect(args){
         recipients.push(args.itemData);
     }
-</script>
+</script>*@

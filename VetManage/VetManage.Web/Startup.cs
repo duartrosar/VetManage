@@ -83,6 +83,7 @@ namespace VetManage.Web
             services.AddScoped<IVetRepository, VetRepository>();
             services.AddScoped<IAppointmentRepository, AppointmentRepository>();
             services.AddScoped<IMessageBoxRepository, MessageBoxRepository>();
+            services.AddScoped<ISpecialitiesRepository, SpecialitiesRepository>();
 
             services.ConfigureApplicationCookie(options =>
             {

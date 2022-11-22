@@ -1,0 +1,102 @@
+﻿@model VetManage.Web.Models.Specialities.SpecialityViewModel
+
+@{
+    ViewData["Title"] = "Create";
+
+    ViewBag.items = new[] {"Bold", "Italic", "Underline", "StrikeThrough", "|", 
+                "FontColor", "BackgroundColor","|","FontSize",
+                "Formats", "Alignments", "OrderedList", "UnorderedList",
+                "Outdent", "Indent", "|", "CreateTable","|","Undo", "Redo" , "|", "SourceCode"};
+}
+
+<div class="content-container p-3">
+    <div class="dark-5">
+        <div class="p-3 d-flex justify-content-between align-items-center border-bottom">
+            <a asp-action="Index" class="btn btn-outline-light">Back</a>
+            <h2>New Speciality</h2>
+        </div>
+        <div class="px-3 pt-3">
+            <flash dismissable="true"/>
+        </div>
+        <div class="px-3 pb-3">
+            <form asp-action="Edit" id="specialitiesForm" method="post">
+                <div asp-validation-summary="ModelOnly"></div>
+                <input type="hidden" value="@Model.Id" />
+                <div class="mb-2">
+                    <label asp-for="Name">Speciality Name</label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="mb-2">
+                    <label asp-for="Name">Description</label>
+                    <div class="editor-container">
+                        <ejs-richtexteditor id="Description" name="Description" ejs-for="Description" beforeDialogOpen="onDialogOpen" actionBegin="onActionBegin" created="created" change="onChange">
+                            <e-richtexteditor-pastecleanupsettings plainText="true"></e-richtexteditor-pastecleanupsettings>
+                            <e-richtexteditor-iframesettings enable="true"></e-richtexteditor-iframesettings>
+                            <e-content-template>
+                            </e-content-template>
+                            <e-richtexteditor-toolbarsettings type="Expand" items="@ViewBag.items"></e-richtexteditor-toolbarsettings>
+                        </ejs-richtexteditor>
+
+                    </div>
+                    <span asp-validation-for="Description" id="descriptionVal" class="text-danger"></span>
+                </div>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <a asp-action="Index" class="btn btn-danger">Cancel</a>
+                    <button type="submit" id="submitBtn" class="btn btn-primary text-light">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+<script type="text/javascript">
+    let defaultRTE, formObject, options;
+    let aspRichTextVal = document.getElementById('descriptionVal');
+
+    function created() {
+        options = {
+            rules: {
+                'Description': {
+                    required: true
+                }
+            }
+        };
+        formObject = new ej.inputs.FormValidator('#specialitiesForm', options);
+    };
+
+    window.onload = function () {
+        document.getElementById('submitBtn').onclick = function () {
+            getValue();
+        };
+    }
+
+    function getValue() {
+        let isValid = formObject.validate();
+    
+        if (!isValid) {
+            aspRichTextVal.innerHTML = `<span>You must enter a Speciality Description.</span>`
+        }
+    }
+
+    function onChange() {
+        aspRichTextVal.innerHTML = "";
+    }
+
+    function onDialogOpen(args) {
+        args.cancel = true;
+    }
+
+    function onActionBegin(args) {
+        if (args.type === 'drop'
+            || args.type === 'dragstart'
+            || args.requestType === 'Image') {
+            args.cancel = true;
+        }
+    }
+</script>
+

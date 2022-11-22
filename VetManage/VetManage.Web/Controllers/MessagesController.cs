@@ -40,10 +40,9 @@ namespace VetManage.Web.Controllers
                 var model = _converterHelper.AllToMessageViewModel(inbox, messageMessageBoxes);
 
                 return View(model);
-            } else
-            {
-                return new NotFoundViewResult("MessageNotFound");
             }
+
+            return new NotFoundViewResult("MessageNotFound");
         }
 
         public async Task<IActionResult> Outbox()

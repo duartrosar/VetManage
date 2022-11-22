@@ -1,0 +1,42 @@
+﻿@model IEnumerable<VetManage.Web.Models.Specialities.SpecialityViewModel>
+
+@{
+    ViewData["Title"] = "IndexPublic";
+}
+
+<div class="container-xl px-3 pb-3">
+    <div class="services-section d-flex flex-column justify-content-around align-items-center p-5">
+        <div class="services-title-container text-center my-5">
+            <h3 class="services-subtitle mb-3">Our professional services</h3>
+            <h2 class="services-title">Best Pet Care Services</h2>
+        </div>
+        <div class="row w-100 mb-5">
+            @foreach(var item in Model)
+            {
+               <div class="col-4 mb-3">
+                    <div class="card dark-5 px-4 pt-5 pb-3 h-100" style="width: 18rem;">
+                        <div class="card-header">
+                            <h5 class="card-title">@Html.DisplayFor(modelItem => item.Name)</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">@Html.DisplayFor(modelItem => item.DescriptionAbbreviation)</p>
+                        </div>
+                        <div class="card-footer">
+                            <a asp-action="SingleSpeciality" asp-route-id="@item.Id" class="btn btn-primary text-light">Read More</a>
+                        </div>
+                    </div>
+                </div> 
+            }
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#specialityNav").addClass("active");
+        });
+    </script>
+}

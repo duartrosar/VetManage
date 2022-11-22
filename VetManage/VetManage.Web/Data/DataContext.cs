@@ -20,6 +20,8 @@ namespace VetManage.Web.Data
 
         public DbSet<MessageMessageBox> MessageMessageBox { get; set; }
 
+        public DbSet<Speciality> Specialities { get; set; }
+
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -28,8 +30,9 @@ namespace VetManage.Web.Data
 
             modelBuilder.Entity<Message>(builder =>
             {
-                builder.HasOne(m => m.Sender).WithMany(mb => mb.Inbox).OnDelete(DeleteBehavior.Restrict);
-
+                builder.HasOne(m => m.Sender)
+                .WithMany(mb => mb.Inbox)
+                .OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<MessageMessageBox>(builder =>

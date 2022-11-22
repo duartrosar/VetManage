@@ -13,10 +13,10 @@ namespace VetManage.Web.Models.Messages
 
         public int MessageBoxId { get; set; }
 
-        [Required]
+        [Required(ErrorMessage="You must enter a subject")]
         public string Subject { get; set; }
 
-        [Required]
+        [Required(ErrorMessage="You must enter a enter a body")]
         public string Body { get; set; }
 
         public string BodyRaw { get; set; }

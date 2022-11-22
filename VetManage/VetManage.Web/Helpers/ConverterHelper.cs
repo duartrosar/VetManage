@@ -8,6 +8,7 @@ using VetManage.Web.Models.Calendar;
 using VetManage.Web.Models.Messages;
 using VetManage.Web.Models.Owners;
 using VetManage.Web.Models.Pets;
+using VetManage.Web.Models.Specialities;
 using VetManage.Web.Models.Users;
 using VetManage.Web.Models.Vets;
 
@@ -247,7 +248,7 @@ namespace VetManage.Web.Helpers
             {
                 Body = model.Body,
                 Subject = model.Subject,
-                //Recipients = model.RecipientsList, // Todo
+                // TODO: Recipients = model.RecipientsList, 
             };
         }
 
@@ -377,6 +378,46 @@ namespace VetManage.Web.Helpers
                 DateOfBirth = user.DateOfBirth,
                 BlobContainer = user.BlobContainer,
             };
+        }
+
+        public SpecialityViewModel ToSpecialityViewModel(Speciality speciality)
+        {
+            HtmlDocument htmlDoc = new HtmlDocument();
+            htmlDoc.LoadHtml(speciality.Description);
+            string bodyRaw = htmlDoc.DocumentNode.InnerText;
+
+            bodyRaw = bodyRaw.Replace("&nbsp;", Environment.NewLine);
+
+            return new SpecialityViewModel
+            {
+                Id = speciality.Id,
+                Name = speciality.Name,
+                Description = speciality.Description,
+                DescriptionRaw = bodyRaw,
+                DescriptionAbbreviation = bodyRaw.Substring(0, Math.Min(bodyRaw.Length - 1, 190)) + "...",
+            };
+        }
+
+        public Speciality ToSpeciality(SpecialityViewModel model, bool isNew)
+        {
+            return new Speciality
+            {
+                Id = isNew ? 0 : model.Id,
+                Name = model.Name,
+                Description = model.Description,
+            };
+        }
+
+        public ICollection<SpecialityViewModel> AllToSpecialityViewModel(IQueryable specialities)
+        {
+            List<SpecialityViewModel> specialityViewModels = new List<SpecialityViewModel>();
+
+            foreach (Speciality speciality in specialities)
+            {
+                specialityViewModels.Add(ToSpecialityViewModel(speciality));
+            }
+
+            return specialityViewModels;
         }
     }
 }
