@@ -1,0 +1,76 @@
+﻿@using VetManage.Web.Data.Entities
+@model VetManage.Web.Models.Treatments.TreatmentViewModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<div class="content-container p-3">
+    <div class="dark-5">
+        <div class="p-3 d-flex justify-content-between align-items-center border-bottom">
+            <a asp-action="Index" class="btn btn-outline-light">Back</a>
+            <h2>New Treatment</h2>
+        </div>
+        <div class="p-3">
+            <form class="flex-fill" id="treatmentForm" method="post" style="max-width: 1600px;">
+                <div asp-validation-summary="ModelOnly"></div>
+                <div class="mb-4">
+                    <div class="col">
+                        <partial name="_PetData" model="@new Pet()"/>
+                        <div class="p-3" id="choosePetBtnContainer">
+                            <a class="btn btn-outline-light mt-2" id="choosePetBtn">Choose Pet</a>
+                        </div>
+                        <span asp-validation-for="PetId" class="text-danger"></span>
+                        <input asp-for="PetId" style="visibility: hidden;" />
+                    </div>
+                </div>
+                <div class="mb-4 d-none" id="petsTableContainer">
+                    <h4>Pets</h4>
+                    <partial name="_PetsTable" model="@ViewData["Pets"]" />
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="mb-4">
+                            <label asp-for="SpecialityId">Speciality</label>
+                            <select asp-for="SpecialityId" asp-items="@Model.Specialities" class="form-control"></select>
+                            <span asp-validation-for="SpecialityId" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="mb-4">
+                            <label asp-for="TreatmentDate">TreatmentDate</label>
+                            <input asp-for="TreatmentDate" type="date" class="form-control"/>
+                            <span asp-validation-for="TreatmentDate" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label asp-for="Notes">Notes</label>
+                    <textarea asp-for="Notes" class="form-control"></textarea>
+                    <span asp-validation-for="Notes" class="text-danger"></span>
+                </div>
+                <div class="mb-4">
+                    <div class="d-grid gap-2 d-flex justify-content-end">
+                        <div>
+                            <a asp-action="Index" class="btn btn-danger" data-bs-dismiss="modal">Cancel</a>
+                            <button asp-action="Create" id="createTreatment" type="submit" class="btn btn-success text-light">Create</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#treatmentsNav").addClass("active");
+            $("#treatmentsNav").addClass("bg-dark");
+        });
+    </script>
+
+    <script type="text/javascript" src="~/js/TreatmentPetSelection.js"></script>
+}

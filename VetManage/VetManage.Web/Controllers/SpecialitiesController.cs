@@ -11,16 +11,16 @@ namespace VetManage.Web.Controllers
 {
     public class SpecialitiesController : Controller
     {
-        private readonly ISpecialitiesRepository _specialitiesRepository;
+        private readonly ISpecialityRepository _specialityRepository;
         private readonly IConverterHelper _converterHelper;
         private readonly IFlashMessage _flashMessage;
 
         public SpecialitiesController(
-            ISpecialitiesRepository specialitiesRepository,
+            ISpecialityRepository specialityRepository,
             IConverterHelper converterHelper,
             IFlashMessage flashMessage)
         {
-            _specialitiesRepository = specialitiesRepository;
+            _specialityRepository = specialityRepository;
             _converterHelper = converterHelper;
             _flashMessage = flashMessage;
         }
@@ -28,7 +28,7 @@ namespace VetManage.Web.Controllers
         [Authorize(Roles = "Admin,Employee")]
         public IActionResult Index()
         {
-            var specialities = _specialitiesRepository.GetAll();
+            var specialities = _specialityRepository.GetAll();
 
             var model = _converterHelper.AllToSpecialityViewModel(specialities);
 
@@ -37,7 +37,7 @@ namespace VetManage.Web.Controllers
 
         public IActionResult IndexPublic()
         {
-            var specialities = _specialitiesRepository.GetAll();
+            var specialities = _specialityRepository.GetAll();
 
             var model = _converterHelper.AllToSpecialityViewModel(specialities);
 
@@ -51,7 +51,7 @@ namespace VetManage.Web.Controllers
                 return new NotFoundViewResult("SpecialityNotFound");
             }
 
-            var speciality = await _specialitiesRepository.GetByIdAsync(id.Value);
+            var speciality = await _specialityRepository.GetByIdAsync(id.Value);
 
             if(speciality == null)
             {
@@ -79,7 +79,7 @@ namespace VetManage.Web.Controllers
 
                 _flashMessage.Confirmation("Speciality was created successfully.");
 
-                await _specialitiesRepository.CreateAsync(speciality);
+                await _specialityRepository.CreateAsync(speciality);
 
                 return View(model);
             }
@@ -95,7 +95,7 @@ namespace VetManage.Web.Controllers
                 return new NotFoundViewResult("SpecialityNotFound");
             }
 
-            var speciality = await _specialitiesRepository.GetByIdAsync(id.Value);
+            var speciality = await _specialityRepository.GetByIdAsync(id.Value);
 
             if(speciality == null)
             {
@@ -117,7 +117,7 @@ namespace VetManage.Web.Controllers
                 {
                     var speciality = _converterHelper.ToSpeciality(model, false);
 
-                    await _specialitiesRepository.UpdateAsync(speciality);
+                    await _specialityRepository.UpdateAsync(speciality);
 
                     _flashMessage.Confirmation("Speciality was updated succesfully.");
 
@@ -125,7 +125,7 @@ namespace VetManage.Web.Controllers
                 }
                 catch (Exception ex)
                 {
-                    if(!await _specialitiesRepository.ExistsAsync(model.Id))
+                    if(!await _specialityRepository.ExistsAsync(model.Id))
                     {
                         return new NotFoundViewResult("SpecialityNotFound");
                     }
@@ -133,8 +133,6 @@ namespace VetManage.Web.Controllers
                     _flashMessage.Danger(ex.Message);
                 }
             }
-            _flashMessage.Danger("Could not update speciality succesfully.");
-
             return View(model);
         }
 
@@ -146,7 +144,7 @@ namespace VetManage.Web.Controllers
                 return new NotFoundViewResult("SpecialityNotFound");
             }
 
-            var speciality = await _specialitiesRepository.GetByIdAsync(id.Value);
+            var speciality = await _specialityRepository.GetByIdAsync(id.Value);
 
             if(speciality == null)
             {
@@ -155,7 +153,7 @@ namespace VetManage.Web.Controllers
 
             try
             {
-                await _specialitiesRepository.DeleteAsync(speciality);
+                await _specialityRepository.DeleteAsync(speciality);
 
                 _flashMessage.Confirmation("Speciality was deleted succesfully.");
 
@@ -163,8 +161,7 @@ namespace VetManage.Web.Controllers
             }
             catch (Exception ex)
             {
-                // TODO: Vet could not be deleted
-                if (!await _specialitiesRepository.ExistsAsync(id.Value))
+                if (!await _specialityRepository.ExistsAsync(id.Value))
                 {
                     return new NotFoundViewResult("SpecialityNotFound");
                 }
@@ -172,7 +169,7 @@ namespace VetManage.Web.Controllers
                 if (ex.InnerException != null && ex.InnerException.Message.Contains("DELETE"))
                 {
                     ViewBag.ErrorTitle = $"You can't delete {speciality.Name}. Too much depends on it";
-                    ViewBag.ErrorMessage = $"You can't delete this spciality because there are appointments associated with it.</br></br>" +
+                    ViewBag.ErrorMessage = $"You can't delete this speciality because there are treatments associated with it.</br></br>" +
                         $"Delete all appointments associated with this speciality and try again.</br></br>" +
                         $"Note: If there are messages associated with this user you may not delete it.";
                 }

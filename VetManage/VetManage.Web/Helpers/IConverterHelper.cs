@@ -8,6 +8,7 @@ using VetManage.Web.Models.Messages;
 using VetManage.Web.Models.Owners;
 using VetManage.Web.Models.Pets;
 using VetManage.Web.Models.Specialities;
+using VetManage.Web.Models.Treatments;
 using VetManage.Web.Models.Users;
 using VetManage.Web.Models.Vets;
 
@@ -53,5 +54,9 @@ namespace VetManage.Web.Helpers
         Speciality ToSpeciality(SpecialityViewModel model, bool isNew);
         SpecialityViewModel ToSpecialityViewModel(Speciality speciality);
         ICollection<SpecialityViewModel> AllToSpecialityViewModel(IQueryable specialities);
+
+        Treatment ToTreatment(TreatmentViewModel model, bool isNew);
+        TreatmentViewModel ToTreatmentViewModel(Treatment treatment);
+        ICollection<TreatmentViewModel> AllToTreatmentViewModel(IQueryable treatments);
     }
 }

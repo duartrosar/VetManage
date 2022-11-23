@@ -1,0 +1,60 @@
+﻿@using VetManage.Web.Data.Entities
+@model VetManage.Web.Models.Treatments.TreatmentViewModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<div class="content-container p-3">
+    <div class="dark-5">
+        <div class="p-3 d-flex justify-content-between align-items-center border-bottom">
+            <a asp-action="Index" class="btn btn-outline-light">Back</a>
+            <h2>Treatment Details</h2>
+        </div>
+        <div class="flex-fill p-3" style="max-width: 1600px;">
+            <div asp-validation-summary="ModelOnly"></div>
+            <div class="mb-4">
+                <div class="col">
+                    <partial name="_PetData" model="@Model.Pet"/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="mb-4">
+                        <label asp-for="SpecialityId">Speciality</label>
+                        <select asp-for="SpecialityId" asp-items="@Model.Specialities" class="form-control" disabled></select>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="mb-4">
+                        <label asp-for="TreatmentDate">TreatmentDate</label>
+                        <input asp-for="TreatmentDate" type="date" class="form-control" readonly/>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-4">
+                <label asp-for="Notes">Notes</label>
+                <textarea asp-for="Notes" class="form-control" readonly></textarea>
+            </div>
+            <div class="mb-4">
+                <div class="d-grid gap-2 d-flex justify-content-end">
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary text-light">Edit</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#treatmentsNav").addClass("active");
+            $("#treatmentsNav").addClass("bg-dark");
+
+            $("#petData").removeClass("d-none");
+            $("#petSelectionMessage").addClass("d-none");
+        });
+    </script>
+}

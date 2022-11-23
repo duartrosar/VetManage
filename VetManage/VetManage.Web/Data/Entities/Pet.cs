@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace VetManage.Web.Data.Entities
@@ -48,5 +49,7 @@ namespace VetManage.Web.Data.Entities
         public string ImageFullPath => ImageId == Guid.Empty
              ? $"https://vetmanage.azurewebsites.net/images/noimage.png"
              : $"https://vetmanagestorage.blob.core.windows.net/pets/{ImageId}";
+
+        public List<Treatment> Treatments { get; set; }
     }
 }

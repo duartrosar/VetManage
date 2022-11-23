@@ -9,6 +9,7 @@ using VetManage.Web.Models.Messages;
 using VetManage.Web.Models.Owners;
 using VetManage.Web.Models.Pets;
 using VetManage.Web.Models.Specialities;
+using VetManage.Web.Models.Treatments;
 using VetManage.Web.Models.Users;
 using VetManage.Web.Models.Vets;
 
@@ -418,6 +419,45 @@ namespace VetManage.Web.Helpers
             }
 
             return specialityViewModels;
+        }
+
+        public Treatment ToTreatment(TreatmentViewModel model, bool isNew)
+        {
+            return new Treatment
+            {
+                Id = isNew ? 0 : model.Id,
+                Notes = model.Notes,
+                PetId = model.PetId,
+                SpecialityId = model.SpecialityId,
+                TreatmentDate = model.TreatmentDate,
+            };
+        }
+
+        public TreatmentViewModel ToTreatmentViewModel(Treatment treatment)
+        {
+            return new TreatmentViewModel
+            {
+                Id = treatment.Id,
+                Notes = treatment.Notes,
+                TreatmentDate = treatment.TreatmentDate,
+                Pet = treatment.Pet,
+                Speciality = treatment.Speciality,
+                PetId = treatment.PetId,
+                SpecialityId = treatment.SpecialityId,
+                DateString = treatment.TreatmentDate.ToShortDateString(),
+            };
+        }
+
+        public ICollection<TreatmentViewModel> AllToTreatmentViewModel(IQueryable treatments)
+        {
+            List<TreatmentViewModel> treatmentViewModels = new List<TreatmentViewModel>();
+
+            foreach(Treatment treatment in treatments)
+            {
+                treatmentViewModels.Add(ToTreatmentViewModel(treatment));
+            }
+
+            return treatmentViewModels;
         }
     }
 }

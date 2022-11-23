@@ -88,7 +88,7 @@
     <e-schedule-eventsettings dataSource="Model.Appointments" enableTooltip="true"></e-schedule-eventsettings>
 </ejs-schedule>*@
 
-<partial name="_Create" model="Model.Appointment"/>
+@*<partial name="_Create" model="Model.Appointment"/>*@
 
 
 @section Scripts {
@@ -107,7 +107,6 @@
 
             let date = offsetDateTimezoneToJson(args.data.StartTime);
 
-            console.log(args);
             // if the the user clicked an appointment
             if (args.data.Id === undefined) {
                 window.location.href = "/Calendar/Create/?" + `date=${date}`;

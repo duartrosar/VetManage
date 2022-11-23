@@ -1,0 +1,74 @@
+﻿@using Newtonsoft.Json
+@model IEnumerable<VetManage.Web.Data.Entities.Pet>
+
+@{
+    ViewData["Title"] = "Index";
+
+    JsonSerializerSettings serializerSettings =  new JsonSerializerSettings 
+    { 
+        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+    };
+}
+
+
+<div class="p-3 dark-5">
+    <div class="table-responsive">
+        <table class="table table-hover table-striped" id="petsTable">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.ImageId)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Name)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Type)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Breed)
+                    </th>
+                    <th class="d-none d-sm-table-cell">
+                        @Html.DisplayNameFor(model => model.DateOfBirth)
+                    </th>
+                    <th class="d-none d-md-table-cell">
+                        @Html.DisplayNameFor(model => model.Gender)
+                    </th>
+                    <th class="d-none d-lg-table-cell">
+                        @Html.DisplayNameFor(model => model.Owner)
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="petTableBody">
+        @foreach (var item in Model) {
+                <tr data-pet="@JsonConvert.SerializeObject(item, Formatting.None, serializerSettings)">
+                    <td class="align-middle">
+                        <div class="frame" style="background-image: url(@Url.Content(item.ImageFullPath))"></div>
+                    </td>
+                    <td class="align-middle">
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td class="align-middle">
+                        @Html.DisplayFor(modelItem => item.Type)
+                    </td>
+                    <td class="align-middle">
+                        @Html.DisplayFor(modelItem => item.Breed)
+                    </td>
+                    <td class="d-none d-sm-table-cell align-middle">
+                        @Html.DisplayFor(modelItem => item.DateOfBirth)
+                    </td>
+                    <td class="d-none d-md-table-cell align-middle">
+                        @Html.DisplayFor(modelItem => item.Gender)
+                    </td>
+                    <td class="d-none d-lg-table-cell align-middle">
+                        @Html.DisplayFor(modelItem => item.Owner.FullName)
+                    </td>
+                </tr>
+        }
+            </tbody>
+        </table>
+        <div class="d-flex align-items-end justify-content-center">
+            <button type="button" id="confirmPetSelection" class="btn btn-outline-light">Confirm Selection</button>
+        </div>
+    </div>
+</div>

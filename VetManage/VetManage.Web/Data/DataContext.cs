@@ -22,6 +22,8 @@ namespace VetManage.Web.Data
 
         public DbSet<Speciality> Specialities { get; set; }
 
+        public DbSet<Treatment> Treatments { get; set; }
+
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -84,6 +86,17 @@ namespace VetManage.Web.Data
 
                 builder.HasOne(a => a.Vet)
                 .WithMany()
+                .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<Treatment>(builder =>
+            {
+                builder.HasOne(t => t.Speciality)
+                .WithMany(s => s.Treatments)
+                .OnDelete(DeleteBehavior.Restrict);
+
+                builder.HasOne(t => t.Pet)
+                .WithMany(p => p.Treatments)
                 .OnDelete(DeleteBehavior.Restrict);
             });
         }

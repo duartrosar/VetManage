@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace VetManage.Web.Data.Entities
 {
@@ -12,5 +13,7 @@ namespace VetManage.Web.Data.Entities
 
         [Required(ErrorMessage = "You must enter a Speciality Description")]
         public string Description { get; set; }
+
+        public List<Treatment> Treatments { get; set; }
     }
 }
