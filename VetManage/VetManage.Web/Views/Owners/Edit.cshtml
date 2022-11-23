@@ -22,7 +22,6 @@
                 <div class="row">
                     <div class="col">
                         <div class="h-100">
-                            @*<label asp-for="ImageFile" class="control-label"></label>*@
                             <div class="image-preview border-opacity-50 d-flex justify-content-center align-items-center" style="background-image: url(@Url.Content(@Model.ImageFullPath))">
                                 <label class="btn btn-outline-light border-0 d-flex flex-column pt-1">
                                     <i data-feather="upload" stroke-width="1"></i>
@@ -45,7 +44,7 @@
                         </div>
                         <div class="mb-4">
                             <label asp-for="Gender">Gender</label>
-                            <input id="gender" asp-for="Gender" class="form-control"/>
+                            <select asp-for="Gender" asp-items="(List<SelectListItem>)@ViewData["Genders"]" class="form-control"></select>
                             <span asp-validation-for="Gender" class="text-danger"></span>
                         </div>
                         <div class="mb-4">
@@ -70,7 +69,7 @@
                 <div class="mb-4">
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                         <a asp-action="Index" class="btn btn-danger">Cancel</a>
-                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button type="submit" class="btn btn-primary text-light">Save</button>
                     </div>
                 </div>
                 <input asp-for="ImageIdString" style="visibility: hidden;"/>

@@ -1,0 +1,241 @@
+﻿@model VetManage.Web.Models.Home.DashBoardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="content-container p-3">
+    <div class="">
+        <div>
+            <p class="fs-1 fw-lighter">Welcome back, @ViewData["User"].</p>
+        </div>
+        <div class="row g-3 pt-3">
+            <div class="col-8">
+                <div class="row g-3">
+                    <div class="col-6">
+                        <!---- APPOINTMENTS TODAY ---->
+                        <div class="card border-0 dark-5">
+                            <div class="card-header">
+                                <div class="fs-4 py-3 fw-light">Appointments today</div>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="list-group list-group-flush">
+                                    @if(Model.TodaysAppoinments.Count() == 0)
+                                    {
+                                        <div class="d-flex justify-content-center align-items-center mt-3">
+                                            <p class="fw-lighter m-0">
+                                                No appointments today
+                                            </p>
+                                        </div>
+                                    }else
+                                    {
+                                        @foreach(var item in Model.TodaysAppoinments)
+                                        {
+                                            <a asp-controller="Calendar" asp-action="Edit" asp-route-id="@item.Id" class="list-group-item list-group-item-action d-flex align-items-center">
+                                                <div class="frame frame-nav me-2" style="background-image: url(@Url.Content(item.Pet.ImageFullPath))"></div>
+                                                <p class="fw-lighter m-0">
+                                                    @item.Pet.Name - @item.Pet.Type - Dr. @item.Vet.FullName - @item.DateString
+                                                </p>
+                                            </a>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <div class="py-3 fw-light">
+                                    <a asp-controller="Calendar" asp-action="Index">
+                                        See all
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <!---- NEW APPOINTMENTS ---->
+                        <div class="card border-0 dark-5">
+                            <div class="card-header">
+                                <div class="fs-4 py-3 fw-light">Recently booked appointments</div>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="list-group list-group-flush">
+                                    @if(Model.LatestAppointments.Count() == 0)
+                                    {
+                                        <div class="d-flex justify-content-center align-items-center mt-3">
+                                            <p class="fw-lighter m-0">
+                                                No appointments found
+                                            </p>
+                                        </div>
+                                    }else
+                                    {
+                                        @foreach(var item in Model.LatestAppointments)
+                                        {
+                                            <a asp-controller="Calendar" asp-action="Edit" asp-route-id="@item.Id" class="list-group-item list-group-item-action d-flex align-items-center">
+                                                <div class="frame frame-nav me-2" style="background-image: url(@Url.Content(item.Pet.ImageFullPath))"></div>
+                                                <p class="fw-lighter m-0">
+                                                    @item.Pet.Name - @item.Pet.Type - Dr. @item.Vet.FullName - @item.DateString  
+                                                </p>
+                                            </a>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <div class="py-3 fw-light">
+                                    <a asp-controller="Calendar" asp-action="Index">
+                                        See all
+                                    </a>
+                                </div>
+                            </div>
+                         </div>
+                    </div>
+                </div>
+                <div class="row g-3 pt-3">
+                    <div class="col-12">
+                        <!---- LATEST TREATMENTS ---->
+                        <div class="card border-0 dark-5">
+                            <div class="card-header">
+                                <div class="fs-4 py-3 fw-light">Latest Treatments</div>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="list-group list-group-flush">
+                                    @if(Model.LastestTreatments.Count() == 0)
+                                    {
+                                        <div class="d-flex justify-content-center align-items-center mt-3">
+                                            <p class="fw-lighter m-0">
+                                                No treatments found
+                                            </p>
+                                        </div>
+                                    }else
+                                    {
+                                        @foreach(var item in Model.LastestTreatments)
+                                        {
+                                           <a asp-controller="Treatments" asp-action="Details" asp-route-id="@item.Id" class="list-group-item list-group-item-action d-flex align-items-center">
+                                                <div class="frame frame-nav me-2" style="background-image: url(@Url.Content(item.Pet.ImageFullPath))"></div>
+                                                <p class="fw-lighter m-0">
+                                                    @item.Pet.Name - @item.Speciality.Name - @item.NotesAbbreviation - @item.DateString
+                                                    </p>
+                                            </a> 
+                                        }
+                                    }
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <div class="py-3 fw-light">
+                                    <a asp-controller="Treatments" asp-action="Index">
+                                        See all
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <!---- UNREAD MESSAGES ---->
+                <div class="card border-0 dark-5">
+                    <div class="card-header">
+                        <div class="fs-4 py-3 fw-light">Unread Messages</div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush">
+                            @if(Model.UnreadMessages.Count() == 0)
+                            {
+                                <div class="d-flex justify-content-center align-items-center mt-3">
+                                    <p class="fw-lighter m-0">
+                                        There are no messages left to read
+                                    </p>
+                                </div>
+                            }else
+                            {
+                                @foreach(var item in Model.UnreadMessages)
+                                {
+                                    <button data-messageId="@item.Id" class="messageBtn list-group-item list-group-item-action d-flex align-items-center">                              
+                                        <p class="fw-lighter m-0">
+                                            @item.SenderName - @item.Subject - @item.DateString 
+                                        </p>
+                                    </button>
+                                }
+                            }
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="py-3 fw-light">
+                            <a asp-action="Inbox" asp-controller="Messages">
+                                See All
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @if(User.IsInRole("Employee") || User.IsInRole("Admin"))
+        {
+            <div class="row g-3 pt-3">
+                <div class="col-4">
+                    <!---- Pets amount ---->
+                    <div class="card border-0 dark-5">
+                        <div class="card-body p-5">
+                            <div class="row g-3">
+                                <div class="col-4">
+                                    <div class="frame me-2" style="background-image: url(@Url.Content("~/images/nouser.png"))"></div>
+                                </div>
+                                <div class="col-8">
+                                    <p class="fw-lighter m-0">Total Pets</p>
+                                    <p class="fs-1 fw-light m-0">@Model.TotalPets</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <!---- Owners amount ---->
+                    <div class="card border-0 dark-5">
+                        <div class="card-body p-5">
+                            <div class="row g-3">
+                                <div class="col-4">
+                                    <div class="frame me-2" style="background-image: url(@Url.Content("~/images/nouser.png"))"></div>
+                                </div>
+                                <div class="col-8">
+                                    <p class="fw-lighter m-0">Total Owners</p>
+                                    <p class="fs-1 fw-light m-0">@Model.TotalOwners</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <!---- Appointments amount ---->
+                    <div class="card border-0 dark-5">
+                        <div class="card-body p-5">
+                            <div class="row g-3">
+                                <div class="col-4">
+                                    <div class="frame me-2" style="background-image: url(@Url.Content("~/images/nouser.png"))"></div>
+                                </div>
+                                <div class="col-8">
+                                    <p class="fw-lighter m-0">Total Appointments</p>
+                                    <p class="fs-1 fw-light m-0">@Model.TotalAppointments</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#dashboardNav").addClass("active");
+            $("#dashboardNav").addClass("bg-dark");
+
+            $('.messageBtn').click(function(){
+                let messageId = $(this).data("messageid");
+
+                window.location.href = "/Messages/SingleMessage/?" + `messageId=${messageId}`; 
+            });
+        });
+    </script>
+}

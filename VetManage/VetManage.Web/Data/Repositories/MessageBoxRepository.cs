@@ -135,9 +135,23 @@ namespace VetManage.Web.Data.Repositories
                 .ThenInclude(s => s.User)
                 .FirstOrDefaultAsync(m => m.Id == messageId);
 
-            if(message != null)
+            return message;
+        }
+
+        public async Task<IQueryable> GetUnreadMessages(string userId)
+        {
+            var user = await _userHelper.GetUserByIdAsync(userId);
+
+            if (user != null)
             {
-                return message;
+                var messageBox = await _context.MessageBoxes.FirstOrDefaultAsync(mb => mb.UserId == userId);
+
+                return _context.Messages
+                    .Where(m => m.Recipients.Any(r => r.MessageBoxId == messageBox.Id))
+                    .Where(m => m.Recipients.Any(r => r.IsRead == false))
+                    .Include(m => m.Sender)
+                    .ThenInclude(s => s.User)
+                    .OrderByDescending(m => m.Date);
             }
 
             return null;

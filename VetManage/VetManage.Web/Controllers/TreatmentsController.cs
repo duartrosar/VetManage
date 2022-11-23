@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Vereyon.Web;
 using VetManage.Web.Data.Repositories;
@@ -9,6 +10,7 @@ using VetManage.Web.Models.Treatments;
 
 namespace VetManage.Web.Controllers
 {
+    [Authorize]
     public class TreatmentsController : Controller
     {
         private readonly ITreatmentRepository _treatmentRepository;
@@ -16,23 +18,36 @@ namespace VetManage.Web.Controllers
         private readonly IFlashMessage _flashMessage;
         private readonly IPetRepository _petRepository;
         private readonly ISpecialityRepository _specialityRepository;
+        private readonly IOwnerRepository _ownerRepository;
 
         public TreatmentsController(
             ITreatmentRepository treatmentRepository,
             IConverterHelper converterHelper,
             IFlashMessage flashMessage,
             IPetRepository petRepository,
-            ISpecialityRepository specialityRepository)
+            ISpecialityRepository specialityRepository,
+            IOwnerRepository ownerRepository)
         {
             _treatmentRepository = treatmentRepository;
             _converterHelper = converterHelper;
             _flashMessage = flashMessage;
             _petRepository = petRepository;
             _specialityRepository = specialityRepository;
+            _ownerRepository = ownerRepository;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            // Get the logged in user to check if it's an owner
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var owner = await _ownerRepository.GetByUserIdAsync(userId);
+
             var treatments = _treatmentRepository.GetAllWithPetsAndSpecialities();
+
+            if (owner != null)
+            {
+                treatments = _treatmentRepository.GetAllByOwnerId(owner.Id);
+            }
 
             var model = _converterHelper.AllToTreatmentViewModel(treatments);
 
@@ -52,6 +67,19 @@ namespace VetManage.Web.Controllers
             if (treatment == null)
             {
                 return new NotFoundViewResult("TreatmentNotFound");
+            }
+
+            // Get the logged in user to check if it's an owner
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var owner = await _ownerRepository.GetByUserIdAsync(userId);
+
+            if (owner != null)
+            {
+                if(owner.Id != treatment.Pet.OwnerId)
+                {
+                    return new NotFoundViewResult("TreatmentNotFound");
+                }
             }
 
             // TODO: Check if the treatment belongs to a pet that belongs 

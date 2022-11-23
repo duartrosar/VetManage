@@ -88,6 +88,8 @@ namespace VetManage.Web.Controllers
                 DateOfBirth = DateTime.Now,
             };
 
+            ViewData["Genders"] = _converterHelper.GetGenders();
+
             return View(model);
         }
 
@@ -96,6 +98,8 @@ namespace VetManage.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(UserViewModel model)
         {
+            ViewData["Genders"] = _converterHelper.GetGenders();
+
             if (ModelState.IsValid)
             {
                 try
@@ -146,7 +150,7 @@ namespace VetManage.Web.Controllers
 
                         model.ImageId = imageId;
 
-                        return View(model);
+                        return RedirectToAction(nameof(Index));
                     }
 
                     _flashMessage.Danger("That email is already being used by another user, please try again");
@@ -185,6 +189,8 @@ namespace VetManage.Web.Controllers
                 model.IsAdmin = true;
             }
 
+            ViewData["Genders"] = _converterHelper.GetGenders();
+
             return View(model);
         }
 
@@ -192,6 +198,8 @@ namespace VetManage.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(UserViewModel model)
         {
+            ViewData["Genders"] = _converterHelper.GetGenders();
+
             if (ModelState.IsValid)
             {
                 try

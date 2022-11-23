@@ -15,5 +15,7 @@ namespace VetManage.Web.Models.Treatments
         public string DateString { get; set; }
 
         public IEnumerable<SelectListItem> Specialities { get; set; }
+
+        public string NotesAbbreviation { get; set; }
     }
 }

@@ -14,35 +14,29 @@
         <div class="px-3 pt-3">
             <flash dismissable="true"/>
         </div>
-        <div class="px-3 pt-3">
-            <button class="btn btn-outline-light" id="chooseOwnerBtn">Choose Owner</button>
-        </div>
         <div class="px-3">
             <form asp-action="Edit" class="flex-fill" method="post" style="max-width: 1200px;" id="registerVetsForm" enctype="multipart/form-data">
                 <div asp-validation-summary="ModelOnly"></div>
                 <input asp-for="Id" type="hidden"/>
                 <input asp-for="ImageId" type="hidden"/>
-                <div class="row">
+                @if (!User.IsInRole("Client"))
+                {
                     <div class="col">
-                        <div class="mb-4">
-                            <label asp-for="Name">Owner Id</label>
-                            <input asp-for="OwnerId" type="text" id="ownerId" class="form-control"/>
-                            <span asp-validation-for="OwnerId" class="text-danger"></span>
+                        <partial name="_OwnerData" model="@Model.Owner"/>
+                        <div class="p-3" id="chooseOwnerBtnContainer">
+                            <a class="btn btn-outline-light mt-2" id="chooseOwnerBtn">Choose Owner</a>
                         </div>
+                        <span asp-validation-for="OwnerId" class="text-danger"></span>
+                        <input asp-for="OwnerId" style="visibility: hidden;" />
                     </div>
-                    <div class="col">
-                        <div class="mb-4">
-                            <label asp-for="Name">Owner's First Name</label>
-                            <input type="text" class="form-control" readonly/>
-                        </div>
+                    <div class="d-none" id="ownersTableContainer">
+                        <h4>Pets</h4>
+                        <partial name="_OwnersTable" model="@ViewData["Owners"]" />
                     </div>
-                    <div class="col">
-                        <div class="mb-4">
-                            <label asp-for="Name">Owner's Last Name</label>
-                            <input type="text" class="form-control" readonly/>
-                        </div>
-                    </div>
-                </div>
+                } else
+                {
+                    <input asp-for="OwnerId" style="visibility: hidden;" />
+                }
                 <div class="row">
                     <div class="col">
                         <div class="h-100">
@@ -73,7 +67,7 @@
                         </div>
                         <div class="mb-4">
                             <label asp-for="Gender">Gender</label>
-                            <input asp-for="Gender" class="form-control"/>
+                            <select asp-for="Gender" asp-items="(List<SelectListItem>)@ViewData["Genders"]" class="form-control"></select>
                             <span asp-validation-for="Gender" class="text-danger"></span>
                         </div>
                     </div>
@@ -103,7 +97,7 @@
                 <div class="mb-4">
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                         <a asp-action="Index" class="btn btn-danger">Cancel</a>
-                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button type="submit" class="btn btn-primary text-light">Save</button>
                     </div>
                 </div>
                 <input asp-for="ImageIdString" class="form-control" style="visibility: hidden; height: 0px;"/>
@@ -119,46 +113,11 @@
 
     <script type="text/javascript">
         $(document).ready(function() {
-            // Datatable
-            let table = $("#ownersTable").DataTable({
-                "pageLength": 5,
-            });
+            $("#petsNav").addClass("active");
+            $("#petsNav").addClass("bg-dark");
 
-            $("#confirmSelection").click(function() { 
-                let selectedRow = $(".selected");
-                let ownerId = selectedRow.data("ownerId")
-                let owner = selectedRow.data("owner")
-
-                console.log(owner);
-
-                if(ownerId !== undefined){
-                    // set the owners values
-                    $("#ownerId").val(owner.Id);
-                    $("#ownerFirst").val(owner.FirstName);
-                    $("#ownerLast").val(owner.LastName);
-
-                    // close modal
-                    $("#chooseOwner").modal("hide");
-                    $("#ownerId-error").remove();
-                }
-            });
-
-            $('#ownersTable tbody').on('click', 'tr', function () {
-                if ($(this).hasClass('selected')) {
-                    $(this).removeClass('selected');
-                } else {
-                    table.$('tr.selected').removeClass('selected');
-                    $(this).addClass('selected');
-                }
-            });
-
-            $("#ownerId").focus(function(){
-                $("#chooseOwner").modal("show");
-            });
-
-            $("#chooseOwnerBtn").click(function(){
-                $("#chooseOwner").modal("show");
-            });
+            $("#ownerData").removeClass("d-none");
+            $("#ownerSelectionMessage").addClass("d-none");
         });
 
         // Preview image
@@ -190,4 +149,6 @@
                 });
             });
     </script>
+
+    <script type="text/javascript" src="~/js/PetOwnerSelection.js"></script>
 }

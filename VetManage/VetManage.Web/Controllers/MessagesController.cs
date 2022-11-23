@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Vereyon.Web;
 using VetManage.Web.Data.Entities;
 using VetManage.Web.Data.Repositories;
 using VetManage.Web.Helpers;
@@ -16,15 +17,18 @@ namespace VetManage.Web.Controllers
         private readonly IMessageBoxRepository _messageBoxRepository;
         private readonly IUserHelper _userHelper;
         private readonly IConverterHelper _converterHelper;
+        private readonly IFlashMessage _flashMessage;
 
         public MessagesController(
             IMessageBoxRepository messageBoxRepository,
             IUserHelper userHelper,
-            IConverterHelper converterHelper)
+            IConverterHelper converterHelper,
+            IFlashMessage flashMessage)
         {
             _messageBoxRepository = messageBoxRepository;
             _userHelper = userHelper;
             _converterHelper = converterHelper;
+            _flashMessage = flashMessage;
         }
 
         public async Task<IActionResult> Inbox()
@@ -105,18 +109,22 @@ namespace VetManage.Web.Controllers
                     var message = _converterHelper.ToMessage(model);
 
                     message.SenderId = messageBox.Id;
+
                     message.SenderUsername = messageBox.Username;
 
                     await _messageBoxRepository.SendMessage(message, recipients);
 
-                    return RedirectToAction(nameof(Index));
+                    _flashMessage.Confirmation("Message was sent");
+
+                    return RedirectToAction(nameof(Inbox));
                 }
                 catch (Exception ex)
                 {
-
-                    throw;
+                    _flashMessage.Danger(ex.Message);
                 }
             }
+            _flashMessage.Danger("Message could not be sent");
+
             return View(model);
         }
 
@@ -141,6 +149,7 @@ namespace VetManage.Web.Controllers
             var model = new MessageViewModel();
 
             IQueryable<Message> messages;
+
             List<int> messagesIds;
             // If the user is trying to open a message from their outbox
             // messageMessageBox will be null
@@ -153,7 +162,7 @@ namespace VetManage.Web.Controllers
 
                 if (!messagesIds.Contains(messageId))
                 {
-                    // TODO: User not allowed to see this message
+                    // User not allowed to see this message
                     return new NotFoundViewResult("MessageNotFound");
                 }
 
@@ -170,7 +179,7 @@ namespace VetManage.Web.Controllers
 
                 if (!messagesIds.Contains(messageId))
                 {
-                    // TODO: User not allowed to see this message
+                    // User not allowed to see this message
                     return new NotFoundViewResult("MessageNotFound");
                 }
 

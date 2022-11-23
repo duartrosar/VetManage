@@ -95,6 +95,8 @@ namespace VetManage.Web.Controllers
                 },
             };
 
+            ViewData["Genders"] = _converterHelper.GetGenders();
+
             return View(model);
         }
 
@@ -158,10 +160,12 @@ namespace VetManage.Web.Controllers
 
                         model.OwnerViewModel.ImageId = imageId;
 
-                        return View(model);
+                        return RedirectToAction(nameof(Index));
                     }
 
                     _flashMessage.Danger("That email is already being used by another user.");
+
+                    ViewData["Genders"] = _converterHelper.GetGenders();
 
                     return View(model);
                 }
@@ -192,6 +196,8 @@ namespace VetManage.Web.Controllers
 
             var model = _converterHelper.ToOwnerViewModel(owner);
 
+            ViewData["Genders"] = _converterHelper.GetGenders();
+
             return View(model);
         }
 
@@ -202,6 +208,8 @@ namespace VetManage.Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                ViewData["Genders"] = _converterHelper.GetGenders();
+
                 try
                 {
                     Guid imageId = model.ImageId;

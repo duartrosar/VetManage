@@ -53,6 +53,22 @@ $dropdown-dark-link-active-bg: tint-color($dark, 5%);
 $dropdown-dark-link-disabled-color: $gray-500;
 $dropdown-dark-header-color: $gray-500;
 
+// List groups
+$list-group-bg: rgba(0,0,0,0);
+$list-group-color: white;
+$list-group-border-color: tint-color($dark, 20%);
+
+$list-group-hover-bg: $secondary;
+$list-group-action-hover-color: white;
+$list-group-active-bg: $secondary;
+
+$list-group-action-active-bg: $secondary;
+$list-group-action-active-color: white;
+
+// cards
+$card-height: 100%;
+$card-border-color: tint-color($dark, 20%);
+
 :root {
     --ck-color-text: black;
 }

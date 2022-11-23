@@ -26,5 +26,7 @@ namespace VetManage.Web.Data.Repositories
         Task ReadMessage(MessageMessageBox messageMessageBox);
 
         Task<Message> GetMessageById(int messageId);
+
+        Task<IQueryable> GetUnreadMessages(string userId);
     }
 }

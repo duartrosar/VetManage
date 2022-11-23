@@ -81,9 +81,10 @@ namespace VetManage.Web.Controllers
 
                 await _specialityRepository.CreateAsync(speciality);
 
-                return View(model);
+                return RedirectToAction(nameof(Index));
             }
             _flashMessage.Danger("Could not create speciality.");
+
             return View(model);
         }
 

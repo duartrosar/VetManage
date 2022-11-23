@@ -9,15 +9,9 @@ namespace VetManage.Web.Data.Repositories
     public interface IOwnerRepository : IGenericRepository<Owner>
     {
         IQueryable GetAllWithUsers();
-
         Task<Owner> GetWithUserByIdAsync(int id);
-
-        IEnumerable<SelectListItem> GetComboUsers();
-
         IQueryable GetAllWithPetsAndUsers();
-
-        IEnumerable<SelectListItem> GetComboUsersNoEntity();
-
-        Task<Owner> GetByUserIdAsync(User user);
+        Task<Owner> GetByUserIdAsync(string id);
+        Task<Owner> GetByUserIdWithPetsAsync(string id);
     }
 }

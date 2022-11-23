@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,6 +27,7 @@ namespace VetManage.Web.Controllers
         private readonly IConverterHelper _converterHelper;
         private readonly IBlobHelper _blobHelper;
         private readonly IFlashMessage _flashMessage;
+        private readonly IUserHelper _userHelper;
 
         public PetsController(
             DataContext context,
@@ -33,7 +35,8 @@ namespace VetManage.Web.Controllers
             IOwnerRepository ownerRepository,
             IConverterHelper converterHelper,
             IBlobHelper blobHelper,
-            IFlashMessage flashMessage)
+            IFlashMessage flashMessage,
+            IUserHelper userHelper)
         {
             _context = context;
             _petRepository = petRepository;
@@ -41,14 +44,24 @@ namespace VetManage.Web.Controllers
             _converterHelper = converterHelper;
             _blobHelper = blobHelper;
             _flashMessage = flashMessage;
+            _userHelper = userHelper;
         }
 
-        // GET: Pets
-        public IActionResult Index()
+        //[Authorize(Roles ="Admin,Employee")]
+        public async Task<IActionResult> Index()
         {
+            // Get the logged in user to check if it's an owner
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var owner = await _ownerRepository.GetByUserIdAsync(userId);
+            
+            if(owner != null)
+            {
+                return View(_petRepository.GetAllByOwnerIdAsync(owner.Id));
+            }
+
             return View(_petRepository.GetAllWithOwners());
         }
-
 
         // GET: Vets/Create
         public async Task<IActionResult> Details(int? id)
@@ -67,11 +80,25 @@ namespace VetManage.Web.Controllers
                 return new NotFoundViewResult("PetNotFound");
             }
 
+            // Get the logged in user to check if it's an owner
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var owner = await _ownerRepository.GetByUserIdAsync(userId);
+
+            if (owner != null)
+            {
+                // Check if the user is trying to edit a pet that isn't theirs
+                if (owner.Id != pet.OwnerId)
+                {
+                    return new NotFoundViewResult("PetNotFound");
+                }
+            }
+
             var model = _converterHelper.ToPetViewModel(pet);
 
             return View(model);
         }
 
+        [Authorize(Roles="Employee")]
         public IActionResult Create()
         {
             var model = new PetViewModel()
@@ -82,12 +109,14 @@ namespace VetManage.Web.Controllers
             var owners = _ownerRepository.GetAllWithUsers();
 
             ViewData["Owners"] = _converterHelper.AllToOwnerViewModel(owners);
+            ViewData["Genders"] = _converterHelper.GetPetGenders();
 
             return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Employee")]
         public async Task<IActionResult> Create(PetViewModel model)
         {
             var owners = _ownerRepository.GetAllWithUsers();
@@ -117,7 +146,7 @@ namespace VetManage.Web.Controllers
 
                         _flashMessage.Confirmation("Pet was created successfully");
 
-                        return View(model);
+                        return RedirectToAction(nameof(Index));
                     }
                     _flashMessage.Danger("Owner could not be found, please try again.");
                 }
@@ -136,7 +165,6 @@ namespace VetManage.Web.Controllers
             {
                 // vet not found
                 return new NotFoundViewResult("PetNotFound");
-
             }
 
             var pet = await _petRepository.GetWithOwnerByIdAsync(id.Value);
@@ -147,9 +175,24 @@ namespace VetManage.Web.Controllers
                 return new NotFoundViewResult("PetNotFound");
             }
 
+            // Get the logged in user to check if it's an owner
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var owner = await _ownerRepository.GetByUserIdAsync(userId);
+
+            if(owner != null)
+            {
+                // Check if the user is trying to edit a pet that isn't theirs
+                if (owner.Id != pet.OwnerId)
+                {
+                    return new NotFoundViewResult("PetNotFound");
+                }
+            }
+
             var owners = _ownerRepository.GetAllWithUsers();
 
             ViewData["Owners"] = _converterHelper.AllToOwnerViewModel(owners);
+
+            ViewData["Genders"] = _converterHelper.GetPetGenders();
 
             var model = _converterHelper.ToPetViewModel(pet);
 
@@ -166,6 +209,7 @@ namespace VetManage.Web.Controllers
             var owners = _ownerRepository.GetAllWithUsers();
 
             ViewData["Owners"] = _converterHelper.AllToOwnerViewModel(owners);
+            ViewData["Genders"] = _converterHelper.GetPetGenders();
 
             if (ModelState.IsValid)
             {
@@ -190,6 +234,8 @@ namespace VetManage.Web.Controllers
 
                         _flashMessage.Confirmation("Pet was updated successfully");
 
+                        model.Owner = owner;
+
                         return View(model);
                     }
                     _flashMessage.Danger("Owner could not be found, please try again.");
@@ -200,23 +246,20 @@ namespace VetManage.Web.Controllers
                     {
                         return new NotFoundViewResult("PetNotFound");
                     }
-                    else
-                    {
-                        _flashMessage.Danger(ex.Message);
-                    }
+                    
+                    _flashMessage.Danger(ex.Message);
                 }
             }
             return View(model);
         }
 
-
+        [Authorize(Roles ="Employee")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
             {
                 // vet not found
                 return new NotFoundViewResult("PetNotFound");
-
             }
 
             var pet = await _petRepository.GetByIdAsync(id.Value);
@@ -224,6 +267,19 @@ namespace VetManage.Web.Controllers
             if (pet == null)
             {
                 return new NotFoundViewResult("PetNotFound");
+            }
+
+            // Get the logged in user to check if it's an owner
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var owner = await _ownerRepository.GetByUserIdAsync(userId);
+
+            if(owner != null)
+            {
+                // Check if the user is trying to edit a pet that isn't theirs
+                if (owner.Id != pet.OwnerId)
+                {
+                    return new NotFoundViewResult("PetNotFound");
+                }
             }
 
             try

@@ -21,21 +21,6 @@ namespace VetManage.Web.Data.Repositories
             return _context.Owners.Include(o => o.User);
         }
 
-        public IEnumerable<SelectListItem> GetComboUsersNoEntity()
-        {
-            // Get all the users with the role Client that do not have an entity associated with them as list of SelectListItem
-            var list = _context.Users
-                .Where(u => u.RoleName == "Client")
-                .Where(u => !u.HasEntity)
-                .Select(u => new SelectListItem
-                {
-                    Text = u.FullName,
-                    Value = u.Id.ToString(),
-                }).ToList();
-
-            return list;
-        }
-
         public async Task<Owner> GetWithUserByIdAsync(int id)
         {
             return await _context.Owners
@@ -48,24 +33,18 @@ namespace VetManage.Web.Data.Repositories
             return _context.Owners.Include(o => o.User).Include(o => o.Pets);
         }
 
-        public IEnumerable<SelectListItem> GetComboUsers()
-        {
-            // Get all the users with the role Client as a list of SelectListItem
-            var list = _context.Users
-                .Where(u => u.RoleName == "Client")
-                .Select(u => new SelectListItem
-                {
-                    Text = u.FullName,
-                    Value = u.Id.ToString(),
-                }).ToList();
 
-            return list;
-        }
-
-        public async Task<Owner> GetByUserIdAsync(User user)
+        public async Task<Owner> GetByUserIdAsync(string id)
         {
             return await _context.Owners
-                .FirstOrDefaultAsync(v => v.User == user);
+                .FirstOrDefaultAsync(v => v.User.Id == id);
+        }
+
+        public async Task<Owner> GetByUserIdWithPetsAsync(string id)
+        {
+            return await _context.Owners
+                .Include(o => o.Pets)
+                .FirstOrDefaultAsync(v => v.User.Id == id);
         }
     }
 }

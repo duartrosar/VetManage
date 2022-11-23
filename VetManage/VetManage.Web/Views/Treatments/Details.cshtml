@@ -36,11 +36,14 @@
                 <label asp-for="Notes">Notes</label>
                 <textarea asp-for="Notes" class="form-control" readonly></textarea>
             </div>
-            <div class="mb-4">
-                <div class="d-grid gap-2 d-flex justify-content-end">
-                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary text-light">Edit</a>
+            @if (!User.IsInRole("Client"))
+            {
+                <div class="mb-4">
+                    <div class="d-grid gap-2 d-flex justify-content-end">
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary text-light">Edit</a>
+                    </div>
                 </div>
-            </div>
+            }
         </div>
     </div>
 </div>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using VetManage.Web.Data.Entities;
@@ -39,10 +40,12 @@ namespace VetManage.Web.Helpers
 
 
         Message ToMessage(MessageViewModel model);
+        MessageViewModel ToMessageViewModel(Message message);
         MessageViewModel ToMessageViewModel(Message message, MessageMessageBox mmb);
         MessageViewModel ToMessageViewModelOutbox(Message message);
         ICollection<MessageViewModel> AllToMessageViewModel(IQueryable<Message> messages, IQueryable<MessageMessageBox> messageMessageBoxes);
         ICollection<MessageViewModel> AllToMessageViewModelOutbox(IQueryable<Message> outbox);
+        ICollection<MessageViewModel> AllToMessageViewModel(IQueryable messages);
 
 
         User ToUser(IIsUser entity, User user, string blobContainerName);
@@ -58,5 +61,8 @@ namespace VetManage.Web.Helpers
         Treatment ToTreatment(TreatmentViewModel model, bool isNew);
         TreatmentViewModel ToTreatmentViewModel(Treatment treatment);
         ICollection<TreatmentViewModel> AllToTreatmentViewModel(IQueryable treatments);
+
+        List<SelectListItem> GetGenders();
+        List<SelectListItem> GetPetGenders();
     }
 }

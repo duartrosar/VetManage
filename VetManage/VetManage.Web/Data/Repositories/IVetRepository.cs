@@ -12,10 +12,6 @@ namespace VetManage.Web.Data.Repositories
 
         Task<Vet> GetWithUserByIdAsync(int id);
 
-        IEnumerable<SelectListItem> GetComboUsersNoEntity();
-
-        IEnumerable<SelectListItem> GetComboUsers();
-
         Task<Vet> GetByUserIdAsync(User user);
     }
 }

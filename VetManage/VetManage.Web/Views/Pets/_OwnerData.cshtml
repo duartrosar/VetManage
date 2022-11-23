@@ -1,0 +1,44 @@
+﻿@model VetManage.Web.Data.Entities.Owner;
+
+<div id="ownerDataContainer">
+    <h4>Owner</h4>
+    <div class="table-responsive">
+        <table class="table table-hover table-striped" id="ownerDataTable">
+            <thead>
+                <tr>
+                    <th>
+                        
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.FullName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Address)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.DateOfBirth)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="d-none" id="ownerData">
+                    <td class="align-middle">
+                        <div class="frame" id="ownerImage" style="background-image: url(@Url.Content(Model.ImageFullPath)"></div>
+                    </td>
+                    <td class="align-middle" id="ownerFullName">
+                        @Html.DisplayFor(modelItem => Model.FullName)
+                    </td>
+                    <td class="align-middle" id="ownerAddress">
+                        @Html.DisplayFor(modelItem => Model.Address)
+                    </td>
+                    <td class="align-middle" id="ownerDateOfBirth">
+                        @Html.DisplayFor(modelItem => Model.DateOfBirth)
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div id="ownerSelectionMessage">
+            <h4>No owner selected</h4>
+        </div>
+    </div>
+</div>

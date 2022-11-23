@@ -9,5 +9,7 @@ namespace VetManage.Web.Data.Repositories
         IQueryable GetAllWithOwners();
 
         Task<Pet> GetWithOwnerByIdAsync(int id);
+
+        IQueryable GetAllByOwnerIdAsync(int id);
     }
 }

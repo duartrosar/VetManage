@@ -12,6 +12,7 @@ namespace VetManage.Web.Data.Entities
         public string Name { get; set; }
 
         [Required(ErrorMessage = "You must enter a Speciality Description")]
+        [MaxLength(5000)]
         public string Description { get; set; }
 
         public List<Treatment> Treatments { get; set; }

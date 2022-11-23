@@ -24,33 +24,6 @@ namespace VetManage.Web.Data.Repositories
                 .ThenBy(v => v.LastName);
         }
 
-        public IEnumerable<SelectListItem> GetComboUsersNoEntity()
-        {
-            var list = _context.Users
-                .Where(u => u.RoleName == "Employee")
-                .Where(u => !u.HasEntity)
-                .Select(u => new SelectListItem
-                {
-                    Text = u.FullName,
-                    Value = u.Id.ToString(),
-                }).ToList();
-
-            return list;
-        }
-
-        public IEnumerable<SelectListItem> GetComboUsers()
-        {
-            var list = _context.Users
-                .Where(u => u.RoleName == "Employee")
-                .Select(u => new SelectListItem
-                {
-                    Text = u.FullName,
-                    Value = u.Id.ToString(),
-                }).ToList();
-
-            return list;
-        }
-
         public async Task<Vet> GetWithUserByIdAsync(int id)
         {
             return await _context.Vets

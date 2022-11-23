@@ -7,9 +7,11 @@ namespace VetManage.Web.Data.Entities
     {
         public int Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "You must pick a treatment date")]
         public DateTime TreatmentDate { get; set; }
 
+        [Required(ErrorMessage = "You must enter some notes")]
+        [MaxLength(500)]
         public string Notes { get; set; }
 
         [Display(Name = "Speciality")]
@@ -17,7 +19,6 @@ namespace VetManage.Web.Data.Entities
         public int SpecialityId { get; set; }
 
         public Speciality Speciality { get; set; }
-
 
         [Display(Name = "Pet")]
         [Range(1, int.MaxValue, ErrorMessage = "You must select a Pet")]

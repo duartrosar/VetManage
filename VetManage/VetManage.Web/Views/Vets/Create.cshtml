@@ -46,7 +46,7 @@
                         </div>
                         <div class="mb-4">
                             <label asp-for="VetViewModel.Gender">Gender</label>
-                            <input id="gender" asp-for="VetViewModel.Gender" class="form-control"/>
+                            <select asp-for="VetViewModel.Gender" asp-items="(List<SelectListItem>)@ViewData["Genders"]" class="form-control"></select>
                             <span asp-validation-for="VetViewModel.Gender" class="text-danger"></span>
                         </div>
                     </div>

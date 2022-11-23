@@ -13,25 +13,8 @@
         <div class="p-3">
             <div class="flex-fill" style="max-width: 1200px;">
                 <div asp-validation-summary="ModelOnly"></div>
-                <div class="row">
-                    <div class="col">
-                        <div class="mb-4">
-                            <label asp-for="OwnerId">Owner Id</label>
-                            <input asp-for="OwnerId" type="text" id="ownerId" class="form-control" readonly/>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="mb-4">
-                            <label asp-for="Owner.FirstName">Owner's First Name</label>
-                            <input asp-for="Owner.FirstName" type="text" class="form-control" readonly/>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="mb-4">
-                            <label asp-for="Owner.LastName">Owner's Last Name</label>
-                            <input asp-for="Owner.LastName" type="text" class="form-control" readonly/>
-                        </div>
-                    </div>
+                <div class="col">
+                    <partial name="_OwnerData" model="@Model.Owner"/>
                 </div>
                 <div class="row">
                     <div class="col">
@@ -41,7 +24,7 @@
                                     <i data-feather="upload" stroke-width="1"></i>
                                     <input asp-for="ImageFile" class="img" id="imageFile" type="file" style="width: 0px;height: 0px;overflow: hidden;" readonly/>
                                 </label>
-                            </div>id="imgUrlValidation"></span>
+                            </div>
                         </div>
                     </div>
                     <div class="col">
@@ -83,7 +66,7 @@
                 </div>
                 <div class="mb-4">
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary text-light">Edit</a>
                     </div>
                 </div>
             </div>
@@ -91,3 +74,16 @@
     </div>
 </div>
 
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#petsNav").addClass("active");
+            $("#petsNav").addClass("bg-dark");
+
+            $("#ownerData").removeClass("d-none");
+            $("#ownerSelectionMessage").addClass("d-none");
+        });
+    </script>
+}

@@ -16,10 +16,10 @@ namespace VetManage.Web.Data.Entities
 
         [Required(ErrorMessage="You must enter a Last Name")]
         [MaxLength(50)]
-        [Display(Name = "Surname")]
+        [Display(Name = "Last Name")]
         public string LastName { get; set; }
 
-        [Required(ErrorMessage="You must enter a Gender")]
+        [Required(ErrorMessage="You must select a Gender")]
         public string Gender { get; set; }
 
         [Required(ErrorMessage="You must enter a Date Of Birth")]

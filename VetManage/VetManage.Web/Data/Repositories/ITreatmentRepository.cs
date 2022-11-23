@@ -10,6 +10,11 @@ namespace VetManage.Web.Data.Repositories
 
         IQueryable GetAllByPetId(int petId);
 
+        IQueryable GetAllByOwnerId(int ownerId);
+
+        IQueryable GetLatestTreatments();
+
         Task<Treatment> GetWithPetAndSpecialityByIdAsync(int id);
+        IQueryable GetLatestTreatmentsByOwnerId(int id);
     }
 }

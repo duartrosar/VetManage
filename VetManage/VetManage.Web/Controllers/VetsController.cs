@@ -60,7 +60,6 @@ namespace VetManage.Web.Controllers
             {
                 // vet not found
                 return new NotFoundViewResult("VetNotFound");
-
             }
 
             var vet = await _vetRepository.GetWithUserByIdAsync(id.Value);
@@ -69,7 +68,6 @@ namespace VetManage.Web.Controllers
             {
                 // vet not found
                 return new NotFoundViewResult("VetNotFound");
-
             }
 
             var model = new VetDetailsViewModel
@@ -91,6 +89,8 @@ namespace VetManage.Web.Controllers
                     DateOfBirth = DateTime.Now,
                 },
             };
+
+            ViewData["Genders"] = _converterHelper.GetGenders();
 
             return View(model);
         }
@@ -160,10 +160,12 @@ namespace VetManage.Web.Controllers
 
                         model.VetViewModel.ImageId = imageId;
 
-                        return View(model);
+                        return RedirectToAction(nameof(Index));
                     }
 
                     _flashMessage.Danger("That email is already being used by another user.");
+
+                    ViewData["Genders"] = _converterHelper.GetGenders();
 
                     return View(model);
                 }
@@ -199,6 +201,8 @@ namespace VetManage.Web.Controllers
                 model.IsAdmin = true;
             }
 
+            ViewData["Genders"] = _converterHelper.GetGenders();
+
             return View(model);
         }
 
@@ -209,6 +213,8 @@ namespace VetManage.Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                ViewData["Genders"] = _converterHelper.GetGenders();
+
                 try
                 {
                     Guid imageId = model.ImageId;

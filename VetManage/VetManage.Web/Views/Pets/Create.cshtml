@@ -1,4 +1,5 @@
 ﻿@using Newtonsoft.Json
+@using VetManage.Web.Data.Entities
 @model VetManage.Web.Models.Pets.PetViewModel
 
 @{
@@ -11,35 +12,23 @@
             <a asp-action="Index" class="btn btn-outline-light">Back</a>
             <h2>New Owner</h2>
         </div>
-        <div class="p-3 mt-4">
-            <button class="btn btn-outline-light" id="chooseOwnerBtn">Choose Owner</button>
-        </div>
         <div class="px-3 pt-3">
             <flash dismissable="true"/>
         </div>
         <div class="px-3">
             <form asp-action="Create" class="flex-fill" method="post" style="max-width: 1200px;" id="registerVetsForm" enctype="multipart/form-data">
                 <div asp-validation-summary="ModelOnly"></div>
-                <div class="row">
-                    <div class="col">
-                        <div class="mb-4">
-                            <label asp-for="Name">Owner Id</label>
-                            <input asp-for="OwnerId" type="text" id="ownerId" class="form-control"/>
-                            <span asp-validation-for="OwnerId" class="text-danger"></span>
-                        </div>
+                <div class="col">
+                    <partial name="_OwnerData" model="@new Owner()"/>
+                    <div class="p-3" id="chooseOwnerBtnContainer">
+                        <a class="btn btn-outline-light mt-2" id="chooseOwnerBtn">Choose Owner</a>
                     </div>
-                    <div class="col">
-                        <div class="mb-4">
-                            <label asp-for="Name">Owner's First Name</label>
-                            <input id="ownerFirst" type="text" class="form-control" readonly/>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="mb-4">
-                            <label asp-for="Name">Owner's Last Name</label>
-                            <input id="ownerLast" type="text" class="form-control" readonly/>
-                        </div>
-                    </div>
+                    <span asp-validation-for="OwnerId" class="text-danger"></span>
+                    <input asp-for="OwnerId" style="visibility: hidden;" />
+                </div>
+                <div class="d-none" id="ownersTableContainer">
+                    <h4>Pets</h4>
+                    <partial name="_OwnersTable" model="@ViewData["Owners"]" />
                 </div>
                 <div class="row">
                     <div class="col">
@@ -71,7 +60,7 @@
                         </div>
                         <div class="mb-4">
                             <label asp-for="Gender">Gender</label>
-                            <input asp-for="Gender" class="form-control"/>
+                            <select asp-for="Gender" asp-items="(List<SelectListItem>)@ViewData["Genders"]" class="form-control"></select>
                             <span asp-validation-for="Gender" class="text-danger"></span>
                         </div>
                     </div>
@@ -101,7 +90,7 @@
                 <div class="mb-4">
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                         <a asp-action="Index" class="btn btn-danger">Cancel</a>
-                        <button type="submit" class="btn btn-success">Create</button>
+                        <button type="submit" class="btn btn-success text-light">Create</button>
                     </div>
                 </div>
                 <input asp-for="ImageIdString" style="visibility: hidden; height: 0px;"/>
@@ -110,53 +99,15 @@
     </div>
 </div>
 
-<partial name="_OwnersModal" model="@ViewData["Owners"]" />
+@*<partial name="_OwnersModal" model="@ViewData["Owners"]" />*@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
     <script type="text/javascript">
         $(document).ready(function() {
-            // Datatable
-            let table = $("#ownersTable").DataTable({
-                "pageLength": 5,
-            });
-
-            $("#confirmSelection").click(function() { 
-                let selectedRow = $(".selected");
-                let ownerId = selectedRow.data("ownerId")
-                let owner = selectedRow.data("owner")
-
-                console.log(owner);
-
-                if(ownerId !== undefined){
-                    // set the owners values
-                    $("#ownerId").val(owner.Id);
-                    $("#ownerFirst").val(owner.FirstName);
-                    $("#ownerLast").val(owner.LastName);
-
-                    // close modal
-                    $("#chooseOwner").modal("hide");
-                    $("#ownerId-error").remove();
-                }
-            });
-
-            $('#ownersTable tbody').on('click', 'tr', function () {
-                if ($(this).hasClass('selected')) {
-                    $(this).removeClass('selected');
-                } else {
-                    table.$('tr.selected').removeClass('selected');
-                    $(this).addClass('selected');
-                }
-            });
-
-            $("#ownerId").focus(function(){
-                $("#chooseOwner").modal("show");
-            });
-
-            $("#chooseOwnerBtn").click(function(){
-                $("#chooseOwner").modal("show");
-            });
+            $("#petsNav").addClass("active");
+            $("#petsNav").addClass("bg-dark");
         });
 
         // Preview image
@@ -188,4 +139,6 @@
                 });
             });
     </script>
+
+    <script type="text/javascript" src="~/js/PetOwnerSelection.js"></script>
 }

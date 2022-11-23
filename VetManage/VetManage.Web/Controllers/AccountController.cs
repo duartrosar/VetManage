@@ -54,7 +54,7 @@ namespace VetManage.Web.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Dashboard", "Home");
             }
             return View();
         }
@@ -82,7 +82,7 @@ namespace VetManage.Web.Controllers
                                 // Redirect to the area the user was trying to access
                                 return Redirect(Request.Query["ReturnUrl"].First());
                             }
-                            return RedirectToAction("Index", "Home");
+                            return RedirectToAction("Dashboard", "Home");
                         }
                     }
                 }
@@ -104,7 +104,9 @@ namespace VetManage.Web.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var user = await _userHelper.GetUserByIdAsync(userId);
 
-            if(user != null)
+            ViewData["Genders"] = _converterHelper.GetGenders();
+
+            if (user != null)
             {
                 //var entity = 
                 var model = new EditProfileViewModel
@@ -128,6 +130,8 @@ namespace VetManage.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> EditProfile(EditProfileViewModel model)
         {
+            ViewData["Genders"] = _converterHelper.GetGenders();
+
             if (ModelState.IsValid)
             {
                 try
@@ -181,91 +185,6 @@ namespace VetManage.Web.Controllers
 
                             return View(model);
                         }
-
-                        //if (await _userHelper.IsUserInRoleAsync(user, "Employee"))
-                        //{
-                        //    var vet = await _vetRepository.GetByUserIdAsync(user);
-
-                        //    if(vet != null)
-                        //    {
-                        //        Guid imageId = model.ImageId;
-
-                        //        // Upload image if it's new
-                        //        if (model.ImageFile != null && model.ImageFile.Length > 0)
-                        //        {
-                        //            imageId = await _blobHelper.UploadBlobAsync(model.ImageFile, "vets");
-                        //            model.ImageId = imageId;
-                        //        }
-
-                        //        vet = _converterHelper.EditProfileViewModelToVet(model, vet, imageId);
-                        //        model.ImageFullPath = vet.ImageFullPath;
-                        //        user = _converterHelper.ToUser(vet, user);
-
-                        //        await _vetRepository.UpdateAsync(vet);
-
-                        //        // Update the user 
-                        //        var response = await _userHelper.UpdateUserAsync(user);
-
-                        //        if (response.Succeeded)
-                        //        {
-                        //            await _vetRepository.UpdateAsync(vet);
-
-                        //            _flashMessage.Confirmation("Profile updated!");
-
-                        //            if (user.UserName != model.Username)
-                        //            {
-                        //                Response response2 = await SendConfirmNewEmailAsync(user, model);
-
-                        //                if (response2.IsSuccess)
-                        //                {
-                        //                    _flashMessage.Confirmation("Profile updated! The instructions to confirm your new email have been sent.");
-                        //                }
-                        //            }
-                        //            return View(model);
-                        //        }
-                        //    }
-                        //}
-                        //else if (await _userHelper.IsUserInRoleAsync(user, "Client"))
-                        //{
-                        //    var owner = await _ownerRepository.GetByUserIdAsync(user);
-
-                        //    if(owner != null)
-                        //    {
-                        //        Guid imageId = model.ImageId;
-
-                        //        // Upload image if it's new
-                        //        if (model.ImageFile != null && model.ImageFile.Length > 0)
-                        //        {
-                        //            imageId = await _blobHelper.UploadBlobAsync(model.ImageFile, "owners");
-                        //            model.ImageId = imageId;
-                        //        }
-
-                        //        owner = _converterHelper.EditProfileViewModelToOwner(model, owner, imageId);
-                        //        model.ImageFullPath = owner.ImageFullPath;
-                        //        user = _converterHelper.ToUser(owner, user);
-
-                        //        // Update the user 
-                        //        var response = await _userHelper.UpdateUserAsync(user);
-
-                        //        if (response.Succeeded)
-                        //        {
-                        //            await _ownerRepository.UpdateAsync(owner);
-
-                        //            _flashMessage.Confirmation("Profile updated!");
-
-                        //            if (user.UserName != model.Username)
-                        //            {
-                        //                Response response2 = await SendConfirmNewEmailAsync(user, model);
-
-                        //                if (response2.IsSuccess)
-                        //                {
-                        //                    _flashMessage.Confirmation("Profile updated! The instructions to confirm your new email have been sent.");
-                        //                }
-                        //            }
-                        //            return View(model);
-                        //        }
-                        //    }
-                        //}
 
                         _flashMessage.Danger("Your profile could not be updated, please try again.");
 

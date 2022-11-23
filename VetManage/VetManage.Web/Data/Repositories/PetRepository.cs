@@ -14,6 +14,13 @@ namespace VetManage.Web.Data.Repositories
             _context = context;
         }
 
+        public IQueryable GetAllByOwnerIdAsync(int id)
+        {
+            return _context.Pets
+                .Include(p => p.Owner)
+                .Where(p => p.OwnerId == id);
+        }
+
         public IQueryable GetAllWithOwners()
         {
             return _context.Pets.Include(p => p.Owner);

@@ -8,7 +8,7 @@
     <div class="dark-5">
         <div class="p-3 d-flex justify-content-between align-items-center border-bottom">
             <a asp-action="Index" class="btn btn-outline-light">Back</a>
-            <h2>Edit Vet</h2>
+            <h2>Edit Employee</h2>
         </div>
         <div class="px-3 pt-3">
             <flash dismissable="true"/>
@@ -43,7 +43,7 @@
                         </div>
                         <div class="mb-4">
                             <label asp-for="Gender">Gender</label>
-                            <input id="gender" asp-for="Gender" class="form-control"/>
+                            <select asp-for="Gender" asp-items="(List<SelectListItem>)@ViewData["Genders"]" class="form-control"></select>
                             <span asp-validation-for="Gender" class="text-danger"></span>
                         </div>
                         <div class="mb-4">
@@ -77,7 +77,7 @@
                 <div>
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                         <a asp-action="Index" class="btn btn-danger">Cancel</a>
-                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button type="submit" class="btn btn-primary text-light">Save</button>
                     </div>
                 </div>
             </form>

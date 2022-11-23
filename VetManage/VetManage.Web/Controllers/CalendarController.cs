@@ -1,9 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Vereyon.Web;
 using VetManage.Web.Data;
 using VetManage.Web.Data.Entities;
 using VetManage.Web.Data.Repositories;
@@ -12,44 +16,56 @@ using VetManage.Web.Models.Calendar;
 
 namespace VetManage.Web.Controllers
 {
+    [Authorize]
     public class CalendarController : Controller
     {
         private readonly IAppointmentRepository _appointmentRepository;
         private readonly IConverterHelper _converterHelper;
         private readonly IVetRepository _vetRepository;
         private readonly IPetRepository _petRepository;
+        private readonly IOwnerRepository _ownerRepository;
+        private readonly IFlashMessage _flashMessage;
+        private readonly IUserHelper _userHelper;
 
         public CalendarController(
             IAppointmentRepository appointmentRepository,
             IConverterHelper converterHelper,
             IVetRepository vetRepository,
-            IPetRepository petRepository)
+            IPetRepository petRepository,
+            IOwnerRepository ownerRepository,
+            IFlashMessage flashMessage,
+            IUserHelper userHelper)
         {
             _appointmentRepository = appointmentRepository;
             _converterHelper = converterHelper;
             _vetRepository = vetRepository;
             _petRepository = petRepository;
+            _ownerRepository = ownerRepository;
+            _flashMessage = flashMessage;
+            _userHelper = userHelper;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             var appointments = _appointmentRepository.GetAll();
 
-            CalendarViewModel viewModel = new CalendarViewModel
-            {
-                Appointments = _converterHelper.AllToAppointmentViewModel(appointments),
-                Appointment = new AppointmentViewModel()
-                {
-                    ComboPets = _appointmentRepository.GetComboPets(),
-                    ComboVets = _appointmentRepository.GetComboVets(),
-                },
-            };
+            // Get the logged in user to check if it's an owner
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            return View(viewModel);
+            var owner = await _ownerRepository.GetByUserIdAsync(userId);
+
+            if (owner != null)
+            {
+                appointments = (IQueryable<Appointment>)_appointmentRepository.GetAllByOwnerId(owner.Id);
+            }
+
+            var model = _converterHelper.AllToAppointmentViewModel(appointments);
+
+            return View(model);
         }
 
 
-        public IActionResult Create(string date)
+        public async Task<IActionResult> Create(string date)
         {
             DateTime dateTime; ;
 
@@ -67,6 +83,15 @@ namespace VetManage.Web.Controllers
 
             var pets = _petRepository.GetAllWithOwners();
             var vets = _vetRepository.GetAllWithUsers();
+
+            // Get the logged in user to check if it's an owner
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var owner = await _ownerRepository.GetByUserIdAsync(userId);
+
+            if (owner != null)
+            {
+                pets = _petRepository.GetAllByOwnerIdAsync(owner.Id);
+            }
 
             ViewData["Pets"] = _converterHelper.AllToPetViewModel(pets);
             ViewData["Vets"] = _converterHelper.AllToVetViewModel(vets);
@@ -91,16 +116,29 @@ namespace VetManage.Web.Controllers
 
                     if (isNull)
                     {
-                        var appointment = _converterHelper.ToAppointment(model, true);
+                        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                        var user = await _userHelper.GetUserByIdAsync(userId);
 
-                        await _appointmentRepository.CreateAsync(appointment);
-                        return RedirectToAction(nameof(Index));
+                        if(user != null)
+                        {
+                            var appointment = _converterHelper.ToAppointment(model, true);
+
+                            appointment.User = user;
+
+                            await _appointmentRepository.CreateAsync(appointment);
+
+                            _flashMessage.Confirmation("Appointment booked successfully.");
+
+                            return RedirectToAction(nameof(Index));
+                        }
+
                     }
-                }
-                catch (Exception)
-                {
 
-                    throw;
+                    _flashMessage.Danger("Appointment could not be booked.");
+                }
+                catch (Exception ex)
+                {
+                    _flashMessage.Danger(ex.Message);
                 }
             }
             return View(model);
@@ -124,6 +162,21 @@ namespace VetManage.Web.Controllers
 
             var pets = _petRepository.GetAllWithOwners();
             var vets = _vetRepository.GetAllWithUsers();
+
+            // Get the logged in user to check if it's an owner
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var owner = await _ownerRepository.GetByUserIdWithPetsAsync(userId);
+
+            if (owner != null)
+            {
+                // the user is an owner and is trying to access an appointment that doesn't belong to one of their pets
+                if(appointment.Pet.OwnerId != owner.Id)
+                {
+                    return new NotFoundViewResult("AppointmentNotFound");
+                }
+
+                pets = _petRepository.GetAllByOwnerIdAsync(owner.Id);
+            }
 
             ViewData["Pets"] = _converterHelper.AllToPetViewModel(pets);
             ViewData["Vets"] = _converterHelper.AllToVetViewModel(vets);
@@ -152,23 +205,25 @@ namespace VetManage.Web.Controllers
 
                         await _appointmentRepository.UpdateAsync(appointment);
 
-                        return RedirectToAction(nameof(Index));
+                        _flashMessage.Confirmation("Appointment booked successfully.");
+
+                        return View(model);
                     }
-                    // TODO: Appointment could not be updated
+
+                    _flashMessage.Danger("Appointment could not be updated.");
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception ex)
                 {
                     if (!await _appointmentRepository.ExistsAsync(model.Id))
                     {
                         return new NotFoundViewResult("AppointmentNotFound");
                     }
-                    else
-                    {
-                        throw;
-                    }
+
+                    _flashMessage.Danger(ex.Message);
                 }
             }
-            return RedirectToAction(nameof(Index));
+
+            return View(model);
         }
 
         [HttpPost]
@@ -190,10 +245,18 @@ namespace VetManage.Web.Controllers
                 return new NotFoundViewResult("AppointmentNotFound");
             }
 
+            var appointment = await _appointmentRepository.GetByIdAsync(id.Value);
+
+            if(appointment == null)
+            {
+                return new NotFoundViewResult("AppointmentNotFound");
+            }
+
             try
             {
-                var appointment = await _appointmentRepository.GetByIdAsync(id.Value);
                 await _appointmentRepository.DeleteAsync(appointment);
+
+                _flashMessage.Confirmation("Appointment deleted successfully.");
 
                 return RedirectToAction(nameof(Index));
             }
@@ -202,11 +265,18 @@ namespace VetManage.Web.Controllers
                 if(!await _appointmentRepository.ExistsAsync(id.Value))
                 {
                     return new NotFoundViewResult("AppointmentNotFound");
-                } else
-                {
-                    throw;
                 }
+                _flashMessage.Danger(ex.Message);
             }
+
+            _flashMessage.Danger("Could not delete appointment.");
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        public IActionResult CreateRequest()
+        {
+            return View();
         }
 
         public IActionResult AppointmentNotFound()

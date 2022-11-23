@@ -1,4 +1,5 @@
 ﻿using HtmlAgilityPack;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -227,7 +228,8 @@ namespace VetManage.Web.Helpers
                 Vet = appointment.Vet,
                 Pet = appointment.Pet,
                 VetId = appointment.VetId,
-                PetId = appointment.PetId
+                PetId = appointment.PetId,
+                DateString = appointment.StartTime.ToShortDateString(),
             };
         }
 
@@ -269,6 +271,23 @@ namespace VetManage.Web.Helpers
                 Subject = message.Subject,
                 DateString = message.Date.ToShortDateString(),
                 IsRead = mmb.IsRead,
+            };
+        }
+
+        public MessageViewModel ToMessageViewModel(Message message)
+        {
+            HtmlDocument htmlDoc = new HtmlDocument();
+            htmlDoc.LoadHtml(message.Body);
+            string bodyRaw = htmlDoc.DocumentNode.InnerText;
+
+            return new MessageViewModel
+            {
+                Id = message.Id,
+                SenderName = message.Sender.User.FullName,
+                Subject = message.Subject,
+                Body = message.Body,
+                BodyRaw = bodyRaw,
+                DateString = message.Date.ToShortDateString(),
             };
         }
 
@@ -319,6 +338,17 @@ namespace VetManage.Web.Helpers
             return messageViewModels;
         }
 
+        public ICollection<MessageViewModel> AllToMessageViewModel(IQueryable messages)
+        {
+            List<MessageViewModel> messageViewModels = new List<MessageViewModel>();
+
+            foreach(Message message in messages)
+            {
+                messageViewModels.Add(ToMessageViewModel(message));
+            }
+
+            return messageViewModels;
+        }
 
 
         public User ToUser(IIsUser entity, User user, string blobContainerName)
@@ -445,6 +475,7 @@ namespace VetManage.Web.Helpers
                 PetId = treatment.PetId,
                 SpecialityId = treatment.SpecialityId,
                 DateString = treatment.TreatmentDate.ToShortDateString(),
+                NotesAbbreviation = treatment.Notes.Substring(0, Math.Min(treatment.Notes.Length - 1, 100)) + "...",
             };
         }
 
@@ -458,6 +489,29 @@ namespace VetManage.Web.Helpers
             }
 
             return treatmentViewModels;
+        }
+
+        public List<SelectListItem> GetGenders()
+        {
+            List<SelectListItem> genders = new List<SelectListItem>();
+
+            genders.Add(new SelectListItem { Text = "<Select a gender>", Value = "" });
+            genders.Add(new SelectListItem { Text = "Female", Value = "Female" });
+            genders.Add(new SelectListItem { Text = "Male", Value = "Male" });
+            genders.Add(new SelectListItem { Text = "Prefer Not To Say", Value = "Prefer Not To Say" });
+
+            return genders;
+        }
+
+        public List<SelectListItem> GetPetGenders()
+        {
+            List<SelectListItem> genders = new List<SelectListItem>();
+
+            genders.Add(new SelectListItem { Text = "<Select a gender>", Value = "" });
+            genders.Add(new SelectListItem { Text = "Female", Value = "Female" });
+            genders.Add(new SelectListItem { Text = "Male", Value = "Male" });
+
+            return genders;
         }
     }
 }

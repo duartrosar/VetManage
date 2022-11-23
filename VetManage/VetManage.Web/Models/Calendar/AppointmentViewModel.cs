@@ -45,12 +45,7 @@ namespace VetManage.Web.Models.Calendar
                 return EndTime.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture);
             }
         }
-        //[Display(Name = "Pet")]
-        //[Range(1, int.MaxValue, ErrorMessage = "You must select a Pet")]
-        //public int PetId { get; set; }
-
-        //[Display(Name = "Vet")]
-        //[Range(1, int.MaxValue, ErrorMessage = "You must select a Vet")]
-        //public int VetId { get; set; }
+        
+        public string DateString { get; set; }
     }
 }
