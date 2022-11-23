@@ -3,7 +3,23 @@
     ViewData["Title"] = "Contact";
 }
 
-<h1>Contact</h1>
+<div class="container-xl px-3 pb-3">
+    <div class="services-section d-flex flex-column justify-content-around align-items-center p-5">
+        <div class="services-title-container text-center my-5">
+            <h3 class="services-subtitle mb-3">Get in touch</h3>
+            <h2 class="services-title">We're here for you.</h2>
+        </div>
+        <div class="row w-100 mb-5 text-center">
+            <p>261 334 156</p>
+            <br /> 
+            <p>Address Street, 256</p>
+            <p>RT87 6OP, West County</p>
+            <p>United Nations</p>
+            <br />
+            <p>Open everyday from 7 am to 6 pm.</p>
+        </div>
+    </div>
+</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

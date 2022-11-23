@@ -1,13 +1,5 @@
 ﻿<nav class="navbar fixed-top navbar-expand-sm box-shadow dark-5">
     <div class="container-fluid p-0">
-        @*<div class="menu-burger-container">
-            <div class="px-4 d-flex flex-row justify-content-start align-items-center">
-                <a class="text-white" id="burgerMenu">
-                    <i class="fa fa-bars fa-xl"></i>
-                    <i data-feather="menu" stroke-width="1"></i>
-                </a>
-            </div>
-        </div>*@
         <a class="navbar-brand text-white ms-4" asp-area="" asp-controller="Home" asp-action="Index">
             <div class="d-flex brand-container justify-content-center align-items-center">
                 <div class="brand-image-container">
@@ -28,19 +20,15 @@
                     <li class="nav-item" id="specialityNav">
                         <a class="px-4 text-light fw-lighter" asp-area="" asp-controller="Specialities" asp-action="IndexPublic">Specialities</a>
                     </li>
-                    <li class="nav-item" id="aboutNav">
+                    @*<li class="nav-item" id="aboutNav">
                         <a class="px-4 text-light fw-lighter" asp-area="" asp-controller="Home" asp-action="About">About</a>
-                    </li>
+                    </li>*@
                     <li class="nav-item" id="contactNav">
                         <a class="px-4 text-light fw-lighter" asp-area="" asp-controller="Home" asp-action="Contact">Contact</a>
-                    </li>
-                    <li class="nav-item" id="privacyNav">
-                        <a class="px-4 text-light fw-lighter" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                     </li>
                     <li class="nav-item" id="loginNav">
                         <a class="px-4 text-light fw-lighter" asp-area="" asp-controller="Account" asp-action="Login">
                             Login
-                            @*<i class="fa fa-sign-in"></i>*@
                         </a>
                     </li>
                 } else
@@ -51,7 +39,6 @@
                             <div id="loggedUserImage" class="frame frame-nav me-2" style="background-image: url(@Url.Content("~/images/nouser.png"))"></div>
                             <div class="d-flex flex-column ms-2">
                                 <span class="text-light fs-6 fw-lighter text-start" id="loggedUserName">Duarte Ribeiro</span>
-                                @*<span class="text-light fs-3 fw-lighter text-start" id="loggedUserRole">Employee</span>*@
                             </div>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="dropdownMenuButton">
@@ -71,28 +58,7 @@
                     </li>
                 }
             </ul>
-            @*
-            <ul class="nav navbar-nav navbar-right">
-                @if (User.Identity.IsAuthenticated)
-                {
-                    
-                }
-            </ul>*@
         </div>
     </div>
 </nav>
 
-@*<div class="dropdown">
-                            <button class="dropdown-toggle d-flex justify-content-center align-items-center me-4" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <div class="frame frame-nav" style="background-image: url(@Url.Content("~/images/owners/26099159-8fd9-48c2-abbd-4463501809be.jpg"))"></div>
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <li><a class="dropdown-item" href="#">Action</a></li>
-                                <li><a class="dropdown-item" href="#">Another action</a></li>
-                                <li>
-                                    <a class="dropdown-item px-4 text-light fw-lighter" asp-area="" asp-controller="Account" asp-action="Logout">
-                                Logout
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>*@

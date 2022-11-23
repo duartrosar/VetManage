@@ -23,3 +23,15 @@
     </div>
 </div>
 
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#specialityNav").addClass("active");
+
+            $("#specialitiesNav").addClass("active");
+            $("#specialitiesNav").addClass("bg-dark");
+        });
+    </script>
+}

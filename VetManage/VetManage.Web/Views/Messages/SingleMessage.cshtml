@@ -15,9 +15,14 @@
                 <partial name="_SidebarMessages"/>
             </div>
             <div class="col-10 pt-3 ps-0">
-                <h1>@Model.Subject</h1>
-
-                @Html.Raw(@Model.Body)
+                <div class="container">
+                    <div class="mb-3">
+                        <h1 class="fs-1">@Model.Subject</h1>
+                    </div>
+                    <div class="mb-3">
+                        @Html.Raw(@Model.Body)
+                    </div>
+                </div>
             </div>
         </div>
     </div>

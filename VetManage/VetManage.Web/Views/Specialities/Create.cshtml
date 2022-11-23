@@ -30,7 +30,7 @@
                 <div class="mb-2">
                     <label asp-for="Name">Description</label>
                     <div class="editor-container">
-                        <ejs-richtexteditor id="Description" name="Description" ejs-for="Description" beforeDialogOpen="onDialogOpen" actionBegin="onActionBegin" created="created" change="onChange">
+                        <ejs-richtexteditor id="Description" name="Description" ejs-for="Description" beforeDialogOpen="onDialogOpen" maxLength="5000" actionBegin="onActionBegin" created="created" change="onChange">
                             <e-richtexteditor-pastecleanupsettings plainText="true"></e-richtexteditor-pastecleanupsettings>
                             <e-richtexteditor-iframesettings enable="true"></e-richtexteditor-iframesettings>
                             <e-content-template>

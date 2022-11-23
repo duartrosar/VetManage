@@ -21,6 +21,7 @@ namespace VetManage.Web.Controllers
         private readonly IOwnerRepository _ownerRepository;
         private readonly IMessageBoxRepository _messageBoxRepository;
         private readonly IUserHelper _userHelper;
+        private readonly ISpecialityRepository _specialityRepository;
         private readonly IConverterHelper _converterHelper;
         private readonly ITreatmentRepository _treatmentRepository;
         private readonly IPetRepository _petRepository;
@@ -34,7 +35,8 @@ namespace VetManage.Web.Controllers
             IAppointmentRepository appointmentRepository,
             IOwnerRepository ownerRepository,
             IMessageBoxRepository messageBoxRepository,
-            IUserHelper userHelper)
+            IUserHelper userHelper,
+            ISpecialityRepository specialityRepository)
         {
             _logger = logger;
             _converterHelper = converterHelper;
@@ -44,6 +46,7 @@ namespace VetManage.Web.Controllers
             _ownerRepository = ownerRepository;
             _messageBoxRepository = messageBoxRepository;
             _userHelper = userHelper;
+            _specialityRepository = specialityRepository;
         }
 
         [Authorize]
@@ -98,20 +101,18 @@ namespace VetManage.Web.Controllers
             {
                 return RedirectToAction(nameof(Dashboard));
             }
-            return View();
+
+            var latestSpecialities = _specialityRepository.GetLatestSpecialities();
+
+            HomeViewModel model = new HomeViewModel()
+            {
+                LastestSpecialities = _converterHelper.AllToSpecialityViewModel(latestSpecialities),
+            };
+
+            return View(model);
         }
 
         public IActionResult Contact()
-        {
-            return View();
-        }
-
-        public IActionResult About()
-        {
-            return View();
-        }
-
-        public IActionResult Privacy()
         {
             return View();
         }

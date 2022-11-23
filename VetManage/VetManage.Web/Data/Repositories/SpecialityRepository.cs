@@ -30,5 +30,12 @@ namespace VetManage.Web.Data.Repositories
 
             return list;
         }
+
+        public IQueryable GetLatestSpecialities()
+        {
+            return _context.Specialities
+                .OrderByDescending(t => t.Id)
+                .Take(3);
+        }
     }
 }
