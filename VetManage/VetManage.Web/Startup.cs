@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Vereyon.Web;
 using VetManage.Web.Data;
@@ -93,6 +94,9 @@ namespace VetManage.Web
             });
 
             services.AddControllersWithViews();
+
+            //services.AddControllers().AddJsonOptions(x =>
+            //   x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

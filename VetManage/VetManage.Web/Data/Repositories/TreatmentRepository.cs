@@ -14,6 +14,14 @@ namespace VetManage.Web.Data.Repositories
             _context = context;
         }
 
+        public IQueryable GetAllByPetId(int petId)
+        {
+            return _context.Treatments
+                //.Include(t => t.Pet)
+                //.Include(t => t.Speciality)
+                .Where(t => t.PetId == petId);
+        }
+
         public IQueryable GetAllWithPetsAndSpecialities()
         {
             return _context.Treatments

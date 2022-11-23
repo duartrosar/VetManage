@@ -450,7 +450,7 @@ namespace VetManage.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateToken([FromBody] LoginViewModel model)
         {
-            if (this.ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 var user = await _userHelper.GetUserByEmailAsync(model.Username);
                 if (user != null)
@@ -481,7 +481,7 @@ namespace VetManage.Web.Controllers
                             expiration = token.ValidTo
                         };
 
-                        return this.Created(string.Empty, results);
+                        return Created(string.Empty, results);
                     }
                 }
             }

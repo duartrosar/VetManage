@@ -8,6 +8,8 @@ namespace VetManage.Web.Data.Repositories
     {
         IQueryable GetAllWithPetsAndSpecialities();
 
+        IQueryable GetAllByPetId(int petId);
+
         Task<Treatment> GetWithPetAndSpecialityByIdAsync(int id);
     }
 }
