@@ -205,7 +205,7 @@ namespace VetManage.Web.Helpers
             return new Appointment
             {
                 Id = isNew ? 0 : model.Id,
-                Title = model.Title,
+                Title = model.Subject,
                 Subject = model.Subject,
                 StartTime = model.StartTime,
                 EndTime = model.EndTime,
@@ -381,7 +381,7 @@ namespace VetManage.Web.Helpers
 
         public User ToUser(User user, UserViewModel model, bool isNew, string blobContainerName)
         {
-            user.Id = isNew ? Guid.Empty.ToString() : model.Id;
+            user.Id = isNew ? Guid.NewGuid().ToString() : model.Id;
             user.UserName = model.Username;
             user.FirstName = model.FirstName;
             user.LastName = model.LastName;

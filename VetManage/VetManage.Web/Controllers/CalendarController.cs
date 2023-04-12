@@ -189,17 +189,24 @@ namespace VetManage.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, AppointmentViewModel model)
         {
+            var pets = _petRepository.GetAllWithOwners();
+            var vets = _vetRepository.GetAllWithUsers();
+
+            ViewData["Pets"] = _converterHelper.AllToPetViewModel(pets);
+            ViewData["Vets"] = _converterHelper.AllToVetViewModel(vets);
+            ViewData["DateString"] = model.StartTime.ToString("yyyy-MM-dd");
+
+            var pet = await _petRepository.GetByIdAsync(model.PetId);
+            var vet = await _vetRepository.GetByIdAsync(model.VetId);
+
+            // if both the pet and vet exist
+            var notNull = pet != null && vet != null;
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    var pet = await _petRepository.GetByIdAsync(model.PetId);
-                    var vet = await _vetRepository.GetByIdAsync(model.VetId);
-
-                    // if both the pet and vet exist
-                    var isNull = pet != null && vet != null;
-
-                    if (isNull)
+                    if (notNull)
                     {
                         var appointment = _converterHelper.ToAppointment(model, false);
 
@@ -207,10 +214,13 @@ namespace VetManage.Web.Controllers
 
                         _flashMessage.Confirmation("Appointment booked successfully.");
 
+                        model.Pet = pet;
+                        model.Vet = vet;
+
                         return View(model);
                     }
 
-                    _flashMessage.Danger("Appointment could not be updated.");
+                    return new NotFoundViewResult("AppointmentNotFound");
                 }
                 catch (Exception ex)
                 {
@@ -221,6 +231,12 @@ namespace VetManage.Web.Controllers
 
                     _flashMessage.Danger(ex.Message);
                 }
+            }
+
+            if (notNull)
+            {
+                model.Pet = pet;
+                model.Vet = vet;
             }
 
             return View(model);

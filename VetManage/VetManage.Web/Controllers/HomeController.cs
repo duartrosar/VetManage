@@ -57,24 +57,18 @@ namespace VetManage.Web.Controllers
             var latestTreatments = _treatmentRepository.GetLatestTreatments();
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = await _userHelper.GetUserByIdAsync(userId);
+            var messageBox = await _messageBoxRepository.GetMessageBoxByUserIdAsync(userId);
 
-            if(user != null)
-            {
-                // TODO: If user is owner
-                ViewData["User"] = user.FullName;
-            }
-
-            var unreadMessages = await _messageBoxRepository.GetUnreadMessages(userId);
+            var unreadMessages = _messageBoxRepository.GetUnreadMessagesByMessageBoxId(messageBox.Id);
 
             int totalPets = _petRepository.GetAll().Count();
             int totalOwners = _ownerRepository.GetAll().Count();
             int totalAppointments = _appointmentRepository.GetAll().Count();
 
-
+            // TODO: If user is owner
             var owner = await _ownerRepository.GetByUserIdWithPetsAsync(userId);
 
-            if(owner != null)
+            if (owner != null)
             {
                 todaysAppointments = _appointmentRepository.GetAllByOwnerIdFromToday(owner.Id);
                 latestAppointments = _appointmentRepository.GetMostRecentlyBookedByOwnerId(owner.Id);
@@ -91,6 +85,13 @@ namespace VetManage.Web.Controllers
                 TotalOwners = totalOwners,
                 TotalAppointments = totalAppointments,
             };
+
+            var user = await _userHelper.GetUserByIdAsync(userId);
+            
+            if(user != null)
+            {
+                ViewData["User"] = user.FullName;
+            }
 
             return View(model);
         }

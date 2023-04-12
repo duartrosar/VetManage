@@ -23,26 +23,6 @@ namespace VetManage.Web.Data.Entities
         [MaxLength(250)]
         public string Address { get; set; }
 
-        ///// <summary>
-        ///// RoleId is the id used by the dropdown to access the correct role
-        ///// </summary>
-        //public int RoleId { get; set; }
-
-        ///// <summary>
-        ///// RoleName is used to insert the user into a role and to search
-        ///// </summary>
-        //public string RoleName { get; set; }
-
-        ///// <summary>
-        ///// The id of the Entity associated with the
-        ///// </summary>
-        //public int EntityId { get; set; }
-
-        ///// <summary>
-        ///// Whether or not the user has an Entity associated with it
-        ///// </summary>
-        //public bool HasEntity { get; set; }
-
         [Required(ErrorMessage = "You must select a First Name")]
         public string Gender { get; set; }
 

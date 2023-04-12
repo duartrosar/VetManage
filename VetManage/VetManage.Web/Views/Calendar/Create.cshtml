@@ -10,6 +10,35 @@
         <div class="p-3">
             <form class="flex-fill" id="appointmentForm" method="post" style="max-width: 1600px;">
                 <div asp-validation-summary="ModelOnly"></div>
+                <div class="row">
+                    <div class="col">
+                        <div class="mb-4">
+                            <label asp-for="Subject">Subject</label>
+                            <input asp-for="Subject" class="form-control"/>
+                            <span asp-validation-for="Subject" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col">
+                        <label asp-for="StartTime">Date</label>
+                        <input asp-for="StartTime" type="date" class="form-control"/>
+                        <span asp-validation-for="StartTime" class="text-danger"></span>
+                        <input asp-for="EndTime" type="hidden" class="form-control"/>
+                    </div>
+                    <div class="col">
+                        <label asp-for="StartTimeString">Start Time</label>
+                        <input id="startTimeString" class="timepicker form-control" name="timepicker"/>
+                        <input asp-for="StartTimeString" id="startTimeHidden" type="hidden"/>
+                        <span asp-validation-for="StartTimeString" class="text-danger"></span>
+                    </div>
+                    <div class="col">
+                        <label asp-for="EndTimeString">End Time</label>
+                        <input id="endTimeString" class="timepicker form-control" name="timepicker"/>
+                        <input asp-for="EndTimeString" id="endTimeHidden" type="hidden"/>
+                        <span asp-validation-for="EndTimeString" class="text-danger"></span>
+                    </div>
+                </div>
                 <div class="row mb-4">
                     <div class="col">
                         <partial name="_PetData" model="@new Pet()"/>
@@ -36,47 +65,12 @@
                     <h4>Vets</h4>
                     <partial name="_VetsTable" model="@ViewData["Vets"]" />
                 </div>
-                <div class="row">
-                    <div class="col">
-                        <div class="mb-4">
-                            <label asp-for="Subject">Subject</label>
-                            <input asp-for="Subject" class="form-control"/>
-                            <span asp-validation-for="Subject" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="mb-4">
-                            <label asp-for="Title">Title</label>
-                            <input asp-for="Title" class="form-control"/>
-                            <span asp-validation-for="Title" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
                 <div class="mb-4">
                     <label asp-for="Description">Description</label>
                     <textarea asp-for="Description" class="form-control"></textarea>
                     <span asp-validation-for="Description" class="text-danger"></span>
                 </div>
-                <div class="row mb-4">
-                    <div class="col">
-                        <label asp-for="StartTime">Date</label>
-                        <input asp-for="StartTime" type="date" class="form-control"/>
-                        <span asp-validation-for="StartTime" class="text-danger"></span>
-                        <input asp-for="EndTime" type="hidden" class="form-control"/>
-                    </div>
-                    <div class="col">
-                        <label asp-for="StartTimeString">Start Time</label>
-                        <input id="startTimeString" class="timepicker form-control" name="timepicker"/>
-                        <input asp-for="StartTimeString" id="startTimeHidden" type="hidden"/>
-                        <span asp-validation-for="StartTimeString" class="text-danger"></span>
-                    </div>
-                    <div class="col">
-                        <label asp-for="EndTimeString">End Time</label>
-                        <input id="endTimeString" class="timepicker form-control" name="timepicker"/>
-                        <input asp-for="EndTimeString" id="endTimeHidden" type="hidden"/>
-                        <span asp-validation-for="EndTimeString" class="text-danger"></span>
-                    </div>
-                </div>
+                
                 <div class="mb-4">
                     <div class="d-grid gap-2 d-flex justify-content-end">
                         <div>

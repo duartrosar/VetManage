@@ -186,6 +186,8 @@ namespace VetManage.Web.Controllers
                 model = _converterHelper.ToMessageViewModelOutbox(message);
             }
 
+            model.SenderName = message.SenderUsername;
+
             return View(model);
         }
 

@@ -8,7 +8,7 @@ namespace VetManage.Web.Data.Entities
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "You must enter a subject")]
+        //[Required(ErrorMessage = "You must enter a subject")]
         [MaxLength(75)]
         public string Title { get; set; }
 

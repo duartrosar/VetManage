@@ -116,9 +116,10 @@
     }
 
     function onDragStop(args) {
-        console.log(args);
         let startTime = new Date(args.data.StartTime)
         let endTime = new Date(args.data.EndTime)
+
+        //console.log(typeof(args.data.StartTime));
 
         args.data.StartTime = offsetDateTimezoneToJson(args.data.StartTime);
         args.data.EndTime = offsetDateTimezoneToJson(args.data.EndTime);

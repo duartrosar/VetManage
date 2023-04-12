@@ -156,5 +156,15 @@ namespace VetManage.Web.Data.Repositories
 
             return null;
         }
+
+        public IQueryable GetUnreadMessagesByMessageBoxId(int id)
+        {
+            return _context.Messages
+                    .Where(m => m.Recipients.Any(r => r.MessageBoxId == id))
+                    .Where(m => m.Recipients.Any(r => r.IsRead == false))
+                    .Include(m => m.Sender)
+                    .ThenInclude(s => s.User)
+                    .OrderByDescending(m => m.Date);
+        }
     }
 }

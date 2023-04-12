@@ -108,12 +108,14 @@ namespace VetManage.Web.Controllers
 
                     if(user == null)
                     {
-                        Guid imageId = model.ImageId;
+                        Guid imageId = Guid.Empty;
 
                         if (model.ImageFile != null && model.ImageFile.Length > 0)
                         {
                             imageId = await _blobHelper.UploadBlobAsync(model.ImageFile, "users");
                         }
+
+                        model.ImageId = imageId;
 
                         user = _converterHelper.ToUser(new User(), model, true, "users");
 

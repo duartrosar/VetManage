@@ -49,7 +49,6 @@ namespace VetManage.Web.Controllers
             _flashMessage = flashMessage;
         }
 
-
         public IActionResult Login()
         {
             if (User.Identity.IsAuthenticated)
@@ -147,10 +146,10 @@ namespace VetManage.Web.Controllers
                         var user2 = await _userHelper.GetUserByEmailAsync(model.Username);
                         
                         if (user2 != null && user.Email != model.Username)
-                    {
-                        _flashMessage.Danger("The email you introduced is already being used.");
-                        return View(model);
-                    }
+                        {
+                            _flashMessage.Danger("The email you introduced is already being used.");
+                            return View(model);
+                        }
 
                         Guid imageId = model.ImageId;
 
@@ -181,6 +180,7 @@ namespace VetManage.Web.Controllers
                                     _flashMessage.Confirmation("The instructions to confirm your new email have been sent.");
                                 }
                             }
+
                             model.ImageFullPath = user.ImageFullPath;
 
                             return View(model);
